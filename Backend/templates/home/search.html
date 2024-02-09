@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% block title %}Search{% endblock title %}
+
+{% load static %}
+{% block body %}
+<h1 class="text-black text-5xl -mb-12 mt-32 font-serif w-[85%] mx-auto">Search Results:</h1>
+{% if allPosts|length < 1 and books|length < 1%} <div class="w-[70%] mx-auto text-black my-16">
+
+    <p>No search results</p>
+    <p class="mt-4">Your search query : <b>{{query}}</b> did not match any documents. <br>
+        Suggestions:</p>
+    <ul class="list-disc">
+        <li class="ml-8">Make sure that all words are spelled correctly.</li>
+        <li class="ml-8">Try more general keywords.</li>
+        <li class="ml-8"> Try fewer keywords.</li>
+        <li class="ml-8"> Try different keywords.</li>
+        </li class="ml-8">
+    </ul>
+    </div>
+
+
+
+    {% endif %}
+    <div class="w-[85%] flex mx-auto justify-between mt-24 -mb-10">
+        <div
+            class="book pb-2 border-b-2 border-gray-700 hover:border-b-4 hover:border-gray-900 w-full cursor-pointer flex justify-center flex-col items-center" id="blogToggle">
+            <button class=""><img src="{% static 'images/e-library.png' %}" class='h-16 w-24' alt=""></button>
+            <div class="w-fit px-2 py-1 bg-gray-500 text-white rounded-md scale-75 opacity-0 transition-all duration-500 delay-700  hidden md:block" id="showLibrary">Show Books</div>
+        </div>
+        <div
+            class="blog pb-2 border-b-2 border-gray-700 hover:border-b-4 hover:border-gray-900 w-full cursor-pointer flex justify-center flex-col items-center" id="bookToggle">
+            <button class=""><img src="{% static 'images/blogger-icon-logo.png' %}" class='h-16 w-16' alt=""></button>
+            <div class="w-fit px-2 py-1 bg-gray-500 text-white rounded-md scale-75 transition-all opacity-0 duration-500 delay-700 hidden md:block" id="showBlog">Show Blogs</div>
+        </div>
+    </div>
+    <div class="flex justify-center pt-6 mt-12">
+
+        <div id="blog" class="w-fit mx-auto transition-all duration-200 hidden">
+            <div class="container px-5 mx-auto w-fit">
+                <section class="text-gray-600 bg-white body-font overflow-hidden">
+                    <div class="container px-5 py-24 mx-auto">
+                        <div class="-my-8 divide-y-2 divide-gray-800">
+                            <div class="flex flex-col-reverse">
+                                {% for post in allPosts %}
+                                <div class="py-8 flex flex-wrap md:flex-nowrap">
+                                    <div class="md:w-64 md:mb-0 mb-6 flex-shrink-0 flex flex-col">
+                                        <span class="font-semibold title-font text-black"><span
+                                                class="text-blue-800">By: </span>{{post.author.first_name}}
+                                            {{post.author.last_name}}</span>
+                                        <span class="mt-1 text-blue-600 text-sm">{{post.timeStamp}}</span>
+                                    </div>
+                                    <div class="md:flex-grow">
+                                        <h2 class="text-2xl font-medium text-black title-font mb-2">{{post.title}}</h2>
+                                        <p class="leading-relaxed text-justify">{{post.content|truncatechars:300}}</p>
+                                        <a href="/blog/{{post.slug}}"
+                                            class="text-blue-400 inline-flex items-center mt-4 cursor-pointer">Read More
+                                            <span class="text-2xl">&rarr;</span></a>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <div id="books" {% comment %} class="hidden transition-all duration-200 opacity-0 my-8" {% endcomment %}>
+            <div class="container w-[100%] justify-center mx-auto flex flex-wrap space-y-2">
+                {% for book in books %}
+                <div class="max-w-sm bg-white border border-gray-200 rounded-lg transition-all shadow-2xl scale-90">
+
+                    <img class="rounded-t-lg" src="/media/{{book.bookCover}}" alt="" />
+
+                    <div class="p-5">
+
+                        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 ">{{book.bookName}}</h5>
+
+                        <p class="mb-3 font-normal text-gray-700 ">{{book.desc}}</p>
+                        <a href="/media/{{book.bookPDF}}/" target="_blank"
+                            class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 ">
+                            Read This Book
+                            <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <!-- <button class="btn-primary" onclick = "searchFunc()">Toggle</button> -->
+    {% endblock body %}
+
+    {% block js %}
+    <script>
+
+        
+            document.getElementById("bookToggle").addEventListener('click', () => {
+                document.getElementById("blog").classList.remove("hidden");
+                document.getElementById("books").classList.add("hidden");
+            });
+
+            document.getElementById("blogToggle").addEventListener('click', () => {
+                document.getElementById("books").classList.remove("hidden");
+                document.getElementById("blog").classList.add("hidden");
+            });
+
+            document.getElementById("blogToggle").addEventListener("mouseover", ()=>{
+                document.getElementById("showLibrary").style.opacity = '1'
+            });
+            document.getElementById("bookToggle").addEventListener("mouseover", ()=>{
+                document.getElementById("showBlog").style.opacity = '1'
+            });
+            document.getElementById("blogToggle").addEventListener("mouseout", ()=>{
+                document.getElementById("showLibrary").style.opacity = '0'
+            });
+            document.getElementById("bookToggle").addEventListener("mouseout", ()=>{
+                document.getElementById("showBlog").style.opacity = '0'
+            });
+    </script>
+    {% endblock js %}

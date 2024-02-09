@@ -1,0 +1,16 @@
+{
+  "devDependencies": {
+    "tailwindcss": "^3.3.6"
+  },
+  "name": "visualise_dreams",
+  "description": "Make Sure NodeJS, Python, Xampp and Virtualenv(Python Library) are Installed\r Steps:\r     I) Create a new Database 'mpsajmer' in XAMPP's PHPMYADMIN\r     II) Import the SQL file associated in the folder.",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npx tailwindcss -i ./static/src/input.css -o ./static/css/main.css --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

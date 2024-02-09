@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load static %}
+{% block blogActive %}link-active{% endblock blogActive %}
+{% block title %}Our Blogs - MPS Ajmer !{% endblock title %}
+{% block body %}
+<div class="container px-5 py-24 mx-auto">
+    <h1 class="text-black text-5xl mt-16 -my-8 font-serif">Our Latest Posts:</h1>
+    <section class="text-gray-600 bg-white body-font overflow-hidden">
+        <div class="container px-5 py-24 mx-auto">
+            <div class="-my-8 divide-y-2 divide-gray-800">
+                <div class="flex flex-col-reverse">
+                    {% for post in allPosts %}
+                <div class="py-8 flex flex-wrap md:flex-nowrap w-[90%]">
+                    <div class="md:w-64 md:mb-0 mb-6 flex-shrink-0 flex flex-col">
+                       
+                        <span class="font-semibold title-font"><span class="text-blue-800">By:  <a href="/profile/{{post.author.username}}" target = "_blank"></span class = "hover:underline text-black hover:text-cyan-400">{{post.author.first_name}} {{post.author.last_name}}</span></a>
+                        <span class="mt-1 text-blue-600 text-sm">{{post.timeStamp}}</span>
+                    </div>
+                    <div class="md:flex-grow">
+                        <h2 class="text-2xl font-medium text-black title-font mb-2">{{post.title}}</h2>
+                        <p class="leading-relaxed text-justify">{{post.content|truncatechars:300}}</p>
+                        <a href="/blog/{{post.slug}}" class="text-blue-400 inline-flex items-center mt-4 cursor-pointer">Read More <span class="text-2xl">&rarr;</span></a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+                
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock body %}

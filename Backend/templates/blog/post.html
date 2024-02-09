@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}{{post.title|truncatechars:20}} - MPS Ajmer !{% endblock title %}
+{% block blogActive %}link-active{% endblock blogActive %}
+{% block body %}
+
+<section class="text-blue-600 bg-white body-font">
+
+    <div class="container px-5 py-24 mx-auto flex flex-col">
+      <div class="lg:w-4/6 mx-auto">
+        <div class="mx-auto w-fit text-black font-bold italic text-3xl text-justify">
+          <p>{{post.title}}</p>
+        </div>
+        <div class="mt-10 w-fit mx-auto whitespace-nowrap">
+          <div class="top flex flex-col justify-center items-center my-4">
+            <img src="/media/{{post.author.profile}}" alt="" class="w-40 h-40 rounded-full">
+            <p class = "text-xl font-semibold">By: {{post.author.first_name}} {{post.author.last_name}}</p>
+            <a href="/profile/{{post.author.username}}" target = "_blank"><p class = "text-gray-600 text-sm cursor-pointer underline underline-offset-4">@{{post.author.username}}</p></a>
+          </div>
+        </div>
+        <div class="rounded-lg h-full w-full overflow-hidden">
+          <img alt="content" class="object-cover object-center h-full w-full" src="/media/{{post.image}}">
+        </div>
+        
+        <p class="leading-relaxed text-lg my-10 text-justify text-black">{{post.content}}</p>
+      </div>
+    </div>
+  </section>
+{% endblock body %}

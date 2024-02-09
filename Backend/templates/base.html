@@ -1,0 +1,412 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock title %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2&family=Baloo+Bhaina+2&family=Dancing+Script&family=Kalnia:wght@300&family=Oswald:wght@300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="shortcut icon" href="{% static 'images/Logo.png' %}" type="image/png">
+    
+    <style>
+        *{
+            margin: 0px;
+            padding: 0px;
+        }
+        body::-webkit-scrollbar {
+            width: 0px;
+        }
+
+        #leftItemList::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #leftItemList::-webkit-scrollbar-track {
+            border-radius: 20px;
+            background-color: transparent;
+        }
+
+        #leftItemList::-webkit-scrollbar-thumb {
+            border-radius: 20px;
+            background-color: rgb(233 213 255 / var(--tw-bg-opacity));
+        }
+
+        #rightBody::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        {% comment %} #rightBody{
+            margin-top: 300px !important;
+        } {% endcomment %}
+
+        #rightBody::-webkit-scrollbar-track {
+            width: 10px;
+            background-color: #1e40af8f;
+        }
+        #rightBody::-webkit-scrollbar-thumb {
+            background-color: #1e40af;
+            border-radius: 40px;
+
+        }
+        {% block css %}
+        
+        {% endblock css %}
+    </style>
+</head>
+<body class="">
+    <nav id="navbar" class="fixed top-0 left-0 right-0 bg-blue-800 z-10 text-black h-[4.7rem]">
+        <div class="flex items-center h-fit">
+            <div class="left block top-auto left-4 absolute md:hidden">
+                <button id="sideHam" onclick="sideShow()" class="flex flex-col">
+                    <div class="pt-[4px] my-1 w-8 bg-white transition-all duration-700 rounded-full" id="sideHamDiv1"></div>
+                    <div class="pt-[4px] my-1 w-8 bg-white transition-all duration-700 rounded-full" id="sideHamDiv2"></div>
+                    <div class="pt-[4px] my-1 w-8 bg-white transition-all duration-200 rounded-full" id="sideHamDiv3"></div>
+                </button>
+            </div>
+            <div class="nav-left items-center justify-center md:absolute my-[0.8rem] md:my-0 flex relative left-14 lg:left-16">
+                <a href="{% url 'homeindex' %}">
+                    <div class="siteTitleImg flex items-center justify-center">
+                        <div class="logo">
+                            <img src="{% static '/images/Logo.png' %}" class="h-12 w-12" alt="">
+                        </div>
+                        <div class="logoTitle cursor-pointer">
+                            <p class="text-white font-Kalnia lg:text-2xl md:text-lg">MPS Ajmer</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="nav-right flex items-center justify-center absolute right-0 md:mx-8 mx-2">
+                <form action="/search/" role = "search" class="search md:mx-1 mr-1 hidden lg:block">
+                    <input type="text" class="bg-white px-3 lg:w-28 xl:w-44 w-32 py-1 rounded-lg text-purple-700 inline border-purple-500 transition-all duration-100 focus:border-4 lg:text-sm xl:text-lg lg:py-1 lg:px-2 xl:py-2 xl:px-4" placeholder="Search" name = "query" id = "querys">
+                    {% comment %} <button type = "submit" class = 'inline lg:w-8 lg:h-8 xl:w-16 xl:h-16 md:h-8 md:w-8'><img src="{% static 'images/search.svg' %}" alt="" class="inline xl:w-14 xl:h-14 cursor-pointer"></button> {% endcomment %}
+                </form>
+                <div class="search md:mx-2 lg:hidden mr-1">
+                    <button class = "md:h-10 md:w-10 h-7 w-7 cursor-pointer flex items-center justify-center flex-col" onclick = "mobileSearch()">
+                        <img src="{% static 'images/search.svg' %}" alt="" class = "transition-all duration-300" id = "searchIco">
+                        <img src="{% static 'images/cross.svg' %}" alt="" class = "invert font-bold -mt-7 transition-all duration-300 opacity-0" id = "searchClose">
+                    </button>
+                </div>
+
+               {% if user.is_authenticated %}
+                <button class="flex transition-all duration-500 justify-center items-center hover:bg-blue-600 md:px-2 md:py-1 py-0.5 px-1 rounded-xl" id = "profDropToggle" onclick = "dropProf()">
+                    <img src="/media/{{user.profile}}" alt="" class="md:h-12 h-8 w-8 md:w-12 rounded-full border-2 mr-1 transition-all duration-500">
+                    <img src="{% static 'images/down-arrow.svg' %}" alt="" class="h-3 w-3 mx-auto my-1 invert md:ml-1 transition-all duration-500" id = "profileDown">
+                </button>
+                
+                {% else %}
+                <a href="{% url 'login' %}"><button class="text-center rounded-xl bg-white text-blue-600 lg:px-6 md:px-4 px-4 text-xl ml-2 md:text-xl pt-1 pb-1 login">Login</button></a>
+                {% endif %}
+                <div class="absolute bg-white text-blue-700 border-blue-400 border-2 px-3 py-3 rounded-xl top-20 md:-right-3 right-0 transition-all duration-500 -translate-y-96" id = "profDrop">
+                    <ul>
+                        <li class = "my-1 w-full rounded-xl hover:text-blue-400 duration-500 py-2 text-center cursor-pointer"><a href = "{% url 'logout' %}" class = "whitespace-nowrap rounded-xl">Logout</a></li>
+                        <hr class="bg-blue-500 h-[0.12rem] rounded-md">
+                        <li class = "my-1 w-full rounded-xl hover:text-blue-400 py-2 text-center cursor-pointer"><a href = "{% url 'editProfileIndex' %}" class = "whitespace-nowrap rounded-xl">Edit My Profile</a></li>
+                        <hr class="bg-blue-500 h-[0.12rem] rounded-md">
+                        <li class = "my-1 w-full rounded-xl hover:text-blue-400 py-2 text-center cursor-pointer"><a href = "/profile/{{user.username}}" class = "whitespace-nowrap rounded-xl">My Profile</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="middle m-auto w-fit h-fit">
+                <div class="nav-items md:flex flex-wrap justify-center my-6 space-x-9 hidden flex-col md:flex-row md:translate-y-0 transition-all duration-100 md:space-x-1 lg:space-x-6"
+                    id="navbarTop">
+                    <div
+                        class="nav-item m-0 hover:text-purple-300 hover:underline hover:underline-offset-8 font-Oswald text-purple-200 {% block homeActive %}{% endblock homeActive %} lg:text-xl md:text-lg">
+                        <a href="{% url 'homeindex' %}">Home</a>
+                    </div>
+                    <div
+                        class="nav-item m-0 lg:text-xl md:text-lg hover:text-purple-300 hover:underline hover:underline-offset-8 font-Oswald text-purple-200 {% block blogActive %}{% endblock blogActive %}">
+                        <a href="{% url 'blogIndex' %}">Blog ({{postLen}})</a>
+                    </div>
+                    {% if user.is_authenticated %}
+                    
+                    <div
+                        class="nav-item lg:text-xl md:text-lg m-0 hover:text-purple-300 hover:underline hover:underline-offset-8 font-Oswald text-purple-200 {% block myProfileActive %}{% endblock myProfileActive %}">
+                        <a href="/profile/{{user.username}}">My Profile</a>
+                    </div>
+                    
+                    <div
+                        class="nav-item lg:text-xl md:text-lg m-0 hover:text-purple-300 hover:underline hover:underline-offset-8 font-Oswald text-purple-200 {% block editProfileActive %}{% endblock editProfileActive %}">
+                        <a href="/editprofile/">Edit My Profile</a>
+                    </div>
+                    {% endif %}
+                    <div
+                        class="nav-item lg:text-xl md:text-lg m-0 hover:text-purple-300 hover:underline hover:underline-offset-8 font-Oswald text-purple-200 {% block elibraryActive %}{% endblock elibraryActive %}">
+                        <a href="{% url 'elibraryIndex' %}">Elibrary</a>
+                    </div>
+                    {% comment %} <div
+                        class="nav-item lg:text-xl md:text-lg m-0 hover:text-purple-300 hover:underline hover:underline-offset-8 font-Oswald text-purple-200 {% block contactActive %}{% endblock contactActive %}">
+                        <a href="#">Contact</a>
+                    </div> {% endcomment %}
+                </div>
+                
+            </div>
+        </div>
+        <div class="menuDropButton w-fit mx-auto my-2 hidden md:hidden">
+            <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown" class="text-black bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">Menu<svg class="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+              </svg>
+            </button>
+        </div>
+        
+        <hr class="bg-white h-[0.12rem] w-full" id="hrTop">
+        <div class="search-box-mobile mx-2 lg:hidden mt-2 focus:border-0 transition-all duration-300 -translate-y-52" id = "searchFormMobile">
+            <form action="/search/">
+                <input type="text" class="w-full px-4 py-2 rounded-md border-4 border-purple-600 text-xl text-purple-700" placeholder = "Search" name = 'query' id = 'queryMobile'>
+                <button class="absolute mt-2 right-4" type="submit">
+                    <img src="{% static 'images/search.svg' %}" alt="" class = "invert opacity-60 h-6 w-6">
+                </button>
+            </form>
+        </div>
+    </nav>
+        
+    <div class="main-cont flex" id="flexBody">
+        <div class="">        
+            <div class="left-nav top-12 h-screen md:w-[20%] md:block bg-white shadow-2xl w-[70%] transition-all z-[2] duration-300 fixed py-4 text-black -translate-x-full"
+                id="sidebar">
+                <div class="sideMenuBase py-8 px-4 md:px-2 flex flex-col space-y-1 md:hidden">
+                    <a href="/">
+                        <div class="flex items-center space-x-2 w-full hover:bg-gray-600 rounded-md py-2 px-2 cursor-pointer">
+                            <img src="{% static 'images/home.svg' %}" class = "h-8 w-8 md:h-6 md:w-6 lg:w-8 lg:h-8 2xl:h-10 2xl:w-10" alt="">
+                            <p class = "text-lg md:text-sm lg:text-lg 2xl:text-xl whitespace-nowrap text-black">Home</p>
+                        </div>
+                    </a>
+                    <a href="/blog/">
+                        <div class="flex items-center justify-between w-full hover:bg-gray-600 rounded-md py-2 px-2 cursor-pointer">
+                            <div class="justify-self-start flex space-x-2">
+                                <img src="{% static 'images/blogIco.svg' %}" class = "h-8 w-8 md:h-6 md:w-6 lg:w-8 lg:h-8 2xl:h-10 2xl:w-10" alt="">
+                                <p class = "text-lg md:text-sm lg:text-lg 2xl:text-xl whitespace-nowrap text-black">Blog</p>
+                            </div>
+                            <div class="justify-self-end">
+                                <span class = "text-black">({{postLen}})Blogs</span>
+                            </div>
+                        </div>
+                    </a>
+                    {% if user.is_authenticated %}
+                    <a href="/profile/{{user.username}}"><div class="flex items-center space-x-2 w-full hover:bg-white rounded-md py-2 px-2 cursor-pointer">
+                        <img src="{% static 'images/view profile.png' %}" class = "h-10 w-10 md:h-6 md:w-6 lg:w-8 lg:h-8 2xl:h-10 2xl:w-10" alt="">
+                        <p class = "text-lg md:text-sm lg:text-lg 2xl:text-xl whitespace-nowrap text-black">My Profile</p>
+                    </div></a>
+                    <a href="/editprofile/"><div class="flex items-center space-x-2 w-full hover:bg-gray-600 rounded-md py-2 px-2 cursor-pointer">
+                        <img src="{% static 'images/edit profile.png' %}" class = "h-10 w-10 md:h-6 md:w-6 lg:w-8 lg:h-8 2xl:h-10 2xl:w-10" alt="">
+                        <p class = "text-lg md:text-sm lg:text-lg 2xl:text-xl whitespace-nowrap text-black">Edit My Profile</p>
+                    </div></a>
+                    {% endif %}
+                    <a href="{% url 'elibraryIndex' %}"><div class="flex items-center space-x-2 w-full hover:bg-gray-600 rounded-md py-2 px-2 cursor-pointer">
+                        <img src="{% static 'images/e-library.png' %}" class = "h-10 w-10 md:h-6 md:w-6 lg:w-8 lg:h-8 xl:h-10 xl:w-10" alt="">
+                        <p class = "text-lg md:text-sm lg:text-lg 2xl:text-xl whitespace-nowrap text-black"><strong>e</strong>Library</p>
+                    </div></a>
+                </div>
+                <hr class="h-[0.12rem] separator md:hidden">
+                <div class="actualNav text-black py-10 px-4 flex flex-col">
+                    {% for mainNavs in mainNav %}
+                    <div class="mainNav bg-purple-700 rounded-xl h-fit transition-all duration-500" id = "mainNav{{forloop.counter}}">
+                        <div class="flex items-center space-x-2 w-full bg-gray-700 rounded-md py-2 px-2 cursor-pointer justify-between">
+                            <div class="flex items-center justify-center space-x-2">
+                                <p class = "text-lg md:text-sm lg:text-lg 2xl:text-xl whitespace-nowrap">{{mainNavs.navName}}</p>
+                            </div>
+                            <div class="dropImg">
+                                <button class="px-1 py-1 hover:bg-gray-500 rounded-lg">
+                                    <img src="{% static 'images/dropDown.png' %}" alt="" class = "invert h-6 w-6" onclick ="toggleNav(mainNav{{forloopcounter}}, subNav{{forloop.counter}}, navButt{{forloop.counter}})" id = "navButt{{forloop.counter}}">
+                                </button>
+                            </div>
+                        </div>
+                        <div class="pl-8 transition-all duration-300 hidden opacity-0" id = "subNav{{forloop.counter}}">
+                            <ul class="list-disc">
+                                {% for assNav in assNav %}
+                                <li class="text-black text-xl"><a href="/{{assnav.navTarget}}/">{{assNav.navName}}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+            </div>
+            <div class="h-[150vh] w-[30%] bg-gray-700 opacity-50 md:h-[150vh] md:w-[80%] transition-all duration-300 z-[4] fixed right-0 top-0 translate-x-full cursor-pointer" onclick = 'sideShow()' id = 'quitSide'></div>
+        </div>
+            
+
+        
+        <div class="right-body mt-12 w-screen h-screen md:inline-block overflow-y-scroll scroll-smooth bg-white"
+            id="rightBody">
+            
+            
+            <div class="pt-7">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="border {{ message.tags }} px-4 py-3 rounded relative" role="alert" id = "alertDiss{{forloop.counter}}">
+                    <strong class="font-bold">Message: </strong>
+                    <span class="block sm:inline">{{ message }}</span>
+                    <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+                        <button onclick = "dismiss(alertDiss{{forloop.counter}})" class = 'top-auto'>
+                            <svg class="fill-current h-6 w-6" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" /></svg>
+                        </button>
+                    
+                    </span>
+                </div>
+                {% endfor %}
+        {% endif %}
+            </div>
+
+
+            
+                
+            
+        <div class="hidden bg-green-100 text-green-700">Hello</div>
+        <div class="hidden bg-red-100 text-red-700">Hello</div>
+        <div class="hidden bg-blue-500 text-black">Hello</div>
+        <div class="hidden text-blue-500">Hello</div>
+        <div class="hidden -rotate-180">Hello</div>
+        <div class="w-[85%] mx-auto ">
+            {% block body %}
+            
+            {% endblock body %}
+        </div>
+            
+            <footer class="text-gray-400 bg-white body-font">
+                <hr class="md:mx-24 mx-4 h-[0.12rem]  bg-white separator" />
+                <div
+                    class="container px-5 py-24 mx-auto flex md:items-center lg:items-start md:flex-row md:flex-nowrap flex-wrap flex-col">
+                    <div class="w-64 flex-shrink-0 md:mx-0 mx-auto text-center md:text-left md:mt-0 mt-10">
+                        <a class="flex title-font font-medium items-center md:justify-start justify-center text-black">
+                            <img src="{% static '/images/logo.svg' %}" class="w-16 h-16 text-black p-2 bg-purple-500 rounded-full"
+                                alt="" />
+                            <span class="ml-3 text-xl font-DancingScript">MPS Ajmer</span>
+                        </a>
+                        <p class="mt-2 text-sm text-gray-500">
+                            Air plant banjo lyft occupy retro adaptogen indego
+                        </p>
+                    </div>
+                    <div class="flex-grow flex flex-wrap md:pr-20 -mb-10 md:text-left text-center order-first">
+                        <div class="lg:w-1/4 md:w-1/2 w-full px-4">
+                            <h2 class="title-font font-medium text-black tracking-widest text-sm mb-3">
+                                CATEGORIES
+                            </h2>
+                            <nav class="list-none mb-10">
+                                <li>
+                                    <a class="text-gray-400 hover:text-black cursor-pointer">First Link</a>
+                                </li>
+                                <li>
+                                    <a class="text-gray-400 hover:text-black cursor-pointer">Second Link</a>
+                                </li>
+                                <li>
+                                    <a class="text-gray-400 hover:text-black cursor-pointer">Third Link</a>
+                                </li>
+                                <li>
+                                    <a class="text-gray-400 hover:text-black cursor-pointer">Fourth Link</a>
+                                </li>
+                            </nav>
+                        </div>
+                        <div class="lg:w-1/4 md:w-1/2 w-full px-4">
+                            <h2 class="title-font font-medium text-black tracking-widest text-sm mb-3">
+                                CATEGORIES
+                            </h2>
+                            <nav class="list-none mb-10">
+                                <li>
+                                    <a class="text-gray-400 hover:text-black">First Link</a>
+                                </li>
+                                <li>
+                                    <a class="text-gray-400 hover:text-black">Second Link</a>
+                                </li>
+                                <li>
+                                    <a class="text-gray-400 hover:text-black">Third Link</a>
+                                </li>
+                                <li>
+                                    <a class="text-gray-400 hover:text-black">Fourth Link</a>
+                                </li>
+                            </nav>
+                        </div>
+                        <div class="lg:w-1/4 md:w-1/2 w-full px-4">
+                            <h2 class="title-font font-medium text-black tracking-widest text-sm mb-3">
+                                CATEGORIES
+                            </h2>
+                            <nav class="list-none mb-10">
+                                <li>
+                                    <a class="text-gray-400 hover:text-black">First Link</a>
+                                </li>
+                                <li>
+                                    <a class="text-gray-400 hover:text-black">Second Link</a>
+                                </li>
+                                <li>
+                                    <a class="text-gray-400 hover:text-black">Third Link</a>
+                                </li>
+                                <li>
+                                    <a class="text-gray-400 hover:text-black">Fourth Link</a>
+                                </li>
+                            </nav>
+                        </div>
+                        <div class="lg:w-1/4 md:w-1/2 w-full px-4">
+                            <h2 class="title-font font-medium text-black tracking-widest text-sm mb-3">
+                                CATEGORIES
+                            </h2>
+                            <nav class="list-none mb-10">
+                                <li>
+                                    <a class="text-gray-400 hover:text-black">First Link</a>
+                                </li>
+                                <li>
+                                    <a class="text-gray-400 hover:text-black">Second Link</a>
+                                </li>
+                                <li>
+                                    <a class="text-gray-400 hover:text-black">Third Link</a>
+                                </li>
+                                <li>
+                                    <a class="text-gray-400 hover:text-black">Fourth Link</a>
+                                </li>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white bg-opacity-75">
+                    <div class="container mx-auto py-4 px-5 flex flex-wrap flex-col sm:flex-row">
+                        <p class="text-gray-400 text-sm text-center sm:text-left">
+                            © 2020 Tailblocks —
+                            <a href="https://twitter.com/knyttneve" class="text-gray-500 ml-1" rel="noopener noreferrer"
+                                target="_blank">@knyttneve</a>
+                        </p>
+                        <span class="inline-flex sm:ml-auto sm:mt-0 mt-2 justify-center sm:justify-start">
+                            <a class="text-gray-400">
+                                <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    class="w-5 h-5" viewBox="0 0 24 24">
+                                    <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"></path>
+                                </svg>
+                            </a>
+                            <a class="ml-3 text-gray-400">
+                                <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    class="w-5 h-5" viewBox="0 0 24 24">
+                                    <path
+                                        d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z">
+                                    </path>
+                                </svg>
+                            </a>
+                            <a class="ml-3 text-gray-400">
+                                <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
+                                    <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
+                                    <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37zm1.5-4.87h.01"></path>
+                                </svg>
+                            </a>
+                            <a class="ml-3 text-gray-400">
+                                <svg fill="currentColor" stroke="currentColor" stroke-linecap="round"
+                                    stroke-linejoin="round" stroke-width="0" class="w-5 h-5" viewBox="0 0 24 24">
+                                    <path stroke="none"
+                                        d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z">
+                                    </path>
+                                    <circle cx="4" cy="4" r="2" stroke="none"></circle>
+                                </svg>
+                            </a>
+                        </span>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <script src="{% static 'script/script.js' %}"></script>
+    {% block js %}
+    
+    {% endblock js %}
+    
+</body>
+</html>
