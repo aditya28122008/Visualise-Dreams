@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useContext, useRef } from "react";
+// import { useState } from "react";
 import { Link } from "react-router-dom";
 import vars from "../vars";
 import alertContext from "../context/alert/alertContext";
@@ -6,29 +7,34 @@ import alertContext from "../context/alert/alertContext";
 const BlogItem = (props) => {
   const alContext = useContext(alertContext);
   const { showAlert } = alContext;
-  const [user, setUser] = useState({ fName: "", lName: "", username: "" });
+  // const [user, setUser] = useState({ fName: "", lName: "", username: "" });
+  const contentRef = useRef(null);
   const host = vars.host;
-  const getPostUser = async () => {
-    try {
-      const response = await fetch(
-        `${host}/api/post-user/${props.post.author}`
-      );
-      let json = await response.json();
-      json = json[0];
-      setUser({
-        fName: json.first_name,
-        lName: json.last_name,
-        username: json.username,
-      });
-    } catch (error) {
-      showAlert(
-        "Can't connect to the server. Please check your internet connection",
-        "warning"
-      );
-    }
+  // const getPostUser = async () => {
+  //   try {
+  //     const response = await fetch(
+  //       `${host}/api/post-user/${props.post.author}`
+  //     );
+  //     let json = await response.json();
+  //     json = json[0];
+  //     setUser({
+  //       fName: json.first_name,
+  //       lName: json.last_name,
+  //       username: json.username,
+  //     });
+  //   } catch (error) {
+  //     showAlert(
+  //       "Can't connect to the server. Please check your internet connection",
+  //       "warning"
+  //     );
+  //   }
+  // };
+  const setPostContent = () => {
+    contentRef.current.innerHTML = contentRef.current.innerText.slice(0, 100)
   };
   useEffect(() => {
-    getPostUser();
+    // getPostUser();
+    setPostContent();
   }, []);
   return (
     <div>
@@ -88,9 +94,11 @@ const BlogItem = (props) => {
             <div className="tagline dark:text-purple-600 text-sm mt-3 mb-1 text-purple-800">
               {props.post.tagline.slice(0, 45)}...
             </div>
-            <div className="content text-justify dark:text-gray-400 hidden md:block text-gray-600 text-sm">
-              {props.post.content.slice(0, 100)}...
-            </div>
+            <div
+              className="content text-justify dark:text-gray-400 hidden md:block text-gray-600 text-sm"
+              dangerouslySetInnerHTML={{ __html: props.post.content }}
+              ref={contentRef}
+            />
             <div className="content text-justify dark:text-gray-400 md:hidden text-gray-600 text-sm">
               {props.post.content.slice(0, 50)}...
             </div>

@@ -35,7 +35,7 @@ const UserState = (props) => {
           },
         });
         const json = await response.json();
-        if (json.code === "token_not_valid" || json.code === "user_inactive") {
+        if (json.code === "token_not_valid" || json.code === "user_inactive" || json.code === "user_not_found") {
           localStorage.removeItem("MPSUser");
           setAuthenticated(false);
         } else {

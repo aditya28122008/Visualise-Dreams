@@ -11,19 +11,20 @@ from blog.models import Post
 from accounts.models import CustomUser as User
 from django.contrib.auth.models import Group
 from Elibrary.models import Book
+from .pagination import BlogPaginations, AdminPostPaginations
 
 # Create your views here.
 
 class PostList(ListAPIView):
     serializer_class = BlogSerializer
-    pagination_class = PageNumberPagination
+    pagination_class = BlogPaginations
     def get_queryset(self):
         posts = Post.objects.filter(allowed = True)
         return posts
     
 class PostListAdmin(ListAPIView):
     serializer_class = BlogSerializer
-    pagination_class = PageNumberPagination
+    pagination_class = AdminPostPaginations
     queryset = Post.objects.all()
     
 
@@ -57,22 +58,13 @@ class GetGroupName(ListAPIView):
         
 
     
-class SinglePost(APIView):
+class SinglePost(ListAPIView):
     serializer_class = BlogSerializer
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-    def get(self, request, slug):
-        groups = request.user.groups.values_list('name', flat=True)
-        if request.user.is_superuser or 'Blogs' in groups:
-            slug = slug
-            post = Post.objects.filter(slug = slug)
-            ser = BlogSerializer(post)
-            return Response(ser.data)
-        else:
-            slug = slug
-            post = Post.objects.filter(slug = slug, allowed=True)
-            ser = BlogSerializer(post)
-            return Response(ser.data)
+    def get_queryset(self):
+        slug = self.kwargs['slug']
+        post = Post.objects.filter(slug=slug)
+        return post
+    
     
 
 class CRUDPost(APIView):

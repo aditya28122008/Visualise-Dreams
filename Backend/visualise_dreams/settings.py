@@ -48,7 +48,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'rest_framework.authtoken',
     'rest_framework_simplejwt',
     'accounts',
     'corsheaders',
@@ -95,6 +94,7 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
 
 # DATABASES = {
 #     'default': {
@@ -155,6 +155,7 @@ STATICFILES_DIRS = [
 ]
 
 # STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 # Managing Messages
 MESSAGE_TAGS = {
     messages.SUCCESS: "bg-green-100 text-green-700",
@@ -178,14 +179,12 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ),
-    'PAGE_SIZE': 4,
+    )
 }
 
 # Managing Django CORS:-
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "http://localhost:3001",
     "http://192.168.43.53:3000",
     "http://192.168.43.122:3000",
     "http://192.168.43.122:5500",

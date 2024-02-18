@@ -15,7 +15,7 @@ class Post(models.Model):
     allowed = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.title + str(self.snoPost) + str(datetime.now()))
+        self.slug = slugify(self.title + str(self.snoPost))
         super(Post, self).save(*args, **kwargs)
     
     

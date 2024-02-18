@@ -20,7 +20,6 @@ const Blog = () => {
       const response = await fetch(`${page.next}`);
       const json = await response.json();
       setPage(json);
-      console.log(json);
       const newPosts = posts.concat(json.results);
       setPost(newPosts);
       if (!json.next) {
@@ -41,7 +40,6 @@ const Blog = () => {
       const response = await fetch(`${vars.host}/api/post/`);
       let json = await response.json();
       setPage(json);
-      console.log(json);
       setPost(json.results);
     } catch (error) {
       showAlert(
@@ -67,21 +65,27 @@ const Blog = () => {
 
         {/* {loading && <Spiner />} */}
         <div className="-mb-12">
+          <div className="px-4">
+            <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 sm:gap-3 md:gap-4 lg:gap-6 w-fit mx-auto my-4">
+              {posts.map((post) => {
+                return <BlogItem post={post} key={post.snoPost} />;
+              })}
+            </div>
+          </div>
           <InfiniteScroll
             dataLength={posts.length}
             next={fetchPagedBlogs}
             hasMore={page.next ? true : false}
             loader={<Spiner />}
-            endMessage={<><div className="text-center text-lg">You've Reached the End Of the Module</div></>}
-          >
-            <div className="px-4">
-              <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 sm:gap-3 md:gap-4 lg:gap-6 w-fit mx-auto my-4">
-                {posts.map((post) => {
-                  return <BlogItem post={post} key={post.snoPost} />;
-                })}
-              </div>
-            </div>
-          </InfiniteScroll>
+            endMessage={
+              <>
+                <div className="text-center text-lg">
+                  You've Reached the End Of the Module. <br />
+                  No More Blogs to Display.
+                </div>
+              </>
+            }
+          ></InfiniteScroll>
         </div>
         {/* <div className="container flex justify-between mt-4">
           <button

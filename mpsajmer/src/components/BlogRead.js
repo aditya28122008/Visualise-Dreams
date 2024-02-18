@@ -9,7 +9,7 @@ const BlogRead = () => {
   const usCon = useContext(userContext);
   const { blogAdminAccess } = usCon;
   const loderCon = useContext(loaderContext);
-  const {setProgress} = loderCon;
+  const { setProgress } = loderCon;
   const alContext = useContext(alertContext);
   const { showAlert } = alContext;
   const { slug } = useParams();
@@ -29,12 +29,12 @@ const BlogRead = () => {
         method: "GET",
       });
       const json = await response.json();
-      if(json.length !== 0 || blogAdminAccess){
+      if (json.length !== 0 || blogAdminAccess) {
         setPost(json[0]);
         getPostUser(json[0].author);
         document.title = `MPS Ajmer - ${json[0].title}`;
       }
-      setProgress(100)
+      setProgress(100);
     } catch (error) {
       showAlert(
         "Can't connect to the server. Please check your internet connection",
@@ -58,7 +58,7 @@ const BlogRead = () => {
       });
       //   console.log(json.status);
     } catch (error) {}
-    setProgress(100)
+    setProgress(100);
   };
   useEffect(() => {
     getPost();
@@ -100,9 +100,10 @@ const BlogRead = () => {
                 src={post.image}
               />
             </div>
-            <p className="leading-relaxed text-lg my-10 text-justify dark:text-gray-400 text-gray-600">
-              {post.content}
-            </p>
+            <p
+              className="leading-relaxed text-lg my-10 text-justify dark:text-gray-400 text-gray-600"
+              dangerouslySetInnerHTML={{ __html: post.content }}
+            />
           </div>
         </div>
       </section>
