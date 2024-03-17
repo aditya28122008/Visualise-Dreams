@@ -9,10 +9,11 @@ import Spiner from "../Spiner";
 import InfiniteScroll from "react-infinite-scroll-component";
 import AdminSidebar from "../AdminSidebar";
 import { FaCheckCircle } from "react-icons/fa";
+import { IoIosCloseCircle } from "react-icons/io";
 import blogContext from "../../context/admin/blogs/blogContext";
 // import AdminNavbar from "./AdminNavbar";
 
-const AllowedPosts = () => {
+const BlockedPosts = () => {
   const bloCont = useContext(blogContext);
   const { conDeleteBlogById, conGetBlogs } = bloCont;
   const usContext = useContext(userContext);
@@ -40,25 +41,19 @@ const AllowedPosts = () => {
   };
 
   const blog = async () => {
-    const json = await conGetBlogs()
-    if(json.success){
-      setPage(json.json)
-      setPost(json.json.results)
+    try {
+      const response = await fetch(`${vars.host}/api/b-post-admin/`);
+      let json = await response.json();
+      setPage(json);
+      setPost(json.results);
+    } catch (error) {
+      toast.error(
+        "Can't connect to the server. Please check your internet connection"
+      );
     }
   };
 
   const allowPost = async (id) => {
-    const response = await fetch(`${vars.host}/api/admin-crud-blogs/${id}`, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("MPSUser")}`,
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({ command: "allow" }),
-    });
-    const json = await response.json();
-  };
-  const blockPost = async (id) => {
     try {
       const response = await fetch(`${vars.host}/api/admin-crud-blogs/${id}`, {
         method: "PUT",
@@ -66,7 +61,7 @@ const AllowedPosts = () => {
           Authorization: `Bearer ${localStorage.getItem("MPSUser")}`,
           "Content-type": "application/json",
         },
-        body: JSON.stringify({ command: "block" }),
+        body: JSON.stringify({ command: "allow" }),
       });
       const json = await response.json();
       if (json.success) {
@@ -74,9 +69,7 @@ const AllowedPosts = () => {
           return e.snoPost !== id;
         });
         setPost(newPosts);
-        toast.success("Post Blocked Successfully");
-      } else {
-        toast.error("An Error occoured");
+        toast.success("Post Allowed Successfully");
       }
     } catch (error) {
       toast.error(
@@ -112,9 +105,8 @@ const AllowedPosts = () => {
               {blogAdminAccess && (
                 <>
                   <h1 className="text-4xl mb-4 text-center">
-                    Allowed Blog Posts
-                    <FaCheckCircle className="inline text-green-600 mx-2 bg-white rounded-full" />
-                    {/* <IoIosCloseCircle className="inline text-red-600 dark:text-red-500 mx-2  rounded-full"/> */}
+                    Blocked Blog Posts
+                    <IoIosCloseCircle className="inline text-red-600 dark:text-red-500 mx-2 bg-white rounded-full" />
                   </h1>
                   <div className="relative">
                     <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -183,10 +175,10 @@ const AllowedPosts = () => {
                               </td>
                               <td className="px-6 py-4">
                                 <button
-                                  className="px-2 py-1 bg-red-600 hover:bg-red-500 text-white rounded-lg"
-                                  onClick={() => blockPost(post.snoPost)}
+                                  className="px-2 py-1 bg-green-600 hover:bg-green-500 text-white rounded-lg"
+                                  onClick={() => allowPost(post.snoPost)}
                                 >
-                                  Block
+                                  Allow
                                 </button>
                               </td>
                             </tr>
@@ -224,4 +216,4 @@ const AllowedPosts = () => {
   );
 };
 
-export default AllowedPosts;
+export default BlockedPosts;

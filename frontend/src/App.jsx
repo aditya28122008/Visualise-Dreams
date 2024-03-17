@@ -22,6 +22,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import NotFound from "./components/NotFound";
 import BlogState from "./context/admin/blogs/BlogState";
+import BlockedPosts from "./components/admin/BlockedPosts";
 
 function App() {
   const [mode, setMode] = useState("");
@@ -108,6 +109,10 @@ function App() {
                         <Route
                           path="/admin/a-posts"
                           element={<AllowedPosts />}
+                        />
+                        <Route
+                          path="/admin/b-posts"
+                          element={<BlockedPosts />}
                         />
                         <Route
                           exact

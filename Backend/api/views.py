@@ -29,6 +29,13 @@ class AllowedPostsList(ListAPIView):
     def get_queryset(self):
         posts = Post.objects.filter(allowed = True).order_by("-timeStamp")
         return posts
+class BlockedPostsList(ListAPIView):
+    serializer_class = BlogSerializer
+    pagination_class = AdminPostPaginations
+    queryset = Post.objects.all()
+    def get_queryset(self):
+        posts = Post.objects.filter(allowed = False).order_by("-timeStamp")
+        return posts
     
     
 
