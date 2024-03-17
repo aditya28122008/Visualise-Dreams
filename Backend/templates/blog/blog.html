@@ -18,7 +18,7 @@
                     </div>
                     <div class="md:flex-grow">
                         <h2 class="text-2xl font-medium text-black title-font mb-2">{{post.title}}</h2>
-                        <p class="leading-relaxed text-justify">{{post.content|truncatechars:300}}</p>
+                        <div class="leading-relaxed text-justify">{{post.content|safe}}</div>
                         <a href="/blog/{{post.slug}}" class="text-blue-400 inline-flex items-center mt-4 cursor-pointer">Read More <span class="text-2xl">&rarr;</span></a>
                     </div>
                 </div>
@@ -30,3 +30,15 @@
     </section>
 </div>
 {% endblock body %}
+
+{% block js %}
+<script>
+    const func = ()=>{
+        let elemes = Array.from(document.getElementsByClassName("leading-relaxed text-justify"));
+        elemes.map((e)=>{
+            e.innerHTML = e.innerText.slice(0, 300);
+        })
+    }
+    document.addEventListener('DOMContentLoaded', func())
+</script>
+{% endblock js %}

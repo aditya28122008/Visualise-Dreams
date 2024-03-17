@@ -21,7 +21,7 @@
           <img alt="content" class="object-cover object-center h-full w-full" src="/media/{{post.image}}">
         </div>
         
-        <p class="leading-relaxed text-lg my-10 text-justify text-black">{{post.content}}</p>
+        <p class="leading-relaxed text-lg my-10 text-justify text-black">{{post.content|safe}}</p>
       </div>
     </div>
   </section>

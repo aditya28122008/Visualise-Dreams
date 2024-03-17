@@ -23,6 +23,8 @@ const dismiss = (argu) => {
     argu.classList.add("hidden");
 };
 
+document.addEventListener('DOMContentLoaded', )
+
 const toggleNav = (mainId, subId, buttonId) => {
     document.getElementById(mainId).classList.toggle("h-full");
     document.getElementById(mainId).classList.toggle("h-fit");

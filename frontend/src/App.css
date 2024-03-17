@@ -1,0 +1,66 @@
+/* .App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+} */
+
+
+@tailwind base;
+@tailwind components;
+@layer utilities{
+    .link-active{
+        @apply underline underline-offset-8;
+    }
+    .separator{
+        @apply bg-purple-700 rounded-md md:mx-36 mx-4
+    }
+    .none{
+        @apply rotate-45 -rotate-45 my-1 -my-[0.45rem] opacity-0
+    }
+    .success{
+        @apply bg-green-100 text-green-700;
+    }
+    .warning{
+        @apply bg-red-100 text-red-700;
+    }
+    .btn-primary{
+        @apply inline-flex text-white bg-blue-500 border-0 py-2 md:px-6 px-4 focus:outline-none hover:bg-blue-600 rounded md:text-lg text-sm;
+    }
+    .btn-danger{
+        @apply inline-flex text-white bg-red-700 border-0 py-2 md:px-6 px-4 focus:outline-none hover:bg-blue-600 rounded md:text-lg text-sm;
+    }
+}
+@tailwind utilities;

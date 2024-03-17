@@ -19,13 +19,17 @@ class PostList(ListAPIView):
     serializer_class = BlogSerializer
     pagination_class = BlogPaginations
     def get_queryset(self):
-        posts = Post.objects.filter(allowed = True)
+        posts = Post.objects.filter(allowed = True).order_by("-timeStamp")
         return posts
     
-class PostListAdmin(ListAPIView):
+class AllowedPostsList(ListAPIView):
     serializer_class = BlogSerializer
     pagination_class = AdminPostPaginations
     queryset = Post.objects.all()
+    def get_queryset(self):
+        posts = Post.objects.filter(allowed = True).order_by("-timeStamp")
+        return posts
+    
     
 
 
@@ -78,10 +82,9 @@ class CRUDPost(APIView):
             if serializer.is_valid():
                 serializer.validated_data['author'] = request.user
                 serializer.save()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+                return Response({"success": True}, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_400_BAD_REQUEST)
-        
 
     def delete(self, request, snoPost):
         groups = request.user.groups.values_list('name', flat=True)
@@ -90,7 +93,7 @@ class CRUDPost(APIView):
             if not post == None:
                 post.delete()
                 postSer = BlogSerializer(post)
-                return Response(postSer.data)
+                return Response({"success": True}, status=status.HTTP_200_OK)
             else:
                 return Response('Post Not Found', status=status.HTTP_404_NOT_FOUND)
         else:
@@ -106,14 +109,14 @@ class CRUDPost(APIView):
                 post.allowed = True
                 post.save()
                 postSer = BlogSerializer(post)
-                return Response(postSer.data)
+                return Response({"success": True}, status=status.HTTP_200_OK)
             if json['command'] == 'block':
                 post.allowed = False
                 post.save()
                 postSer = BlogSerializer(post)
-                return Response(postSer.data)
+                return Response({"success": True}, status=status.HTTP_200_OK)
         else:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"success": False},status=status.HTTP_401_UNAUTHORIZED)
         
 
 
@@ -127,7 +130,7 @@ class GetUserData(APIView):
         return Response(serializer.data)
     
 
-class TestUpdate(APIView):
+class UpdateProfile(APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
     parser_classes = ( MultiPartParser, FormParser, JSONParser )

@@ -182,13 +182,19 @@ REST_FRAMEWORK = {
     )
 }
 
-# Managing Django CORS:-
+
+"""
+Managing Django CORS:-
+"""
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://192.168.43.53:3000",
     "http://192.168.43.122:3000",
     "http://192.168.43.122:5500",
     "http://127.0.0.1:5500",
+    "http://127.0.0.1:3000",
+    "http://localhost:5173",
+    "http://localhost:4173",
 ]
 
 
@@ -205,7 +211,7 @@ from datetime import timedelta
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=182),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=365),
+    "REFRESH_TOKEN_LIFETIME": timedelta(microseconds=4),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": False,
