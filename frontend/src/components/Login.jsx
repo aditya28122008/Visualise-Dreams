@@ -51,7 +51,6 @@ const Login = (props) => {
         }),
       });
       const json = await response.json();
-      console.log(json);
       if (json.access) {
         localStorage.setItem("MPSUser", `${json.access}`);
         fetchUser();

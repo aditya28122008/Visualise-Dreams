@@ -51,12 +51,10 @@ const Search = () => {
   const bookT = () => {
     document.getElementById("blog").classList.remove("hidden");
     document.getElementById("books").classList.add("hidden");
-    console.log("bookT");
   };
   const blogT = () => {
     document.getElementById("books").classList.remove("hidden");
     document.getElementById("blog").classList.add("hidden");
-    console.log("blogT");
   };
   //   document.getElementById("bookToggle").addEventListener("click");
   //   document.getElementById("blogToggle").addEventListener("click", );

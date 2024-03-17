@@ -42,7 +42,6 @@ const UserState = ({children}) => {
           setAuthenticated(false);
         } else {
           setUser(json);
-          console.log(json);
           setAuthenticated(true);
           checkGroups(json);
         }
