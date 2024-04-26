@@ -1,19 +1,19 @@
-import React, { useEffect, useState, useContext } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect, useState, useContext } from "react";
 import loaderContext from "../context/loadingBar/loderContext";
 import vars from "../vars";
-import alertContext from "../context/alert/alertContext";
 import { useParams, Link } from "react-router-dom";
 import userContext from "../context/users/userContext";
-import {toast} from 'react-toastify'
+import { toast } from "react-toastify";
+import Logo from "../static/images/Logo.png";
 
 const BlogRead = () => {
   const usCon = useContext(userContext);
   const { blogAdminAccess } = usCon;
   const loderCon = useContext(loaderContext);
   const { setProgress } = loderCon;
-  const alContext = useContext(alertContext);
-  const { showAlert } = alContext;
   const { slug } = useParams();
+  const [allowed, setAllowed] = useState(true);
   const [notAvail, setNotAvail] = useState(false);
   const [post, setPost] = useState({});
   const [postUser, setPostUser] = useState({
@@ -23,6 +23,15 @@ const BlogRead = () => {
     username: "",
     status: "",
   });
+  const chekPostAllowed = async (post) => {
+    if (post.allowed) {
+      setAllowed(true);
+    } else if (blogAdminAccess) {
+      setAllowed(true);
+    } else {
+      setAllowed(false);
+    }
+  };
   const getPost = async () => {
     setProgress(40);
     try {
@@ -30,29 +39,47 @@ const BlogRead = () => {
         method: "GET",
       });
       const json = await response.json();
-      setPost(json[0])
-      getPostUser(json[0].author)
+      setPost(json);
+      if (json.detail === "Not found.") {
+        setNotAvail(true);
+        setProgress(100);
+      } else {
+        getPostUser(json.author, json);
+      }
     } catch (error) {
-      toast.error("Can't connect to the server. Please check your internet connection")
+      toast.error(
+        "Can't connect to the server. Please check your internet connection"
+      );
     }
   };
-  const getPostUser = async (id) => {
-    try {
-      const response = await fetch(`${vars.host}/api/post-user/${id}/`, {
-        method: "GET",
-      });
-      let json = await response.json();
-      json = json[0];
+  const getPostUser = async (id, post) => {
+    if (post.by_admin) {
       setPostUser({
-        fName: json.first_name,
-        lName: json.last_name,
-        profile: json.profile,
-        username: json.username,
-        status: json.Status,
+        fName: "MPS",
+        lName: "Ajmer",
+        profile: Logo,
+        status: 3,
       });
-      //   console.log(json.status);
-    } catch (error) {
-      console.log(error);
+    } else {
+      try {
+        const response = await fetch(`${vars.host}/api/post-user/${id}/`, {
+          method: "GET",
+        });
+        let jsonn = await response.json();
+        setPostUser({
+          fName: jsonn.first_name,
+          lName: jsonn.last_name,
+          profile: jsonn.profile,
+          username: jsonn.username,
+          status: jsonn.Status,
+        });
+        chekPostAllowed();
+        //   console.log(json.status);
+      } catch (error) {
+        toast.error(
+          "Can't connect to the server. Please check your internet connection"
+        );
+      }
     }
     setProgress(100);
   };
@@ -61,7 +88,7 @@ const BlogRead = () => {
   }, []);
   return (
     <div>
-      {!notAvail ? (
+      {!notAvail && allowed ? (
         <section className="dark:bg-gray-900 bg-white body-font">
           <div className="lg:w-4/6 mx-auto">
             <div className="container px-5 py-24 mx-auto flex flex-col">
@@ -82,6 +109,7 @@ const BlogRead = () => {
                       <p className="text-gray-600 dark:text-gray-400 text-sm underline-offset-4">
                         {postUser.status === 1 && "Student"}
                         {postUser.status === 2 && "Teacher"}
+                        {postUser.status === 3 && "Admin"}
                       </p>
                     </div>
                   </div>
@@ -99,7 +127,7 @@ const BlogRead = () => {
                 />
               </div>
               <p
-                className="leading-relaxed text-lg my-10 text-justify dark:text-gray-400 text-gray-600"
+                className="leading-relaxed text-lg my-10 text-justify bg-gray-800 px-2 py-4 rounded-md dark:text-gray-400 text-gray-600"
                 dangerouslySetInnerHTML={{ __html: post.content }}
               />
             </div>

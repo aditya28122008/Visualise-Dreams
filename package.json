@@ -1,0 +1,12 @@
+{
+  "name": "react",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "both": "\"npm run dev\" \"python manage.py runserver\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

@@ -1,7 +1,7 @@
 import logo from "./Logo.png";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Blog from "./components/Blog";
 import Library from "./components/Library";
 import Sidebar from "./components/Sidebar";
@@ -23,6 +23,7 @@ import "react-toastify/dist/ReactToastify.css";
 import NotFound from "./components/NotFound";
 import BlogState from "./context/admin/blogs/BlogState";
 import BlockedPosts from "./components/admin/BlockedPosts";
+import AddBlog from "./components/admin/AddBlog";
 
 function App() {
   const [mode, setMode] = useState("");
@@ -114,6 +115,7 @@ function App() {
                           path="/admin/b-posts"
                           element={<BlockedPosts />}
                         />
+                        <Route path="/admin/addblog" element={<AddBlog />} />
                         <Route
                           exact
                           path="/login"

@@ -7,4 +7,7 @@ class AdminPostPaginations(PageNumberPagination):
 
 
 class BlogPaginations(PageNumberPagination):
-    page_size = 4
+    page_size = 12
+
+class SearchPagination(PageNumberPagination):
+    page_size = 12

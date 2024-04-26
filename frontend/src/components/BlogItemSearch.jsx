@@ -1,38 +1,15 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { useEffect, useState, useContext, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import vars from "../vars";
-import alertContext from "../context/alert/alertContext";
-import {toast} from 'react-toastify'
 const BlogItemSearch = (props) => {
-  const alContext = useContext(alertContext);
-  const { showAlert } = alContext;
-  const [user, setUser] = useState({ fName: "", lName: "", username: "" });
-  const host = vars.host;
   const contentRef = useRef(null);
-  const getPostUser = async () => {
-    try {
-      const response = await fetch(
-        `${host}/api/post-user/${props.post.author}`
-      );
-      let json = await response.json();
-      json = json[0];
-      setUser({
-        fName: json.first_name,
-        lName: json.last_name,
-        username: json.username,
-      });
-    } catch (error) {
-      toast.error("Can't connect to the server. Please check your internet connection")
-    }
-  };
   const setPostContent = () => {
-    contentRef.current.innerHTML = contentRef.current.innerText.slice(0, 100)
+    contentRef.current.innerHTML = contentRef.current.innerText.slice(0, 100);
   };
-
   useEffect(() => {
-    getPostUser();
     setPostContent();
   }, []);
   return (
@@ -80,7 +57,7 @@ const BlogItemSearch = (props) => {
         </div>
       </section> */}
       <Link to={`/blog/${props.post.slug}`}>
-        <div className="rounded-lg h-80 dark:bg-gray-800 bg-white shadow-2xl dark:shadow-none md:my-0 my-3 md:hover:scale-110 transition-all duration-200 cursor-pointer">
+        <div className="rounded-lg min-h-80 dark:bg-gray-800 bg-white shadow-md dark:shadow-none md:my-0 my-3 md:hover:scale-110 transition-all duration-200 cursor-pointer">
           <img
             src={`${vars.host}${props.post.image}`}
             alt=""

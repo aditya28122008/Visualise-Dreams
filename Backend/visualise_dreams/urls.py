@@ -17,14 +17,19 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
+from . import views
 from django.conf.urls.static import static
 admin.site.site_header = "MPS Ajmer.com's Admin"
 admin.site.site_title = "MPS Ajmer.com Admin Portal"
 admin.site.index_title = "Welcome to MPS Ajmer's Administration"
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('main.urls'), name="home"),
+    path('', include("main.urls"), name="home"),
     path('blog/', include('blog.urls'), name="blog"),
     path('library/', include('Elibrary.urls'), name="eLibrary"),
     path('api/', include('api.urls'), name="api"),
-]+ static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
+    # path('accounts/', include('django.contrib.auth.urls')),
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

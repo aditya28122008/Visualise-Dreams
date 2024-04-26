@@ -189,7 +189,7 @@ const Footer = (props) => {
           <p>Copyright ©1989</p>
         </aside>
         <aside className="md:h-fit md:my-auto">
-          <nav className="grid md:grid-cols-3 md:gap-2 md:grid-rows-none grid-rows-3 gap-3">
+          <nav className="grid md:grid-cols-3 md:gap-2 md:grid-rows-none grid-cols-3 mt-4 md:mt-0 gap-3">
             <a>
               <svg
                 xmlns="http://www.w3.org/2000/svg"

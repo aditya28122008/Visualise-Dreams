@@ -1,21 +1,19 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react/prop-types */
 import { useEffect, useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import userContext from "../context/users/userContext";
 import NavbarLink from "./NavbarLink";
 import DropDownImg from "../static/dropDown.png";
-import crosspng from "../static/crossIco.png";
-import searchpng from "../static/search.png";
-// import userContext from "../context/users/userContext";
 import vars from "../vars";
-import alertContext from "../context/alert/alertContext";
-import {toast} from 'react-toastify'
+import { CiSearch } from "react-icons/ci";
+import { IoIosClose } from "react-icons/io";
+import { toast } from "react-toastify";
 
 const Navbar = (props) => {
   const context = useContext(userContext);
   const navigate = useNavigate();
-
-  const alContext = useContext(alertContext);
-  const { showAlert } = alContext;
+  const [blogLen, setBlogLen] = useState("");
   const {
     fetchUser,
     authenticated,
@@ -25,7 +23,6 @@ const Navbar = (props) => {
   } = context;
   const { setMode } = props;
 
-  
   const dropProf = () => {
     document.getElementById("profDrop").classList.toggle("-translate-y-96");
     document.getElementById("profileDown").classList.toggle("-rotate-180");
@@ -44,6 +41,7 @@ const Navbar = (props) => {
 
   useEffect(() => {
     fetchUser();
+    getPostsLength();
     // checkGroups(user);
     // console.log(user);
     if (localStorage.getItem("mode")) {
@@ -63,24 +61,34 @@ const Navbar = (props) => {
     }
   };
   const mobileSearch = () => {
-    document.getElementById("searchClose").classList.toggle("opacity-0");
-    document.getElementById("searchIco").classList.toggle("opacity-0");
+    document.getElementById("searchClose").classList.toggle("hidden");
+    document.getElementById("searchIco").classList.toggle("hidden");
     document
       .getElementById("searchFormMobile")
       .classList.toggle("-translate-y-52");
+  };
+  const getPostsLength = async () => {
+    try {
+      const response = await fetch(`${vars.host}/api/get-post-length/`);
+      const json = await response.json();
+      setBlogLen(json["length"]);
+    } catch (error) {
+      toast.error(
+        "Can't connect to the server. Please check your internet connection"
+      );
+    }
   };
   const logout = async () => {
     localStorage.removeItem("MPSUser");
     navigate("/");
     await fetchUser();
-    fetchUser();
-    toast.info("Successfully Logged Out")
+    toast.info("Successfully Logged Out");
   };
   return (
     <>
       <nav
         id="navbar"
-        className="fixed top-0 left-0 right-0 bg-white dark:bg-gray-800 dark:border-b-white shadow-lg z-10 text-black max-h-[4.7rem]"
+        className="fixed top-0 left-0 right-0 bg-white dark:bg-gray-800 dark:border-b-white shadow-md z-10 text-black max-h-[4.7rem]"
       >
         <div className="flex items-center h-fit">
           <div className={`left block top-auto left-4 absolute md:hidden`}>
@@ -114,7 +122,7 @@ const Navbar = (props) => {
                   />
                 </div>
                 <div className="logoTitle cursor-pointer">
-                  <p className="dark:text-white text-blue-600 font-bold font-Kalnia lg:text-2xl md:text-lg">
+                  <p className="dark:text-white text-black font-bold font-Kalnia lg:text-3xl text-lg md:text-xl">
                     {props.title}
                   </p>
                 </div>
@@ -176,16 +184,12 @@ const Navbar = (props) => {
                 className="md:h-10 md:w-10 h-7 w-7 cursor-pointer flex items-center justify-center flex-col"
                 onClick={() => mobileSearch()}
               >
-                <img
-                  src={searchpng}
-                  alt=""
-                  className="transition-all duration-300 invert dark:invert-0"
+                <CiSearch
+                  className="w-fit transition-all duration-300 font-bold text-blue-800 dark:text-white text-9xl"
                   id="searchIco"
                 />
-                <img
-                  src={crosspng}
-                  alt=""
-                  className="dark:invert font-bold -mt-7 transition-all duration-300 opacity-0"
+                <IoIosClose
+                  className="w-fit font-bold text-9xl my-auto text-blue-800 dark:text-white transition-all duration-300 hidden"
                   id="searchClose"
                 />
               </button>
@@ -252,7 +256,7 @@ const Navbar = (props) => {
               className="nav-items md:flex flex-wrap justify-center my-6 space-x-9 hidden flex-col md:flex-row md:translate-y-0 transition-all duration-100 md:space-x-1 lg:space-x-6"
               id="navbarTop"
             >
-              <NavbarLink name="Blog" to="/" />
+              <NavbarLink name={`Blogs(${blogLen})`} to="/" />
               <NavbarLink name="Elibrary" to="/elibrary" />
               {(libraryAdminAccess || blogAdminAccess) && (
                 <NavbarLink name="Admin" to="/admin/a-posts" />
@@ -302,11 +306,7 @@ const Navbar = (props) => {
               onChange={onChange}
             />
             <button className="absolute mt-2 right-4" type="submit">
-              <img
-                src={searchpng}
-                alt=""
-                className="invert opacity-60 h-6 w-6"
-              />
+              <CiSearch className="h-6 w-6" />
             </button>
           </form>
         </div>

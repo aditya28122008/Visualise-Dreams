@@ -1,29 +1,25 @@
 import { useContext, useEffect, useState } from "react";
 import loaderContext from "../../context/loadingBar/loderContext";
 import userContext from "../../context/users/userContext";
-import alertContext from "../../context/alert/alertContext";
 import { Link } from "react-router-dom";
 import vars from "../../vars";
 import { toast } from "react-toastify";
 import Spiner from "../Spiner";
 import InfiniteScroll from "react-infinite-scroll-component";
 import AdminSidebar from "../AdminSidebar";
-import { FaCheckCircle } from "react-icons/fa";
 import { IoIosCloseCircle } from "react-icons/io";
 import blogContext from "../../context/admin/blogs/blogContext";
 // import AdminNavbar from "./AdminNavbar";
 
 const BlockedPosts = () => {
   const bloCont = useContext(blogContext);
-  const { conDeleteBlogById, conGetBlogs } = bloCont;
+  const { conDeleteBlogById } = bloCont;
   const usContext = useContext(userContext);
   const [posts, setPost] = useState([]);
   const [page, setPage] = useState({});
   const { blogAdminAccess, libraryAdminAccess } = usContext;
   const lodCon = useContext(loaderContext);
   const { setProgress } = lodCon;
-  const alContext = useContext(alertContext);
-  const { showAlert } = alContext;
   const fetchPagedBlogs = async () => {
     try {
       const response = await fetch(`${page.next}`);
@@ -42,10 +38,12 @@ const BlockedPosts = () => {
 
   const blog = async () => {
     try {
+      setProgress(40)
       const response = await fetch(`${vars.host}/api/b-post-admin/`);
       let json = await response.json();
       setPage(json);
       setPost(json.results);
+      setProgress(100);
     } catch (error) {
       toast.error(
         "Can't connect to the server. Please check your internet connection"
@@ -70,6 +68,9 @@ const BlockedPosts = () => {
         });
         setPost(newPosts);
         toast.success("Post Allowed Successfully");
+        if (newPosts.length === 9) {
+          fetchPagedBlogs();
+        }
       }
     } catch (error) {
       toast.error(
@@ -91,7 +92,6 @@ const BlockedPosts = () => {
   };
   useEffect(() => {
     document.title = "MPS Ajmer - Administration";
-    setProgress(100);
     blog();
     // eslint-disable-next-line
   }, []);
@@ -100,11 +100,11 @@ const BlockedPosts = () => {
       {libraryAdminAccess || blogAdminAccess ? (
         <>
           <AdminSidebar />
-          <div className="main flex justify-end">
+          <div className="main flex md:justify-end justify-center">
             <div className="right-main-content overflow-x-auto md:w-[75%]">
               {blogAdminAccess && (
                 <>
-                  <h1 className="text-4xl mb-4 text-center">
+                  <h1 className="text-4xl mb-4 text-center whitespace-nowrap w-fit mx-auto">
                     Blocked Blog Posts
                     <IoIosCloseCircle className="inline text-red-600 dark:text-red-500 mx-2 bg-white rounded-full" />
                   </h1>
@@ -116,16 +116,16 @@ const BlockedPosts = () => {
                             SNO
                           </th>
                           <th scope="col" className="px-6 py-3">
-                            Blog
+                            Post Title
                           </th>
                           <th scope="col" className="px-6 py-3">
-                            Read
+                            Read Post
                           </th>
                           <th scope="col" className="px-6 py-3">
-                            Delete
+                            Delete Post
                           </th>
                           <th scope="col" className="px-6 py-3">
-                            Block
+                            Allow Post
                           </th>
                         </tr>
                       </thead>

@@ -44,9 +44,16 @@
                                 {% for post in allPosts %}
                                 <div class="py-8 flex flex-wrap md:flex-nowrap">
                                     <div class="md:w-64 md:mb-0 mb-6 flex-shrink-0 flex flex-col">
-                                        <span class="font-semibold title-font text-black"><span
-                                                class="text-blue-800">By: </span>{{post.author.first_name}}
-                                            {{post.author.last_name}}</span>
+                                        <span class="font-semibold title-font text-black"><span class="text-blue-800">By: </span>
+                                        {% if not post.by_admin %}
+                                        {{post.author.first_name}} {{post.author.last_name}}
+
+                                        {% else %}
+
+                                        MPS Ajmer
+                                        
+                                        {% endif %}
+                                    </span>
                                         <span class="mt-1 text-blue-600 text-sm">{{post.timeStamp}}</span>
                                     </div>
                                     <div class="md:flex-grow">
