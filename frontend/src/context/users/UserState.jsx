@@ -1,13 +1,10 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import UserContext from "./userContext";
 import vars from "../../vars";
-import alertContext from "../alert/alertContext";
 import {toast} from 'react-toastify'
 // eslint-disable-next-line react/prop-types
 const UserState = ({children}) => {
   const [user, setUser] = useState({});
-  const alContext = useContext(alertContext);
-  const { showAlert } = alContext;
   const [authenticated, setAuthenticated] = useState(null);
   const [blogAdminAccess, setBlogAdminAccess] = useState(false);
   const [libraryAdminAccess, setLibraryAdminAccess] = useState(false);
@@ -44,10 +41,10 @@ const UserState = ({children}) => {
           setUser(json);
           setAuthenticated(true);
           checkGroups(json);
+          console.log(json);
         }
       } else {
         setAuthenticated(false);
-        // checkGroups();
         setBlogAdminAccess(false);
         setLibraryAdminAccess(false);
       }

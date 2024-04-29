@@ -24,6 +24,7 @@ import NotFound from "./components/NotFound";
 import BlogState from "./context/admin/blogs/BlogState";
 import BlockedPosts from "./components/admin/BlockedPosts";
 import AddBlog from "./components/admin/AddBlog";
+import EditBlog from "./components/admin/EditBlog";
 
 function App() {
   const [mode, setMode] = useState("");
@@ -114,6 +115,10 @@ function App() {
                         <Route
                           path="/admin/b-posts"
                           element={<BlockedPosts />}
+                        />
+                        <Route
+                          path="/admin/edit-blog/:slug"
+                          element={<EditBlog />}
                         />
                         <Route path="/admin/addblog" element={<AddBlog />} />
                         <Route

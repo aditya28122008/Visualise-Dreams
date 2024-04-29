@@ -88,7 +88,7 @@ const BlogRead = () => {
   }, []);
   return (
     <div>
-      {!notAvail && allowed ? (
+      {(!notAvail && allowed) ? (
         <section className="dark:bg-gray-900 bg-white body-font">
           <div className="lg:w-4/6 mx-auto">
             <div className="container px-5 py-24 mx-auto flex flex-col">

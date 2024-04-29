@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 urlpatterns = [
     path('post/', views.PostList.as_view()),
@@ -16,7 +16,6 @@ urlpatterns = [
     path('post-user-username/<str:username>/', views.PostUserByUsername.as_view()),
     path('ed-prof/', views.UpdateProfile.as_view()),
     path('token/', TokenObtainPairView.as_view()),
-    path('token-refresh/', TokenRefreshView.as_view()),
     path('user-data/', views.GetUserData.as_view(), name="userData"),
     path('search-blogs/', views.SearchBlog.as_view()),
     path('admin-crud-blogs/<int:snoPost>', views.CRUDPost.as_view()),

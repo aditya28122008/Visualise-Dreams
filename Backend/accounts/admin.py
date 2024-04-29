@@ -21,7 +21,7 @@ class CustomUserAdmin(UserAdmin):
     )
    add_fieldsets = (
         ('Personal info', {
-            'fields': ('first_name', 'last_name', 'email', 'username', 'password1', 'password2',  'Status')
+            'fields': ('first_name', 'last_name', 'email', 'username', 'password1', 'password2', 'Status')
         }),
         ('Permissions', {
             'fields': (

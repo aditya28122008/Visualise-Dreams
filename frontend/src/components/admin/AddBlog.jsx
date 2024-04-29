@@ -53,6 +53,7 @@ const AddBlog = () => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(e);
     const newContent = await editorRef.current.getContent();
     await blogFormData.set("title", blogCreds.title);
     await blogFormData.set("tagline", blogCreds.tagline);
@@ -84,8 +85,24 @@ const AddBlog = () => {
           `The user with username: ${blogCreds.username} doesn't exists`
         );
       }
+    } else {
+      try {
+        const response = await fetch(`${vars.host}/api/admin-crud-blogs/0`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("MPSUser")}`,
+          },
+          body: blogFormData,
+        });
+        const json = await response.json();
+        console.log(json);
+        if (json.success) {
+          navigate("/admin/a-posts");
+        }
+      } catch (error) {
+        console.log(error);
+      }
     }
-    // console.log(blogFormData.get("tagline"));
   };
   const onChange = (e) => {
     setBlogCreds({ ...blogCreds, [e.target.name]: e.target.value });
@@ -120,6 +137,7 @@ const AddBlog = () => {
                           id="title"
                           className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                           placeholder=" "
+                          value={blogCreds.title}
                           onChange={onChange}
                           required
                         />

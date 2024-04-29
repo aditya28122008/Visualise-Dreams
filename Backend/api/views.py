@@ -1,3 +1,4 @@
+import cloudinary.uploader
 from .serializer import BlogSerializer, BlogUserSerializer, UserSerializer, BookSerializer, UpdateProfileSerializer, GroupSerializer
 from rest_framework.generics import ListAPIView
 from datetime import datetime
@@ -8,6 +9,7 @@ from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, JSONParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status, permissions
+import cloudinary
 import os
 from visualise_dreams import settings
 from blog.models import Post
@@ -64,7 +66,8 @@ class Test(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated, BlogPermission]
     def get(self, request):
-        return Response("Working")
+        print(os.getenv("MPS_AJMER_SECRET_KEY"))
+        return Response({"success":os.getenv("MPS_AJMER_SECRET_KEY")})
     
 
 class GetUserByUsername(RetrieveAPIView):
@@ -185,7 +188,7 @@ class CRUDPost(APIView):
 
 
     def delete(self, request, snoPost):
-        post = Post.objects.filter(snoPost = snoPost).first()
+        post = Post.objects.get(snoPost = snoPost)
         if not post == None:
             media_file_path = f'{settings.MEDIA_ROOT}/{post.image}'
             os.remove(media_file_path)
