@@ -1,4 +1,3 @@
-import cloudinary.uploader
 from .serializer import BlogSerializer, BlogUserSerializer, UserSerializer, BookSerializer, UpdateProfileSerializer, GroupSerializer
 from rest_framework.generics import ListAPIView
 from datetime import datetime
@@ -9,7 +8,6 @@ from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, JSONParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status, permissions
-import cloudinary
 import os
 from visualise_dreams import settings
 from blog.models import Post
