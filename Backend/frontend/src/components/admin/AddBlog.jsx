@@ -41,7 +41,7 @@ const AddBlog = () => {
     let json;
     try {
       const response = await fetch(
-        `${vars.host}/api/get-user-by-username/${username}`
+        `${vars.host}/api/get-user-by-username/${username}/`
       );
       json = await response.json();
     } catch (error) {

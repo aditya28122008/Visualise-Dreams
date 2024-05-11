@@ -9,7 +9,7 @@ const BlogItemIndexHomePage = (props) => {
   const [user, setUser] = useState({ fName: "", lName: "", profile: "" });
   const host = vars.host;
   const getPostUser = async () => {
-    const response = await fetch(`${host}/api/post-user/${post.author}`);
+    const response = await fetch(`${host}/api/post-user/${post.author}/`);
     let json = await response.json();
     json = json[0];
     setUser({ fName: json.first_name, lName: json.last_name, profile: json.profile});

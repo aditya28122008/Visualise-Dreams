@@ -38,12 +38,21 @@ ALLOWED_HOSTS = [
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 465  # Gmail SMTP port
-# EMAIL_USE_TLS = True  # Enable TLS encryption
+EMAIL_PORT = 465
 EMAIL_USE_SSL = True 
 EMAIL_HOST_USER = 'bloggerpandey.a@gmail.com'  # Your Gmail username
-EMAIL_HOST_PASSWORD = 'ojuq ixxf iudg uzni'
+EMAIL_HOST_PASSWORD = 'kfvwqjacbciqjgsu'
 EMAIL_FILE_PATH = BASE_DIR / "sent_emails"
+
+SITE_ID = 1  # Assuming you have only one site
+
+# Configure allauth and rest-auth settings
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 1
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+ACCOUNT_EMAIL_REQUIRED = True
+REST_USE_JWT = True
+FRONTEND_URL = "http://localhost:5173"
 
 # Application definition
 
@@ -79,7 +88,7 @@ ROOT_URLCONF = 'visualise_dreams.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates'],
+        'DIRS': [os.path.join(BASE_DIR, "frontend/dist")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -157,7 +166,7 @@ USE_TZ = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
@@ -169,6 +178,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATICFILES_DIRS = [
     BASE_DIR / "static",
     "static/",
+    os.path.join(BASE_DIR,"frontend/dist")
 ]
 
 # STATIC_ROOT = os.path.join(BASE_DIR, 'static')

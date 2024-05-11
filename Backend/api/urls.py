@@ -21,4 +21,7 @@ urlpatterns = [
     path('admin-crud-blogs/<int:snoPost>', views.CRUDPost.as_view()),
     path('group-name/<str:id>/', views.GetGroupName.as_view()),
     path('check-group-exists/', views.CheckGroupExists.as_view()),
+    # path('password/reset/', views.PasswordResetRequestView.as_view(), name='password_reset_request'),
+    # path('password/reset/confirm/<str:uidb64>/<str:token>/', views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('password-reset/', views.PasswordResetView.as_view(), name='password_reset'),
 ]

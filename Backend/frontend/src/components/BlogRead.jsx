@@ -127,7 +127,7 @@ const BlogRead = () => {
                 />
               </div>
               <p
-                className="leading-relaxed text-lg my-10 text-justify bg-gray-800 px-2 py-4 rounded-md dark:text-gray-400 text-gray-600"
+                className="text-lg my-10 text-justify dark:bg-gray-800 px-2 py-4 rounded-md dark:text-gray-400 text-gray-600"
                 dangerouslySetInnerHTML={{ __html: post.content }}
               />
             </div>

@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect, useContext } from "react";
 import vars from "../vars";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import alertContext from "../context/alert/alertContext";
 import userContext from "../context/users/userContext";
 import loaderContext from "../context/loadingBar/loderContext";
@@ -54,9 +54,7 @@ const Login = (props) => {
       if (json.access) {
         localStorage.setItem("MPSUser", `${json.access}`);
         fetchUser();
-        toast.info(
-          "Successfully Logged In"
-        );
+        toast.info("Successfully Logged In");
 
         const userData = await fetch(`${vars.host}/api/user-data/`, {
           method: "GET",
@@ -68,14 +66,16 @@ const Login = (props) => {
         // fetchUser()
         navigate(`/profile/${userJson.username}`);
       } else {
-        toast.warn("Invalid Credentials")
-
+        toast.warn("Invalid Credentials");
       }
       setProgress(100);
     } catch (error) {
-      toast.error("Can't connect to the server. Please check your internet connection")
+      toast.error(
+        "Can't connect to the server. Please check your internet connection"
+      );
     }
   };
+  const url = `${vars.host}/reset_password/`;
   return (
     <div>
       <section className="bg-gray-50 dark:bg-gray-900">
@@ -145,7 +145,18 @@ const Login = (props) => {
                 </button>
               </form>
             </div>
+            <p className="text-center mb-3 hover:underline">
+              <a
+                href={url}
+                target="_blank"
+                rel="noreferrer"
+                className="text-center mb-3 hover:underline"
+              >
+                Forgot Password?
+              </a>
+            </p>
           </div>
+          {/* <Link to=`{vars.host}`></Link> */}
         </div>
       </section>
     </div>

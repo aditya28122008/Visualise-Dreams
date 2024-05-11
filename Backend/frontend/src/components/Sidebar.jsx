@@ -74,6 +74,13 @@ const Sidebar = (props) => {
                       <IoIosCloseCircle className="text-3xl text-red-600 dark:text-red-500 bg-white rounded-full" />
                     }
                   />
+                  <SideNavLink
+                    name="Add Post"
+                    to="/admin/addblog"
+                    icon={
+                      <IoIosCloseCircle className="text-3xl text-red-600 dark:text-red-500 bg-white rounded-full" />
+                    }
+                  />
                 </l>
               )}
             </div>

@@ -7,6 +7,8 @@ from rest_framework.generics import RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, JSONParser
 from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.http import JsonResponse
 from rest_framework import status, permissions
 import os
 from visualise_dreams import settings
@@ -16,9 +18,81 @@ from django.contrib.auth.models import Group
 from Elibrary.models import Book
 from visualise_dreams import vars
 from django.utils import timezone
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_bytes
+from django.core.mail import send_mail
+from django.contrib.auth.tokens import default_token_generator
+from django.template.loader import render_to_string
+# from rest_auth.views import PasswordResetView
+
 from .pagination import BlogPaginations, AdminPostPaginations, SearchPagination
 
 # Create your views here.
+# class PasswordResetRequestView(APIView):
+#     def post(self, request):
+#         email = request.data.get('email')
+#         if email:
+#             try:
+#                 user = User.objects.get(email=email)
+#             except User.DoesNotExist:
+#                 return Response({'error': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+#             token = default_token_generator.make_token(user)
+#             uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+
+#             reset_url = f"{settings.FRONTEND_URL}/reset-password/{uidb64}/{token}/"
+
+#             send_mail(
+#                 'Password Reset',
+#                 f'Click the link to reset your password: {reset_url}',
+#                 settings.EMAIL_HOST_USER,
+#                 [email],
+#                 fail_silently=False,
+#             )
+#             return Response({'success': 'Password reset email sent.'}, status=status.HTTP_200_OK)
+#         else:
+#             return Response({'error': 'Email is required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+# class PasswordResetConfirmView(APIView):
+#     def post(self, request, uidb64, token):
+#         try:
+#             uid = force_bytes(urlsafe_base64_decode(uidb64))
+#             user = User.objects.get(pk=uid)
+#         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+#             user = None
+
+#         if user and default_token_generator.check_token(user, token):
+#             new_password = request.data.get('new_password')
+#             if new_password:
+#                 user.set_password(new_password)
+#                 user.save()
+#                 return Response({'success': 'Password reset successful.'}, status=status.HTTP_200_OK)
+#             else:
+#                 return Response({'error': 'New password is required.'}, status=status.HTTP_400_BAD_REQUEST)
+#         else:
+#             return Response({'error': 'Invalid reset link.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        
+class PasswordResetView(APIView):
+    parser_classes = [JSONParser]
+    def post(self, request):
+        email = request.data['email']
+        user = User.objects.filter(email=email).first()
+        if user:
+            token_generator = PasswordResetTokenGenerator()
+            token = token_generator.make_token(user)
+            uidb64 = urlsafe_base64_encode(force_bytes(user.pk)).encode('utf-8')
+            reset_url = f'{settings.FRONTEND_URL}/reset-password/{uidb64}/{token}/'
+            send_mail(
+                'Password Reset',
+                render_to_string('email/password_reset.html', {'reset_url': reset_url}),
+                'from@example.com',
+                [email],
+                fail_silently=False,
+            )
+        return JsonResponse({'message': 'Password reset email sent'}, status=200)
+
+
 
 class IsSuperUserPermission(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -63,9 +137,9 @@ class BlogPermission(permissions.BasePermission):
 class Test(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated, BlogPermission]
-    def get(self, request):
+    def post(self, request):
         print(os.getenv("MPS_AJMER_SECRET_KEY"))
-        return Response({"success":os.getenv("MPS_AJMER_SECRET_KEY")})
+        return Response({"success": os.getenv("MPS_AJMER_SECRET_KEY")})
     
 
 class GetUserByUsername(RetrieveAPIView):

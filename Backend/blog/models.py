@@ -10,17 +10,23 @@ def generate_random_string(length):
     return ''.join(random.choices(string.ascii_lowercase + string.digits, k=length))
 
 # Create your models here.
+class Categories(models.Model):
+    sno = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=150)
+    def __str__(self):
+        return str(self.name)
 class Post(models.Model):
     snoPost = models.AutoField(primary_key=True)
     author = models.ForeignKey(to=CustomUser, on_delete=models.CASCADE, default="", null=True, blank=True)
     title = models.CharField(max_length=200, default="")
     tagline = models.CharField(max_length=100, default="")
     content = models.TextField(default="")
-    slug = models.SlugField(unique=True, blank=True, max_length = 10000)
+    slug = models.SlugField(unique=True, blank=True, max_length = 800)
     timeStamp = models.DateTimeField(blank=True, auto_now_add=True)
     image = models.FileField(upload_to="blog/images", default="")
     allowed = models.BooleanField(default=False)
     by_admin = models.BooleanField(default=False)
+    # category = models.ForeignKey(to=Categories, on_delete=models.CASCADE, default="")
     allowd_at = models.DateTimeField(blank=True, null=True)
     blocked_at = models.DateTimeField(blank=True, null=True, auto_now_add=True)
     
@@ -35,3 +41,6 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title + ' by ' + str(self.author.first_name) + " " + str(self.author.last_name)
+    
+    
+    
