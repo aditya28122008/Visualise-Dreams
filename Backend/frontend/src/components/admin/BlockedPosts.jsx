@@ -24,7 +24,11 @@ const BlockedPosts = () => {
   const { setProgress } = lodCon;
   const fetchPagedBlogs = async () => {
     try {
-      const response = await fetch(`${page.next}`);
+      const response = await fetch(`${page.next}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("MPSUser")}`,
+        },
+      });
       const json = await response.json();
       setPage(json);
       const newPosts = posts.concat(json.results);
@@ -41,7 +45,11 @@ const BlockedPosts = () => {
   const blog = async () => {
     try {
       setProgress(40);
-      const response = await fetch(`${vars.host}/api/b-post-admin/`);
+      const response = await fetch(`${vars.host}/api/b-post-admin/`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("MPSUser")}`,
+        },
+      });
       let json = await response.json();
       setPage(json);
       setPost(json.results);
@@ -55,7 +63,7 @@ const BlockedPosts = () => {
 
   const allowPost = async (id) => {
     try {
-      const response = await fetch(`${vars.host}/api/admin-crud-blogs/${id}`, {
+      const response = await fetch(`${vars.host}/api/admin-crud-blogs/${id}/`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("MPSUser")}`,
@@ -121,6 +129,9 @@ const BlockedPosts = () => {
                             Post Title
                           </th>
                           <th scope="col" className="px-6 py-3">
+                            Posted On
+                          </th>
+                          <th scope="col" className="px-6 py-3">
                             Read Post
                           </th>
                           <th scope="col" className="px-6 py-3">
@@ -153,6 +164,12 @@ const BlockedPosts = () => {
                                 className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                               >
                                 {post.title}
+                              </th>
+                              <th
+                                scope="row"
+                                className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                              >
+                                {new Date(post.timeStamp).toDateString()}
                               </th>
                               <td className="px-6 py-4 view">
                                 <Link to={`/blog/${post.slug}`}>

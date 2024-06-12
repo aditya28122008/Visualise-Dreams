@@ -1,17 +1,25 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useContext } from "react";
 import logo from "../Logo.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import userContext from "../context/users/userContext";
 import { CiCirclePlus } from "react-icons/ci";
+import { toast } from "react-toastify";
 
 const AdminSidebar = () => {
+  const navigate = useNavigate();
   const usCon = useContext(userContext);
-  const { blogAdminAccess } = usCon;
+  const { blogAdminAccess, fetchUser } = usCon;
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   // Function to toggle the dropdown
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
+  };
+  const logout = async () => {
+    localStorage.removeItem("MPSUser");
+    navigate("/");
+    await fetchUser();
+    toast.info("Successfully Logged Out");
   };
 
   return (
@@ -79,6 +87,13 @@ const AdminSidebar = () => {
                 Blocked Posts
               </Link>
               <Link
+                to="/admin/m-categories"
+                className="block px-4 py-2 text-lg hover:bg-blue-700"
+                onClick={toggleDropdown}
+              >
+                Manage Categories
+              </Link>
+              <Link
                 to="/admin/addblog"
                 className="block px-4 py-2 text-lg hover:bg-blue-700"
               >
@@ -86,11 +101,10 @@ const AdminSidebar = () => {
                 <CiCirclePlus className="inline mx-2 font-bold text-2xl" />
               </Link>
             </div>
-            
           </div>
         )}
         <a
-          href="#"
+          onClick={logout}
           className="px-6 py-3 text-lg font-medium hover:bg-blue-600 hover:text-white"
         >
           Logout

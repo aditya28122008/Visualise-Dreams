@@ -1,9 +1,19 @@
 from rest_framework import serializers
-from blog.models import Post
+from blog.models import Post, Categories
 from accounts.models import CustomUser
-from Elibrary.models import Book
+from Elibrary.models import Book, BookCategory
 from django.contrib.auth.models import Group
 
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Categories
+        fields = "__all__"
+        
+class BookCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BookCategory
+        fields = "__all__"
 
 
 class BlogSerializer(serializers.ModelSerializer):

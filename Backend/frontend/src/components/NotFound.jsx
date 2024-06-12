@@ -21,10 +21,10 @@ const NotFound = () => {
           Oops! Page not found.
         </p>
         <a
-          href="/"
+          href={'/'}
           className="text-blue-500 dark:text-blue-300 mt-4 block hover:underline"
         >
-          Go back home
+          Go back...
         </a>
       </div>
     </div>

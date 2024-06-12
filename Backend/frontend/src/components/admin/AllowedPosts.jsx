@@ -9,7 +9,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import AdminSidebar from "../AdminSidebar";
 import { FaCheckCircle, FaPencilAlt } from "react-icons/fa";
 import blogContext from "../../context/admin/blogs/blogContext";
-// import AdminNavbar from "./AdminNavbar";
+
 
 const AllowedPosts = () => {
   const bloCont = useContext(blogContext);
@@ -22,7 +22,11 @@ const AllowedPosts = () => {
   const { setProgress } = lodCon;
   const fetchPagedBlogs = async () => {
     try {
-      const response = await fetch(`${page.next}`);
+      const response = await fetch(`${page.next}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("MPSUser")}`
+        }
+      });
       const json = await response.json();
       setPage(json);
       const newPosts = posts.concat(json.results);
@@ -48,7 +52,7 @@ const AllowedPosts = () => {
 
   const blockPost = async (id) => {
     try {
-      const response = await fetch(`${vars.host}/api/admin-crud-blogs/${id}`, {
+      const response = await fetch(`${vars.host}/api/admin-crud-blogs/${id}/`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("MPSUser")}`,
@@ -117,6 +121,9 @@ const AllowedPosts = () => {
                             Post Title
                           </th>
                           <th scope="col" className="px-6 py-3">
+                            Posted On
+                          </th>
+                          <th scope="col" className="px-6 py-3">
                             Read Post
                           </th>
                           <th scope="col" className="px-6 py-3">
@@ -149,6 +156,12 @@ const AllowedPosts = () => {
                                 className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                               >
                                 {post.title}
+                              </th>
+                              <th
+                                scope="row"
+                                className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                              >
+                                {new Date(post.timeStamp).toDateString()}
                               </th>
                               <td className="px-6 py-4 view">
                                 <Link to={`/blog/${post.slug}`}>

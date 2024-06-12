@@ -12,9 +12,12 @@ def generate_random_string(length):
 # Create your models here.
 class Categories(models.Model):
     sno = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=150)
+    name = models.CharField(max_length=150, unique=True)
+    
     def __str__(self):
         return str(self.name)
+    
+    
 class Post(models.Model):
     snoPost = models.AutoField(primary_key=True)
     author = models.ForeignKey(to=CustomUser, on_delete=models.CASCADE, default="", null=True, blank=True)
@@ -26,7 +29,7 @@ class Post(models.Model):
     image = models.FileField(upload_to="blog/images", default="")
     allowed = models.BooleanField(default=False)
     by_admin = models.BooleanField(default=False)
-    # category = models.ForeignKey(to=Categories, on_delete=models.CASCADE, default="")
+    category = models.ForeignKey(to=Categories, on_delete=models.CASCADE, null=True, blank=True)
     allowd_at = models.DateTimeField(blank=True, null=True)
     blocked_at = models.DateTimeField(blank=True, null=True, auto_now_add=True)
     
@@ -40,7 +43,7 @@ class Post(models.Model):
     
 
     def __str__(self):
-        return self.title + ' by ' + str(self.author.first_name) + " " + str(self.author.last_name)
+        return self.title
     
     
     

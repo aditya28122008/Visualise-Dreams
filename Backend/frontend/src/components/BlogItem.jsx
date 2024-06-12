@@ -1,15 +1,11 @@
-import React, { useEffect, useContext, useRef } from "react";
+/* eslint-disable react/prop-types */
+import { useEffect, useRef } from "react";
 // import { useState } from "react";
 import { Link } from "react-router-dom";
-import vars from "../vars";
-import alertContext from "../context/alert/alertContext";
 
 const BlogItem = (props) => {
-  const alContext = useContext(alertContext);
-  const { showAlert } = alContext;
   // const [user, setUser] = useState({ fName: "", lName: "", username: "" });
   const contentRef = useRef(null);
-  const host = vars.host;
   // const getPostUser = async () => {
   //   try {
   //     const response = await fetch(
@@ -30,11 +26,17 @@ const BlogItem = (props) => {
   //   }
   // };
   const setPostContent = () => {
-    contentRef.current.innerHTML = `${contentRef.current.innerText.slice(0, 200)}...`
+    const conDiv = document.createElement("div")
+    conDiv.innerHTML = props.post.content;
+    contentRef.current.innerHTML = `${conDiv.innerText.slice(
+      0,
+      200
+    )}...`;
   };
   useEffect(() => {
     // getPostUser();
     setPostContent();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <div>

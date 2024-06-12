@@ -20,6 +20,7 @@ const AddBlog = () => {
     username: "",
     by_admin: false,
   });
+  const [categories, setCategories] = useState([]);
   const [blImg, setBlImg] = useState(null);
   const usContext = useContext(userContext);
   const { blogAdminAccess, libraryAdminAccess } = usContext;
@@ -51,21 +52,123 @@ const AddBlog = () => {
     }
     return json;
   };
+  const getAllCategories = async () => {
+    try {
+      const response = await fetch(`${vars.host}/api/get-all-categories/`);
+      const json = await response.json();
+      // console.log(json);
+      setCategories(json);
+      // console.log(json);
+    } catch (error) {
+      // console.log(error);
+      toast.error(
+        "Can't connect to the server. Please check your internet connection"
+      );
+    }
+  };
+  const applyClasses = async (cont) => {
+    const parser = new DOMParser();
+    let doc = parser.parseFromString(cont, "text/html");
+    let links = doc.querySelectorAll("a");
+
+    links.forEach((l) => {
+      l.classList = "";
+      l.classList.add("underline");
+      l.classList.add("underline-offset-2");
+      l.classList.add("text-blue-500");
+      l.classList.add("cursor-pointer");
+      l.classList.add("hover:text-blue-300");
+    });
+    let HOne = doc.querySelectorAll("h1");
+    HOne.forEach((h) => {
+      h.classList = "";
+      h.classList.add("text-4xl");
+      h.classList.add("font-bold");
+    });
+    let HTwo = doc.querySelectorAll("h2");
+    HTwo.forEach((h) => {
+      h.classList = "";
+      h.classList.add("text-3xl");
+      h.classList.add("font-bold");
+    });
+    let HThree = doc.querySelectorAll("h3");
+    HThree.forEach((h) => {
+      h.classList = "";
+      h.classList.add("text-2xl");
+      h.classList.add("font-bold");
+    });
+    let Hfour = doc.querySelectorAll("h4");
+    Hfour.forEach((h) => {
+      h.classList = "";
+      h.classList.add("text-xl");
+      h.classList.add("font-bold");
+    });
+    let Hfive = doc.querySelectorAll("h5");
+    Hfive.forEach((h) => {
+      h.classList = "";
+      h.classList.add("text-lg");
+      h.classList.add("font-bold");
+    });
+    let Hsix = doc.querySelectorAll("h6");
+    Hsix.forEach((h) => {
+      h.classList = "";
+      h.classList.add("text-base");
+      h.classList.add("font-bold");
+    });
+    let PRE = doc.querySelectorAll("pre");
+    PRE.forEach((h) => {
+      h.classList = "";
+      h.classList.add("text-lg");
+    });
+    let modifiedContent = doc.body.innerHTML;
+    return modifiedContent;
+  };
+  const categoryRef = useRef(null);
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(e);
-    const newContent = await editorRef.current.getContent();
-    await blogFormData.set("title", blogCreds.title);
-    await blogFormData.set("tagline", blogCreds.tagline);
-    await blogFormData.set("content", newContent);
-    await blogFormData.set("by_admin", blogCreds.by_admin);
-    await blogFormData.set("image", blImg);
-    if (!blogCreds.by_admin) {
-      const author = await getAuthorByUsername(blogCreds.username);
-      if (!author.detail) {
-        await blogFormData.set("author", author.id);
+    if (categoryRef.current.value === "Select Category") {
+      toast.error("Please choose a valid category....!");
+      // console.log(categoryRef.current.value);
+    } else {
+      const newContent = await applyClasses(editorRef.current.getContent());
+      await blogFormData.set("title", blogCreds.title);
+      await blogFormData.set("tagline", blogCreds.tagline);
+      await blogFormData.set("content", newContent);
+      await blogFormData.set("by_admin", blogCreds.by_admin);
+      await blogFormData.set("image", blImg);
+      await blogFormData.set("category", blogCreds.category);
+      if (!blogCreds.by_admin) {
+        const author = await getAuthorByUsername(blogCreds.username);
+        if (!author.detail) {
+          await blogFormData.set("author", author.id);
+          try {
+            const response = await fetch(
+              `${vars.host}/api/admin-crud-blogs/0/`,
+              {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem("MPSUser")}`,
+                },
+                body: blogFormData,
+              }
+            );
+            const json = await response.json();
+            if (json.success) {
+              navigate("/admin/a-posts");
+            }
+          } catch (error) {
+            toast.error(
+              "Can't connect to the server. Please check your internet connection"
+            );
+          }
+        } else {
+          toast.error(
+            `The user with username: ${blogCreds.username} doesn't exists`
+          );
+        }
+      } else {
         try {
-          const response = await fetch(`${vars.host}/api/admin-crud-blogs/0`, {
+          const response = await fetch(`${vars.host}/api/admin-crud-blogs/0/`, {
             method: "POST",
             headers: {
               Authorization: `Bearer ${localStorage.getItem("MPSUser")}`,
@@ -73,42 +176,27 @@ const AddBlog = () => {
             body: blogFormData,
           });
           const json = await response.json();
-          console.log(json);
           if (json.success) {
             navigate("/admin/a-posts");
           }
         } catch (error) {
-          console.log(error);
+          toast.error(
+            "Can't connect to the server. Please check your internet connection"
+          );
         }
-      } else {
-        toast.error(
-          `The user with username: ${blogCreds.username} doesn't exists`
-        );
-      }
-    } else {
-      try {
-        const response = await fetch(`${vars.host}/api/admin-crud-blogs/0`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("MPSUser")}`,
-          },
-          body: blogFormData,
-        });
-        const json = await response.json();
-        console.log(json);
-        if (json.success) {
-          navigate("/admin/a-posts");
-        }
-      } catch (error) {
-        console.log(error);
       }
     }
   };
   const onChange = (e) => {
-    setBlogCreds({ ...blogCreds, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setBlogCreds((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
   useEffect(() => {
     document.title = "MPS Ajmer - Administration";
+    getAllCategories();
     setProgress(100);
     // eslint-disable-next-line
   }, []);
@@ -123,7 +211,7 @@ const AddBlog = () => {
                 <>
                   <h1 className="text-4xl mb-4 text-center whitespace-nowrap w-fit mx-auto">
                     Add a blog post
-                    <FaPencilAlt className="inline mx-2 dark:text-white text-gray-700" />
+                    <FaPencilAlt className="inline mx-4 dark:text-red-500 text-gray-700" />
                   </h1>
                   <div>
                     <form
@@ -179,7 +267,6 @@ const AddBlog = () => {
                           initialValue={""}
                         />
                       </div>
-
                       <div className="relative z-0 w-full mb-5 group">
                         <>
                           <label
@@ -204,6 +291,32 @@ const AddBlog = () => {
                             An image related to your blog content will be
                             displayed on the blog card.
                           </p>
+                        </>
+                      </div>
+                      <div className="relative z-0 w-full mb-5 group">
+                        <>
+                          <select
+                            ref={categoryRef}
+                            id="countries"
+                            name="category" // Add this line to bind the select value to the state
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            onChange={onChange} // Ensure correct function name
+                            value={blogCreds.category}
+                          >
+                            {categories.map((cat) => {
+                              return (
+                                <option key={cat.sno} value={cat.sno}>
+                                  {cat.name}
+                                </option>
+                              );
+                            })}
+                          </select>
+                          <label
+                            htmlFor="countries"
+                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                          >
+                            Please choose a Category
+                          </label>
                         </>
                       </div>
                       {!blogCreds.by_admin && (

@@ -6,7 +6,9 @@ import { FaHome, FaCheckCircle } from "react-icons/fa";
 import { IoLibrary } from "react-icons/io5";
 import userContext from "../context/users/userContext";
 import { toast } from "react-toastify";
+import { FaPencilAlt } from "react-icons/fa";
 import { IoIosCloseCircle } from "react-icons/io";
+import { TbCategoryFilled } from "react-icons/tb";
 
 const Sidebar = (props) => {
   const usContext = useContext(userContext);
@@ -49,13 +51,13 @@ const Sidebar = (props) => {
           </div>
         </div>
         <hr className="h-[0.18rem] bg-blue-600 rounded-md md:mx-6 md:hidden" />
-        <div className="actualNav text-black py-10 px-4 flex flex-col">
-          <p className="dark:text-gray-400 text-black text-4xl font-bold text-center font-DancingScript">
-            Admin:-
-          </p>
-          {(blogAdminAccess || libraryAdminAccess) && (
+        {(blogAdminAccess || libraryAdminAccess) && (
+          <div className="actualNav text-black py-10 px-4 flex flex-col">
+            <p className="dark:text-gray-200 text-black text-4xl font-bold text-center font-DancingScript">
+              Admin:-
+            </p>
             <div onClick={() => props.sideShow()}>
-              <p className="dark:text-gray-500 text-black text-xl font-bold text-center font-Oswald">
+              <p className="dark:text-gray-300 text-black text-xl font-bold text-center font-Oswald">
                 Blogs:
               </p>
               {blogAdminAccess && (
@@ -75,17 +77,24 @@ const Sidebar = (props) => {
                     }
                   />
                   <SideNavLink
+                    name="Manage Categories"
+                    to="/admin/m-categories"
+                    icon={
+                      <TbCategoryFilled className="text-3xl text-red-600 dark:text-red-500 rounded-full" />
+                    }
+                  />
+                  <SideNavLink
                     name="Add Post"
                     to="/admin/addblog"
                     icon={
-                      <IoIosCloseCircle className="text-3xl text-red-600 dark:text-red-500 bg-white rounded-full" />
+                      <FaPencilAlt className="text-3xl text-black-600 dark:text-red-500" />
                     }
                   />
                 </l>
               )}
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </>
   );

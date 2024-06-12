@@ -14,7 +14,7 @@ const UserState = ({children}) => {
       setLibraryAdminAccess(true);
     } else {
       juser.groups.map(async (group) => {
-        const response = await fetch(`${vars.host}/api/group-name/${group}`);
+        const response = await fetch(`${vars.host}/api/group-name/${group}/`);
         const json = await response.json();
         if ("Blogs" === json[0].name) {
           setBlogAdminAccess(true);
@@ -41,7 +41,6 @@ const UserState = ({children}) => {
           setUser(json);
           setAuthenticated(true);
           checkGroups(json);
-          console.log(json);
         }
       } else {
         setAuthenticated(false);

@@ -132,7 +132,7 @@ const Navbar = (props) => {
           <div className="nav-right flex xl:space-x-2 md:space-x-1 items-center justify-center absolute right-0 md:mx-8 mx-2">
             <button
               onClick={toggleDarkMode}
-              className="hidden lg:block transition-all duration-200"
+              className="hidden md:block transition-all duration-200"
             >
               <svg
                 stroke="currentColor"
@@ -227,16 +227,20 @@ const Navbar = (props) => {
                   id="profDrop"
                 >
                   <ul>
-                    <li className="my-1 w-full rounded-xl hover:text-blue-400 duration-500 py-2 text-center cursor-pointer">
+                    <li onClick={dropProf} className="my-1 w-full rounded-xl hover:text-blue-400 duration-500 py-2 text-center cursor-pointer">
                       <button onClick={logout}>Logout</button>
                     </li>
                     <hr className="bg-blue-500 h-[0.12rem] rounded-md" />
-                    <li className="my-1 w-full rounded-xl hover:text-blue-400 py-2 text-center cursor-pointer">
+                    <li onClick={dropProf} className="my-1 w-full rounded-xl hover:text-blue-400 py-2 text-center cursor-pointer">
                       <Link to="/edit-profile">Edit Profile</Link>
                     </li>
                     <hr className="bg-blue-500 h-[0.12rem] rounded-md" />
-                    <li className="my-1 w-full rounded-xl hover:text-blue-400 py-2 text-center cursor-pointer">
+                    <li onClick={dropProf} className="my-1 w-full rounded-xl hover:text-blue-400 py-2 text-center cursor-pointer">
                       <Link to={`/profile/${user.username}`}>My Profile</Link>
+                    </li>
+                    <hr className="bg-blue-500 h-[0.12rem] rounded-md" />
+                    <li onClick={dropProf} className="my-1 w-full rounded-xl hover:text-blue-400 py-2 text-center cursor-pointer">
+                      <Link to={`/add-blog`}>Add A Blog</Link>
                     </li>
                   </ul>
                 </div>{" "}

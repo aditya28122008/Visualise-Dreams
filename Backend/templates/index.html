@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" href="{% static 'Logo.png' %}" />
+    <link rel="icon" href="/static/Logo.png" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MPS Ajmer</title>
@@ -43,9 +43,12 @@
       #scrollableDiv::-webkit-scrollbar {
         width: 10px;
       }
+      #scrollableDiv {
+        overflow-x: hidden;
+      }
     </style>
-    <script type="module" crossorigin src="{% static 'assets/index-BoIEdZGO.js' %}"></script>
-    <link rel="stylesheet" crossorigin href="{% static 'assets/index-WFNjPpRO.css' %}">
+    <script type="module" crossorigin src="/static/assets/index-CizymhjP.js"></script>
+    <link rel="stylesheet" crossorigin href="/static/assets/index-Di3ExLQp.css">
   </head>
   <body>
     <div id="root"></div>

@@ -15,15 +15,18 @@ const Search = () => {
   const { setProgress } = loderCon;
   const { host } = vars;
   const [books, setBooks] = useState([]);
+  const [bookPage, setBookPage] = useState({});
   const [page, setPage] = useState({});
   const [posts, setPosts] = useState([]);
+  const { query } = useParams();
   useEffect(() => {
-    fetchResults();
+    fetchResultsBlogs();
+    fetchResultsBooks();
     document.title = "Search Results...!";
     // eslint-disable-next-line
   }, []);
 
-  const fetchResults = async () => {
+  const fetchResultsBlogs = async () => {
     setProgress(40);
     const response = await fetch(`${host}/api/search-blogs/`, {
       method: "POST",
@@ -35,6 +38,20 @@ const Search = () => {
     const json = await response.json();
     setPosts(json.results);
     setPage(json);
+    setProgress(100);
+  };
+  const fetchResultsBooks = async () => {
+    setProgress(40);
+    const response = await fetch(`${host}/api/search-books/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ query }),
+    });
+    const json = await response.json();
+    setBookPage(json);
+    setBooks(json.results);
     setProgress(100);
   };
   const bookT = () => {
@@ -65,10 +82,27 @@ const Search = () => {
       );
     }
   };
-  //   document.getElementById("bookToggle").addEventListener("click");
-  //   document.getElementById("blogToggle").addEventListener("click", );
+  const fetchPagedBooks = async (url) => {
+    try {
+      setProgress(40);
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ query }),
+      });
+      const json = await response.json();
+      setBooks(json.results);
+      setBookPage(json);
+      setProgress(100);
+    } catch (error) {
+      toast.error(
+        "Can't connect to the server. Please check your internet connection"
+      );
+    }
+  };
 
-  const { query } = useParams();
   return (
     <>
       <TopTitle />
@@ -139,6 +173,28 @@ const Search = () => {
                     return <BlogItemSearch post={post} key={post.snoPost} />;
                   })}
                 </div>
+                <div className="flex justify-between mt-4">
+                  <button
+                    className={`px-2 py-1 bg-blue-600 hover:bg-blue-500 text-white ${
+                      page.previous ? "block" : "opacity-0"
+                    } text-lg rounded-lg cursor-pointer lg:scale-125 scale-110`}
+                    disabled={page.previous ? false : true}
+                    onClick={() => fetchPaged(page.previous)}
+                  >
+                    &larr; Latest Posts
+                  </button>
+                  <button
+                    className={`px-2 py-1 bg-blue-600 hover:bg-blue-500 text-white ${
+                      page.next ? "block" : "opacity-0"
+                    } text-lg rounded-lg cursor-pointer lg:scale-125 scale-110`}
+                    disabled={page.next ? false : true}
+                    onClick={() => {
+                      fetchPaged(page.next);
+                    }}
+                  >
+                    Older Posts &rarr;
+                  </button>
+                </div>
               </div>
               <div
                 id="books"
@@ -154,31 +210,31 @@ const Search = () => {
                       return <BookItemSearch book={book} key={book.bookSno} />;
                     })}
                   </div>
+                  <div className="flex justify-between mt-4">
+                    <button
+                      className={`px-2 py-1 bg-blue-600 hover:bg-blue-500 text-white ${
+                        bookPage.previous ? "block" : "opacity-0"
+                      } text-lg rounded-lg cursor-pointer lg:scale-125 scale-110`}
+                      disabled={bookPage.previous ? false : true}
+                      onClick={() => fetchPagedBooks(bookPage.previous)}
+                    >
+                      &larr; Latest Books
+                    </button>
+                    <button
+                      className={`px-2 py-1 bg-blue-600 hover:bg-blue-500 text-white ${
+                        bookPage.next ? "block" : "opacity-0"
+                      } text-lg rounded-lg cursor-pointer lg:scale-125 scale-110`}
+                      disabled={bookPage.next ? false : true}
+                      onClick={() => {
+                        fetchPagedBooks(bookPage.next);
+                      }}
+                    >
+                      Older Books &rarr;
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div className="flex justify-between">
-            <button
-              className={`px-2 py-1 bg-blue-600 hover:bg-blue-500 text-white ${
-                page.previous ? "block" : "opacity-0"
-              } text-lg rounded-lg cursor-pointer lg:scale-125 scale-110`}
-              disabled={page.previous ? false : true}
-              onClick={() => fetchPaged(page.previous)}
-            >
-              &larr; Latest Posts
-            </button>
-            <button
-              className={`px-2 py-1 bg-blue-600 hover:bg-blue-500 text-white ${
-                page.next ? "block" : "opacity-0"
-              } text-lg rounded-lg cursor-pointer lg:scale-125 scale-110`}
-              disabled={page.next ? false : true}
-              onClick={() => {
-                fetchPaged(page.next);
-              }}
-            >
-              Older Posts &rarr;
-            </button>
           </div>
         </>
       )}

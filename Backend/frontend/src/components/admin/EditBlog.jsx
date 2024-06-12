@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useContext, useEffect, useState, useRef } from "react";
 import loaderContext from "../../context/loadingBar/loderContext";
 import userContext from "../../context/users/userContext";
@@ -19,14 +20,15 @@ const EditBlog = () => {
     tagline: "",
     content: "",
     image: "",
+    category: "",
   });
   const { slug } = useParams();
   const [cantEdit, setCantEdit] = useState(false);
-  const [blImg, setBlImg] = useState(null);
   const usContext = useContext(userContext);
   const { blogAdminAccess, libraryAdminAccess } = usContext;
   const lodCon = useContext(loaderContext);
   const { setProgress } = lodCon;
+
   const handleFileUpload = (e) => {
     const blogImage = e.target.files[0];
     const fileUploader = fileUploaderRef.current;
@@ -36,13 +38,14 @@ const EditBlog = () => {
         "Can't upload File...! Please choose an image with a bit short name"
       );
     } else {
-      setBlImg(blogImage);
+      blogFormData.set("image", blogImage);
     }
   };
+
   const getCurrentPost = async () => {
     setProgress(40);
     try {
-      const response = await fetch(`${vars.host}/api/post/${slug}`);
+      const response = await fetch(`${vars.host}/api/post/${slug}/`);
       const json = await response.json();
       if (json.allowed) {
         setCantEdit(true);
@@ -51,45 +54,134 @@ const EditBlog = () => {
         setBlogCreds(json);
       }
     } catch (error) {
-      console.log(error);
+      toast.error(
+        "Can't connect to the server. Please check your internet connection"
+      );
     }
     setProgress(100);
   };
+
+  const categoryRef = useRef(null);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const newContent = await editorRef.current.getContent();
-    await blogFormData.set("title", blogCreds.title);
-    await blogFormData.set("tagline", blogCreds.tagline);
-    await blogFormData.set("content", newContent);
-    await blogFormData.set("image", blImg);
+    if (categoryRef.current.value === "Select Category") {
+      toast.error("Please choose a valid category....!");
+    } else {
+      const newContent = await applyClasses(editorRef.current.getContent());
+      await blogFormData.set("title", blogCreds.title);
+      await blogFormData.set("tagline", blogCreds.tagline);
+      await blogFormData.set("content", newContent);
+      await blogFormData.set("category", categoryRef.current.value);
+    }
+    // console.log(categoryRef.current.value);
+
+    // await blogFormData.set("image", blImg);
     try {
-      const response = await fetch(`${vars.host}/api/admin-crud-blogs/0`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("MPSUser")}`,
-        },
-        body: blogFormData,
-      });
+      const response = await fetch(
+        `${vars.host}/api/admin-crud-blogs/${blogCreds.snoPost}/`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("MPSUser")}`,
+          },
+          body: blogFormData,
+        }
+      );
       const json = await response.json();
-      console.log(json);
       if (json.success) {
-        navigate("/admin/a-posts");
+        navigate(-1);
       }
     } catch (error) {
-      console.log(error);
+      toast.error(
+        "Can't connect to the server. Please check your internet connection"
+      );
     }
-    // console.log(blogFormData.get("tagline"));
   };
+
   const onChange = (e) => {
-    setBlogCreds({ ...blogCreds, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setBlogCreds((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const [categories, setCategories] = useState([]);
+  const getAllCategories = async () => {
+    try {
+      const response = await fetch(`${vars.host}/api/get-all-categories/`);
+      const json = await response.json();
+      setCategories(json);
+    } catch (error) {
+      toast.error(
+        "Can't connect to the server. Please check your internet connection"
+      );
+    }
+  };
+  const applyClasses = async (cont) => {
+    const parser = new DOMParser();
+    let doc = parser.parseFromString(cont, "text/html");
+    let links = doc.querySelectorAll("a")
+    
+    links.forEach((l) => {
+      l.classList = ""
+      l.classList.add("underline");
+      l.classList.add("underline-offset-2");
+      l.classList.add("text-blue-500");
+      l.classList.add("cursor-pointer");
+      l.classList.add("hover:text-blue-300");
+    });
+    let HOne = doc.querySelectorAll("h1");
+    HOne.forEach((h) => {
+      h.classList = ""
+      h.classList.add("text-4xl");
+      h.classList.add("font-bold");
+    });
+    let HTwo = doc.querySelectorAll("h2");
+    HTwo.forEach((h) => {
+      h.classList = ""
+      h.classList.add("text-3xl");
+      h.classList.add("font-bold");
+    });
+    let HThree = doc.querySelectorAll("h3");
+    HThree.forEach((h) => {
+      h.classList = ""
+      h.classList.add("text-2xl");
+      h.classList.add("font-bold");
+    });
+    let Hfour = doc.querySelectorAll("h4");
+    Hfour.forEach((h) => {
+      h.classList = ""
+      h.classList.add("text-xl");
+      h.classList.add("font-bold");
+    });
+    let Hfive = doc.querySelectorAll("h5");
+    Hfive.forEach((h) => {
+      h.classList = ""
+      h.classList.add("text-lg");
+      h.classList.add("font-bold");
+    });
+    let Hsix = doc.querySelectorAll("h6");
+    Hsix.forEach((h) => {
+      h.classList = ""
+      h.classList.add("text-base");
+      h.classList.add("font-bold");
+    });
+    let PRE = doc.querySelectorAll("pre");
+    PRE.forEach((h) => {
+      h.classList = ""
+      h.classList.add("text-lg");
+    });
+    let modifiedContent = doc.body.innerHTML;
+    return modifiedContent;
   };
   useEffect(() => {
     document.title = "MPS Ajmer - Administration";
-    // setProgress(100);
     getCurrentPost();
-
-    // eslint-disable-next-line
+    getAllCategories();
   }, []);
+
   return (
     <>
       {libraryAdminAccess || blogAdminAccess ? (
@@ -98,10 +190,10 @@ const EditBlog = () => {
           {!cantEdit ? (
             <div className="main flex md:justify-end justify-center">
               <div className="right-main-content overflow-x-auto md:w-[75%]">
-                {blogAdminAccess && (
+                {blogAdminAccess ? (
                   <>
                     <h1 className="text-4xl mb-4 text-center whitespace-nowrap w-fit mx-auto">
-                      Add a blog post
+                      Edit this blog post
                       <FaPencilAlt className="inline mx-2 dark:text-white text-gray-700" />
                     </h1>
                     <div>
@@ -147,15 +239,13 @@ const EditBlog = () => {
                         </div>
                         <div className="relative z-0 w-full mb-5 group">
                           <Editor
+                            apiKey={`${vars.tinyAPIKey}`}
                             onInit={(evt, editor) =>
                               (editorRef.current = editor)
                             }
-                            apiKey={`${vars.tinyAPIKey}`}
                             init={{
-                              plugins:
-                                "anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount linkchecker markdown",
-                              toolbar:
-                                "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat",
+                              plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount linkchecker markdown',
+                              toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat | preview',
                             }}
                             initialValue={blogCreds.content}
                           />
@@ -173,7 +263,7 @@ const EditBlog = () => {
                               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                               htmlFor="file_input"
                             >
-                              Upload Blog&apos;s Image
+                              Change Blog&apos;s Image
                             </label>
                             <input
                               className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
@@ -182,7 +272,6 @@ const EditBlog = () => {
                               type="file"
                               onChange={handleFileUpload}
                               ref={fileUploaderRef}
-                              required
                             />
                             <p
                               className="mt-1 text-sm text-gray-500 dark:text-gray-300"
@@ -193,21 +282,53 @@ const EditBlog = () => {
                             </p>
                           </>
                         </div>
+                        <div className="relative z-0 w-full mb-5 group">
+                          <>
+                            <select
+                              ref={categoryRef}
+                              id="countries"
+                              name="category" // Add this line to bind the select value to the state
+                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                              onChange={onChange} // Ensure correct function name
+                              value={blogCreds.category}
+                            >
+                              {categories.map((cat) => {
+                                return (
+                                  <option key={cat.sno} value={cat.sno}>
+                                    {cat.name}
+                                  </option>
+                                );
+                              })}
+                            </select>
+                            <label
+                              htmlFor="countries"
+                              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                            >
+                              The category can be changed from here.
+                            </label>
+                          </>
+                        </div>
                         <button
                           type="submit"
                           className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                         >
-                          Upload
+                          Update
                         </button>
                       </form>
                     </div>
                   </>
+                ) : (
+                  <div>
+                    <p className="text-center text-3xl">
+                      You Can&apos;t edit this post as its been allowed.
+                    </p>
+                  </div>
                 )}
               </div>
             </div>
           ) : (
             <div>
-              <p className="text-center text-3xl">You Can&apos;t edit this post as its been allowed.</p>
+              <p className="text-center text-3xl">Unauthorised</p>
             </div>
           )}
         </>

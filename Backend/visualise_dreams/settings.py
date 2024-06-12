@@ -44,7 +44,6 @@ EMAIL_HOST_USER = 'bloggerpandey.a@gmail.com'  # Your Gmail username
 EMAIL_HOST_PASSWORD = 'kfvwqjacbciqjgsu'
 EMAIL_FILE_PATH = BASE_DIR / "sent_emails"
 
-SITE_ID = 1  # Assuming you have only one site
 
 # Configure allauth and rest-auth settings
 ACCOUNT_EMAIL_VERIFICATION = 'none'
@@ -59,6 +58,7 @@ FRONTEND_URL = "http://localhost:5173"
 INSTALLED_APPS = [
     'blog.apps.BlogConfig',
     'main.apps.MainConfig',
+    'fileUploadTest.apps.FileuploadtestConfig',
     'Elibrary.apps.ElibraryConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    "serverStartupFunctions.apps.ServerstartupfunctionsConfig",
     'rest_framework_simplejwt',
     'accounts',
     'corsheaders',
@@ -88,7 +89,7 @@ ROOT_URLCONF = 'visualise_dreams.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, "frontend/dist")],
+        'DIRS': [os.path.join(BASE_DIR,"templates")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -113,6 +114,7 @@ WSGI_APPLICATION = 'visualise_dreams.wsgi.application'
 #         'NAME': BASE_DIR / 'test.sqlite3',
 #     }
 # }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -127,6 +129,17 @@ DATABASES = {
 #         'NAME': 'mpsAjmer',
 #         'USER': 'root',
 #         'PASSWORD': '',
+#         'HOST':'localhost',
+#         'PORT':'3306',
+#     }
+# }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'mpsAjmer_5',
+#         'USER': 'aditya',
+#         'PASSWORD': 'safetywall',
 #         'HOST':'localhost',
 #         'PORT':'3306',
 #     }
@@ -178,7 +191,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATICFILES_DIRS = [
     BASE_DIR / "static",
     "static/",
-    os.path.join(BASE_DIR,"frontend/dist")
+    os.path.join(BASE_DIR,"frontend/dist/")
 ]
 
 # STATIC_ROOT = os.path.join(BASE_DIR, 'static')
@@ -208,9 +221,9 @@ AUTH_USER_MODEL = 'accounts.CustomUser'
 
 # Managing DRF APIs:-
 REST_FRAMEWORK = {
-    'DEFAULT_RENDERER_CLASSES': (
+    'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
-    ),
+    ],
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
@@ -221,15 +234,7 @@ REST_FRAMEWORK = {
 Managing Django CORS:-
 """
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://192.168.43.53:3000",
-    "http://192.168.43.122:3000",
-    "http://192.168.43.122:5173",
-    "http://192.168.43.122:5500",
-    "http://127.0.0.1:5500",
-    "http://127.0.0.1:3000",
-    "http://localhost:5173",
-    "http://localhost:4173",
+    'http://localhost:5173'
 ]
 
 
@@ -238,6 +243,7 @@ CORS_ALLOW_METHODS = [
     'GET',
     'POST',
     'PUT',
+    'PATCH',
 ]
 
 

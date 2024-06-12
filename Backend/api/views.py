@@ -1,146 +1,78 @@
-from .serializer import BlogSerializer, BlogUserSerializer, UserSerializer, BookSerializer, UpdateProfileSerializer, GroupSerializer
-from rest_framework.generics import ListAPIView
+from .serializer import BlogSerializer, BlogUserSerializer, UserSerializer, BookSerializer, UpdateProfileSerializer, GroupSerializer, CategorySerializer, BookCategorySerializer
 from datetime import datetime
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.views import APIView
-from rest_framework.generics import RetrieveAPIView
+from rest_framework.generics import RetrieveAPIView, ListAPIView, CreateAPIView
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, JSONParser
 from rest_framework.permissions import IsAuthenticated
-from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.http import JsonResponse
 from rest_framework import status, permissions
 import os
 from visualise_dreams import settings
-from blog.models import Post
+from blog.models import Post, Categories
 from accounts.models import CustomUser as User
 from django.contrib.auth.models import Group
-from Elibrary.models import Book
+from Elibrary.models import Book, BookCategory
 from visualise_dreams import vars
 from django.utils import timezone
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes, force_bytes
-from django.core.mail import send_mail
-from django.contrib.auth.tokens import default_token_generator
-from django.template.loader import render_to_string
-# from rest_auth.views import PasswordResetView
+from django.db.models import Prefetch
+from .pagination import BlogPaginations, AdminPostPaginations, SearchPagination, PageNumberPagination
+from .permissions import IsSuperUserPermission, BlogPermission, ElibraryPermission
 
-from .pagination import BlogPaginations, AdminPostPaginations, SearchPagination
 
-# Create your views here.
-# class PasswordResetRequestView(APIView):
-#     def post(self, request):
-#         email = request.data.get('email')
-#         if email:
-#             try:
-#                 user = User.objects.get(email=email)
-#             except User.DoesNotExist:
-#                 return Response({'error': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
-
-#             token = default_token_generator.make_token(user)
-#             uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
-
-#             reset_url = f"{settings.FRONTEND_URL}/reset-password/{uidb64}/{token}/"
-
-#             send_mail(
-#                 'Password Reset',
-#                 f'Click the link to reset your password: {reset_url}',
-#                 settings.EMAIL_HOST_USER,
-#                 [email],
-#                 fail_silently=False,
-#             )
-#             return Response({'success': 'Password reset email sent.'}, status=status.HTTP_200_OK)
-#         else:
-#             return Response({'error': 'Email is required.'}, status=status.HTTP_400_BAD_REQUEST)
-
-# class PasswordResetConfirmView(APIView):
-#     def post(self, request, uidb64, token):
-#         try:
-#             uid = force_bytes(urlsafe_base64_decode(uidb64))
-#             user = User.objects.get(pk=uid)
-#         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-#             user = None
-
-#         if user and default_token_generator.check_token(user, token):
-#             new_password = request.data.get('new_password')
-#             if new_password:
-#                 user.set_password(new_password)
-#                 user.save()
-#                 return Response({'success': 'Password reset successful.'}, status=status.HTTP_200_OK)
-#             else:
-#                 return Response({'error': 'New password is required.'}, status=status.HTTP_400_BAD_REQUEST)
-#         else:
-#             return Response({'error': 'Invalid reset link.'}, status=status.HTTP_400_BAD_REQUEST)
         
-        
-class PasswordResetView(APIView):
-    parser_classes = [JSONParser]
-    def post(self, request):
-        email = request.data['email']
-        user = User.objects.filter(email=email).first()
-        if user:
-            token_generator = PasswordResetTokenGenerator()
-            token = token_generator.make_token(user)
-            uidb64 = urlsafe_base64_encode(force_bytes(user.pk)).encode('utf-8')
-            reset_url = f'{settings.FRONTEND_URL}/reset-password/{uidb64}/{token}/'
-            send_mail(
-                'Password Reset',
-                render_to_string('email/password_reset.html', {'reset_url': reset_url}),
-                'from@example.com',
-                [email],
-                fail_silently=False,
-            )
-        return JsonResponse({'message': 'Password reset email sent'}, status=200)
 
 
 
-class IsSuperUserPermission(permissions.BasePermission):
-    def has_permission(self, request, view):
-        return request.user.is_superuser
 
-
-class CheckGroupExists(APIView):
+class AddBook(CreateAPIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated, IsSuperUserPermission]
-    def get(self, request):
-        group_names = ['Blogs', 'Elibrary']  # List of group names to check
-        existing_groups = []
-        non_existing_groups = []
-
-        for group_name in group_names:
-            if Group.objects.filter(name=group_name).exists():
-                existing_groups.append(group_name)
-            else:
-                non_existing_groups.append(group_name)
-                # Create the group
-                Group.objects.create(name=group_name)
-
-        response_data = {
-            'existing_groups': existing_groups,
-            'non_existing_groups': non_existing_groups
-        }
-
-        if existing_groups:
-            return Response(response_data, status=status.HTTP_200_OK)
-        else:
-            return Response(response_data, status=status.HTTP_404_NOT_FOUND)
-
-
-class BlogPermission(permissions.BasePermission):
-    """
-    Custom permission to allow access only to superusers or users in a specific group.
-    """
-
-    def has_permission(self, request, view):
-        return request.user.is_superuser or request.user.groups.filter(name='Blogs').exists()
-
-class Test(APIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated, BlogPermission]
-    def post(self, request):
-        print(os.getenv("MPS_AJMER_SECRET_KEY"))
-        return Response({"success": os.getenv("MPS_AJMER_SECRET_KEY")})
+    permission_classes = [IsAuthenticated, ElibraryPermission]
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
     
+
+
+class CatBookList(APIView):
+    def get(self, request):
+        cats = BookCategory.objects.prefetch_related(
+            Prefetch('book_set', queryset=Book.objects.all().order_by("-bookSno"), to_attr='books')
+        )
+        allBooks = []
+        for cat in cats:
+            if cat.books:  # Ensure there are posts before processing
+                catPosts = BookSerializer(cat.books, many=True).data
+                categortSer = BookCategorySerializer(cat)
+                catObj = {
+                    "cat": categortSer.data['name'],
+                    "books": catPosts,
+                }
+                allBooks.append(catObj)
+        paginator = PageNumberPagination()
+        paginator.page_size = 3
+        page = paginator.paginate_queryset(allBooks, request)
+        if page is not None:
+            return paginator.get_paginated_response(page)
+        return Response(allBooks)
+
+class CatPostList(APIView):
+    def get(self, request):
+        cats = Categories.objects.all()
+        allPosts = []
+        for cat in cats:
+            posts = Post.objects.filter(category = cat, allowed = True).order_by("-allowd_at")
+            catPosts = []
+            for post in posts:
+                serPos = BlogSerializer(post)
+                catPosts.append(serPos.data)
+            categortSer = CategorySerializer(cat)
+            catObj = {
+                "cat": categortSer.data['name'],
+                "posts": catPosts,
+            }
+            if len(posts) > 0:
+                allPosts.append(catObj)
+        return Response(allPosts)
 
 class GetUserByUsername(RetrieveAPIView):
     serializer_class = UserSerializer
@@ -152,19 +84,26 @@ class PostList(ListAPIView):
     serializer_class = BlogSerializer
     pagination_class = BlogPaginations
     def get_queryset(self):
-        posts = Post.objects.filter(allowed = True).order_by("-allowd_at")
+        cat = self.kwargs['cat']
+        category = Categories.objects.get(name =cat)
+        posts = Post.objects.filter(allowed = True, category=category).order_by("-allowd_at")
         return posts
 
 
     
 class AllowedPostsList(ListAPIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated, BlogPermission]
     serializer_class = BlogSerializer
     pagination_class = AdminPostPaginations
     queryset = Post.objects.all()
     def get_queryset(self):
         posts = Post.objects.filter(allowed = True).order_by("-allowd_at")
         return posts
+
 class BlockedPostsList(ListAPIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated, BlogPermission]
     serializer_class = BlogSerializer
     pagination_class = AdminPostPaginations
     queryset = Post.objects.all()
@@ -173,20 +112,32 @@ class BlockedPostsList(ListAPIView):
         return posts
     
     
+class GetCategoryList(ListAPIView):
+    queryset = Categories.objects.all()
+    serializer_class = CategorySerializer
+    
+    
 class BlogLength(APIView):
     def get(self, request):
-        blogLen = len(Post.objects.filter(allowed=True))
+        blogLen = Post.objects.filter(allowed=True).count()
         if blogLen > vars.max_no_of_posts:
             postLen = f"{vars.max_no_of_posts}+"
             return Response({"length": postLen})
         else:
-            postLen = blogLen
-            return Response({"length": postLen})
+            return Response({"length": blogLen})
 
 
 class BookList(ListAPIView):
+    pagination_class = PageNumberPagination
+    pagination_class.page_size = 4
     queryset = Book.objects.all()
     serializer_class = BookSerializer
+    def get_queryset(self):
+        categorySno = self.kwargs['cat']
+        mainCat = BookCategory.objects.get(name=categorySno)
+        books = Book.objects.filter(category=mainCat)
+        return books
+    
 
 class PostUser(RetrieveAPIView):
     serializer_class = BlogUserSerializer
@@ -223,53 +174,54 @@ class CRUDPost(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated, BlogPermission]
     parser_classes = [MultiPartParser, JSONParser]
-    
-    # def post(self, request, snoPost):
-    #     if snoPost == 0:
-    #         groups = request.user.groups.values_list('name', flat=True)
-    #         if request.user.is_superuser or 'Blogs' in groups:
-    #             data = request.data
-    #             serializer = BlogSerializer(data=data)
-    #             if serializer.is_valid():
-                
-    #                 author = CustomUser.objects.filter(TIDNO=data.get("TIDNO"))
-    #                 print(author)
-    #                 print(data.get(""))
-    #                 if len(author) is 0:
-    #                     author = None
-    #                 if author is not None:
-    #                     serializer.validated_data['author'] = author[0]
-    #                     # serializer.save()
-    #                     return Response({"success": True, "data": serializer.data}, status=status.HTTP_201_CREATED)
-    #                 else:
-    #                     return Response({"success": False, "err_code": "user_not_exists"}, status=status.HTTP_200_OK)            
-    #             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    #         return Response({"success": False}, status=status.HTTP_401_UNAUTHORIZED)
-    #     return Response(status=status.HTTP_400_BAD_REQUEST)
-    
+        
     def post(self, request, snoPost):
         data = request.data
-        serializer = BlogSerializer(data=data)
-        if serializer.is_valid():
-            serializer.validated_data['allowed'] = True
-            serializer.validated_data['allowd_at'] = datetime.now()
-            serializer.save()
-            return Response({"success": True, "data": serializer.data}, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if snoPost == 0:
+            serializer = BlogSerializer(data=data)
+            if serializer.is_valid():
+                serializer.validated_data['allowed'] = True
+                serializer.validated_data['allowd_at'] = datetime.now()
+                serializer.save()
+                return Response({"success": True, "data": serializer.data}, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
-
-
     def delete(self, request, snoPost):
         post = Post.objects.get(snoPost = snoPost)
         if not post == None:
             media_file_path = f'{settings.MEDIA_ROOT}/{post.image}'
             os.remove(media_file_path)
-            # print(f'/media/{media_file_path}')
             post.delete()
-            postSer = BlogSerializer(post)
             return Response({"success": True}, status=status.HTTP_200_OK)
         else:
             return Response('Post Not Found', status=status.HTTP_404_NOT_FOUND)
+        
+    def patch(self, request, snoPost):
+        post = Post.objects.get(snoPost = snoPost)
+        if post.allowed == False:
+            data = request.data
+            serializer = BlogSerializer(data=data)
+            serializer.instance = post
+            
+            if serializer.is_valid():
+                try:
+                    if serializer.validated_data['image']:
+                        media_file_path = f'{settings.MEDIA_ROOT}/{post.image}'
+                        os.remove(media_file_path)
+                except Exception as error:
+                    pass
+                if post.by_admin != True:
+                    serializer.validated_data['author'] = post.author
+                else:
+                    serializer.validated_data['by_admin'] = True
+                serializer.save()
+                return Response({"success": True})
+            else:
+                return Response({}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response({}, status=status.HTTP_401_UNAUTHORIZED)
         
     def put(self, request, snoPost):
         json = request.data
@@ -285,6 +237,30 @@ class CRUDPost(APIView):
             post.save()
             return Response({"success": True}, status=status.HTTP_200_OK)
         
+
+class StudentsBlogApi(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    parser_classes = [JSONParser, MultiPartParser]
+    
+    def post(self, request, snoPost):
+        data = request.data
+        ser = BlogSerializer(data=data)
+        if snoPost == 0:
+            if ser.is_valid():
+                ser.validated_data['author'] = request.user
+                ser.validated_data['by_admin'] = False
+                ser.validated_data['allowed'] = False
+                ser.validated_data['blocked_at'] = datetime.now()
+                ser.save()
+                return Response({"success": True, "data": ser.data})            
+            else:
+                return Response({}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        else:
+            return Response({}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        
+
+
 
 
 class GetUserData(APIView):
@@ -302,7 +278,7 @@ class GetUserData(APIView):
 class UpdateProfile(APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
-    parser_classes = ( MultiPartParser, JSONParser )
+    parser_classes = (MultiPartParser, JSONParser)
     
     def get(self, request):
         user = request.user
@@ -312,6 +288,20 @@ class UpdateProfile(APIView):
     def put(self, request):
         serializer = UpdateProfileSerializer(instance=request.user, data=request.data)
         if serializer.is_valid():
+            try:
+                if serializer.validated_data['profile']:
+                    if request.user.profile != 'user/blank.webp':
+                        media_file_path = f'{settings.MEDIA_ROOT}/{request.user.profile}'
+                        os.remove(media_file_path)
+            except Exception as error:
+                pass
+            try:
+                if serializer.validated_data['bannerImg']:
+                    if request.user.bannerImg != 'user/blank.webp':
+                        media_file_path = f'{settings.MEDIA_ROOT}/{request.user.bannerImg}'
+                        os.remove(media_file_path)
+            except Exception as error:
+                pass
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -319,6 +309,7 @@ class UpdateProfile(APIView):
 
 
 class SearchBlog(APIView):
+    parser_classes = [JSONParser]
     def post(self, request):
         paginator = SearchPagination()
         data = request.data
@@ -330,29 +321,21 @@ class SearchBlog(APIView):
         allPostContent = Post.objects.filter(content__icontains = query, allowed = True)
         allPosts = allPostTitle.union(allPostAuthorFName, allPostAuthorLName, allPostContent).order_by("-allowd_at")
         paginated_blogs = paginator.paginate_queryset(allPosts, request)
-
-        
-        # books = Book.objects.filter(bookName__icontains = query)
-        # booksAuthor = Book.objects.filter(author__icontains = query)
-        # booksCat = Book.objects.filter(category__icontains = query)
-        # booksDesc = Book.objects.filter(desc__icontains = query)
-        # allBooks = books.union(booksAuthor, booksCat, booksDesc)
-        # BookSer = BookSerializer(allBooks, many=True)
         BloSer = BlogSerializer(paginated_blogs, many=True)
         return paginator.get_paginated_response(BloSer.data)
     
 class SearchBook(APIView):
+    parser_classes = [JSONParser]
     def post(self, request):
         paginator = SearchPagination()
         data = request.data
         query = data.get('query')
-        
         books = Book.objects.filter(bookName__icontains = query)
         booksAuthor = Book.objects.filter(author__icontains = query)
-        booksCat = Book.objects.filter(category__icontains = query)
+        booksCat = Book.objects.filter(category__name__icontains = query)
         booksDesc = Book.objects.filter(desc__icontains = query)
         allBooks = books.union(booksAuthor, booksCat, booksDesc)
-        paginated_books = paginator.get_paginated_response(allBooks, request)
+        paginated_books = paginator.paginate_queryset(allBooks, request)
         BookSer = BookSerializer(paginated_books, many=True)
-        return paginator.get_paginated_response(BookSer.data, status=status.HTTP_200_OK)
+        return paginator.get_paginated_response(BookSer.data)
     

@@ -5,10 +5,9 @@ const NavbarLink = ({ to, name }) => {
   // useEffect(() => {
   //   console.log(location.pathname);
   // }, [])
-  
   return (
     <>
-      <div className={`nav-item m-0 ${String(location.pathname) === String(to) ? "link-active" : ""} font-Oswald hover:underline hover:underline-offset-8 dark:text-white text-blue-600 lg:text-xl md:text-lg`}>
+      <div className={`nav-item m-0 ${String(location.pathname.toLocaleLowerCase()).startsWith(`/${String(name).toLocaleLowerCase()}`) ? "link-active" : ""} font-Oswald hover:underline hover:underline-offset-8 dark:text-white text-blue-600 lg:text-xl md:text-lg`}>
         <Link to={to}>{name}</Link>
       </div>
     </>

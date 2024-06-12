@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useContext, useEffect } from "react";
-import alertContext from "../context/alert/alertContext";
 import { useNavigate } from "react-router-dom";
 import vars from "../vars";
 import loaderContext from "../context/loadingBar/loderContext";
@@ -11,9 +10,7 @@ const EditProfile = () => {
   const loderCon = useContext(loaderContext);
   const {setProgress} = loderCon;
   const navigate = useNavigate();
-  const alContext = useContext(alertContext);
   const maxFileNameLength = 100;
-  const { showAlert } = alContext;
   const [user, setUser] = useState({
     email: "",
     nickname: "",

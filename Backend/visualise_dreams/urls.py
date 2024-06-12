@@ -19,7 +19,7 @@ urlpatterns = [
     path('blog/', include('blog.urls'), name="blog"),
     path('library/', include('Elibrary.urls'), name="eLibrary"),
     path('api/', include('api.urls'), name="api"),
-    # path('api/accounts/', include('usersapi.urls'), name="api"),
+    path('test-api/', include('fileUploadTest.urls'), name="api"),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

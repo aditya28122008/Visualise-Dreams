@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 const BlogState = ({ children }) => {
   const conDeleteBlogById = async (id) => {
     try {
-      const response = await fetch(`${vars.host}/api/admin-crud-blogs/${id}`, {
+      const response = await fetch(`${vars.host}/api/admin-crud-blogs/${id}/`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("MPSUser")}`,
@@ -27,7 +27,11 @@ const BlogState = ({ children }) => {
   };
   const conGetBlogs = async () => {
     try {
-      const response = await fetch(`${vars.host}/api/a-post-admin/`);
+      const response = await fetch(`${vars.host}/api/a-post-admin/`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("MPSUser")}`
+        }
+      });
       let json = await response.json();
       return {json, success: true};
     } catch (error) {

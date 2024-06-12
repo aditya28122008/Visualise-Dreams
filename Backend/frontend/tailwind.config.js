@@ -12,16 +12,13 @@ export default {
         "BalooBhaijaan2": ['Baloo Bhaijaan 2', 'sans-serif'],
         "Kalnia": ['Kalnia', 'serif'],
         "BalooBahina2": ['Baloo Bhaina 2', 'sans-serif'],
-        "Sevillana": ['Sevillana', 'cursive']
+        "Sevillana": ['Sevillana', 'cursive'],
+        "Caveat": ['Caveat', 'cursive'],
       },
       colors:{
         'darkMode': '#343541',
       }
     },
   },
-  // theme: {
-
-  // },
   plugins: [],
 }
-

@@ -2,7 +2,7 @@ import logo from "./Logo.png";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import { useState } from "react";
-import Blog from "./components/Blog";
+import CatBlog from "./components/CatBlog";
 import Library from "./components/Library";
 import Sidebar from "./components/Sidebar";
 import UserState from "./context/users/UserState";
@@ -17,6 +17,7 @@ import Search from "./components/Search";
 import loaderContext from "./context/loadingBar/loderContext";
 import LoaadingBar from "./components/LoaadingBar";
 import AllowedPosts from "./components/admin/AllowedPosts";
+import AddBlogStudent from "./components/AddBlogStudent";
 import { ToastContainer } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
@@ -25,6 +26,11 @@ import BlogState from "./context/admin/blogs/BlogState";
 import BlockedPosts from "./components/admin/BlockedPosts";
 import AddBlog from "./components/admin/AddBlog";
 import EditBlog from "./components/admin/EditBlog";
+import ManageCat from "./components/admin/ManageCat";
+import BlogNew from "./components/BlogNew";
+import Test from "./components/Test";
+import LibraryNew from "./components/LibraryNew";
+import EditBlogCategory from "./components/admin/EditBlogCategory";
 
 function App() {
   const [mode, setMode] = useState("");
@@ -72,7 +78,7 @@ function App() {
                   />
                   <Alert />
                   <ToastContainer
-                    position="top-center"
+                    position="top-right"
                     autoClose={2500}
                     hideProgressBar={false}
                     newestOnTop={false}
@@ -97,24 +103,35 @@ function App() {
                       // id="rightBody"
                       id="scrollableDiv"
                     >
-                      {/* <Modal /> */}
                       <Routes>
-                        <Route exact index element={<Blog />} />
+                        <Route exact index element={<BlogNew />} />
                         <Route path="/blog/:slug" element={<BlogRead />} />
-                        <Route exact path="/elibrary" element={<Library />} />
+                        <Route path="/category/:category" element={<CatBlog />} />
+                        <Route path="/b-cat/:category" element={<Library />} />
+                        <Route exact path="/elibrary" element={<LibraryNew />} />
                         <Route
                           path="/profile/:username"
                           element={<Profile />}
                         />
                         <Route path="/search/:query" element={<Search />} />
                         <Route path="/edit-profile" element={<EditProfile />} />
+                        <Route path="/add-blog" element={<AddBlogStudent />} />
+                        <Route path="/test" element={<Test />} />
                         <Route
                           path="/admin/a-posts"
                           element={<AllowedPosts />}
                         />
                         <Route
+                          path="/admin/ed-bl-cat/:sno"
+                          element={<EditBlogCategory />}
+                        />
+                        <Route
                           path="/admin/b-posts"
                           element={<BlockedPosts />}
+                        />
+                        <Route
+                          path="/admin/m-categories"
+                          element={<ManageCat />}
                         />
                         <Route
                           path="/admin/edit-blog/:slug"
@@ -133,6 +150,18 @@ function App() {
                       <Footer logo={logo} />
                     </div>
                   </div>
+                  <div className="hidden text-9xl"></div>
+                  <div className="hidden text-8xl"></div>
+                  <div className="hidden text-7xl"></div>
+                  <div className="hidden text-6xl"></div>
+                  <div className="hidden text-5xl"></div>
+                  <div className="hidden text-4xl"></div>
+                  <div className="hidden text-3xl"></div>
+                  <div className="hidden text-2xl"></div>
+                  <div className="hidden text-xl"></div>
+                  <div className="hidden text-lg"></div>
+                  <div className="hidden text-base"></div>
+                  <div className="hidden text-sm"></div>
                 </div>
               </BrowserRouter>
             </UserState>
