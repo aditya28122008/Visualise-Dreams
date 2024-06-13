@@ -1,12 +1,13 @@
 import { useState } from "react";
 import UserContext from "./userContext";
 import vars from "../../vars";
-import {toast} from 'react-toastify'
+import { toast } from "react-toastify";
 // eslint-disable-next-line react/prop-types
-const UserState = ({children}) => {
+const UserState = ({ children }) => {
   const [user, setUser] = useState({});
   const [authenticated, setAuthenticated] = useState(null);
   const [blogAdminAccess, setBlogAdminAccess] = useState(false);
+  const [userAdminAccess, setUserAdminAccess] = useState(false);
   const [libraryAdminAccess, setLibraryAdminAccess] = useState(false);
   const checkGroups = async (juser) => {
     if (juser.is_superuser) {
@@ -20,6 +21,8 @@ const UserState = ({children}) => {
           setBlogAdminAccess(true);
         } else if ("Elibrary" === json[0].name) {
           setLibraryAdminAccess(true);
+        } else if ("UserAdmin" === json[0].name) {
+          setUserAdminAccess(true);
         }
       });
     }
@@ -34,7 +37,11 @@ const UserState = ({children}) => {
           },
         });
         const json = await response.json();
-        if (json.code === "token_not_valid" || json.code === "user_inactive" || json.code === "user_not_found") {
+        if (
+          json.code === "token_not_valid" ||
+          json.code === "user_inactive" ||
+          json.code === "user_not_found"
+        ) {
           localStorage.removeItem("MPSUser");
           setAuthenticated(false);
         } else {
@@ -46,9 +53,12 @@ const UserState = ({children}) => {
         setAuthenticated(false);
         setBlogAdminAccess(false);
         setLibraryAdminAccess(false);
+        setUserAdminAccess(false);
       }
     } catch (error) {
-      toast.error("Can't connect to the server. Please check your internet connection")
+      toast.error(
+        "Can't connect to the server. Please check your internet connection"
+      );
     }
   };
 
@@ -60,6 +70,7 @@ const UserState = ({children}) => {
         authenticated,
         blogAdminAccess,
         libraryAdminAccess,
+        userAdminAccess,
         checkGroups,
       }}
     >

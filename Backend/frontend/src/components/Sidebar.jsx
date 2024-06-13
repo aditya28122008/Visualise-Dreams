@@ -15,9 +15,7 @@ const Sidebar = (props) => {
   const [blogLen, setBlogLen] = useState("");
   const { blogAdminAccess, libraryAdminAccess } = usContext;
   useEffect(() => {
-    // fetchUser();
     getPostsLength();
-    // eslint-disable-next-line
   }, []);
   const getPostsLength = async () => {
     try {
@@ -61,7 +59,7 @@ const Sidebar = (props) => {
                 Blogs:
               </p>
               {blogAdminAccess && (
-                <l>
+                <>
                   <SideNavLink
                     name="Allowed Posts"
                     to="/admin/a-posts"
@@ -80,7 +78,7 @@ const Sidebar = (props) => {
                     name="Manage Categories"
                     to="/admin/m-categories"
                     icon={
-                      <TbCategoryFilled className="text-3xl text-red-600 dark:text-red-500 rounded-full" />
+                      <TbCategoryFilled className="text-3xl text-green-600 dark:text-red-500 rounded-full" />
                     }
                   />
                   <SideNavLink
@@ -90,7 +88,8 @@ const Sidebar = (props) => {
                       <FaPencilAlt className="text-3xl text-black-600 dark:text-red-500" />
                     }
                   />
-                </l>
+                  <hr className="h-[0.18rem] bg-blue-600 rounded-md md:mx-6 md:hidden" />
+                </>
               )}
             </div>
           </div>

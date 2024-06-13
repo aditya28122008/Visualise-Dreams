@@ -32,6 +32,71 @@ class AddBook(CreateAPIView):
     serializer_class = BookSerializer
     
 
+class GetSpBlCat(RetrieveAPIView):
+    serializer_class = CategorySerializer
+    queryset = Categories.objects.all()
+    lookup_field = "name"
+
+class DeleteBlCat(APIView):
+    authentication_classes = [JWTAuthentication]
+    parser_classes = [MultiPartParser]
+    permission_classes = [IsAuthenticated, BlogPermission]
+    def get(self, request, name):
+        cat = Categories.objects.get(name = name)
+        posts = Post.objects.filter(category = cat)
+        if len(posts) == 0:
+            cat.delete()
+            return Response({"success": True}, status=status.HTTP_200_OK)
+        else:
+            return Response({"success": False, "code": "p_exists"})
+
+
+class AddBlCategory(APIView):
+    parser_classes = [MultiPartParser]
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated, BlogPermission]
+    def post(self, request):
+        data = request.data
+        cat = None
+        try:
+            cat = Categories.objects.get(name=data['name'])
+        except Exception as e:
+            pass
+        if not cat:
+            ser = CategorySerializer(data=data)
+            if ser.is_valid():
+                ser.save()
+                return Response({"success": True}, status=status.HTTP_201_CREATED)
+            return Response({"success": True}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"success": False}, status=status.HTTP_409_CONFLICT)
+
+class UpdateBlCat(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated, BlogPermission]
+    parser_classes = [MultiPartParser]
+
+    def put(self, request, name):
+        data = request.data
+        cat = Categories.objects.filter(name=name)
+        
+        if cat.exists():
+            newcat = cat.first()
+            new_name = data.get('name')
+
+            # Check if another category with the new name exists
+            if Categories.objects.filter(name=new_name).exclude(sno=newcat.sno).exists():
+                return Response({"success": False, "message": "Category name already in use"}, status=status.HTTP_409_CONFLICT)
+
+            ser = CategorySerializer(instance=newcat, data=data)
+            
+            if ser.is_valid():
+                ser.save()
+                return Response({"success": True}, status=status.HTTP_200_OK)
+            else:
+                return Response({"success": False, "errors": ser.errors}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({"success": False, "message": "Category not found"}, status=status.HTTP_404_NOT_FOUND)
 
 class CatBookList(APIView):
     def get(self, request):

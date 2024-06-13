@@ -31,6 +31,7 @@ import BlogNew from "./components/BlogNew";
 import Test from "./components/Test";
 import LibraryNew from "./components/LibraryNew";
 import EditBlogCategory from "./components/admin/EditBlogCategory";
+import AddBlogCategory from "./components/admin/AddBlogCategory";
 
 function App() {
   const [mode, setMode] = useState("");
@@ -122,8 +123,12 @@ function App() {
                           element={<AllowedPosts />}
                         />
                         <Route
-                          path="/admin/ed-bl-cat/:sno"
+                          path="/admin/ed-bl-cat/:name"
                           element={<EditBlogCategory />}
+                        />
+                        <Route
+                          path="/admin/add-bl-cat"
+                          element={<AddBlogCategory />}
                         />
                         <Route
                           path="/admin/b-posts"

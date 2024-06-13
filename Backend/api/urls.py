@@ -25,4 +25,8 @@ urlpatterns = [
     path('student-crud-blogs/<int:snoPost>/', views.StudentsBlogApi.as_view()),
     path('group-name/<str:id>/', views.GetGroupName.as_view()),
     path('get-all-categories/', views.GetCategoryList.as_view()),
+    path('get-sp-bl-cat/<str:name>/', views.GetSpBlCat.as_view()),
+    path('upda-sp-bl-cat/<str:name>/', views.UpdateBlCat.as_view()),
+    path('del-sp-bl-cat/<str:name>/', views.DeleteBlCat.as_view()),
+    path('add-sp-bl-cat/', views.AddBlCategory.as_view()),
 ]

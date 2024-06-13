@@ -53,7 +53,7 @@ const CatBlog = () => {
   }, []);
   return (
     <>
-      <TopTitle /> 
+      <TopTitle />
       <div className="container px-5 py-24 mx-auto">
         <h1 className="text-blue-700 italic font-DancingScript dark:bg-gray-900 dark:text-blue-300 md:text-5xl lg:text-8xl text-3xl whitespace-nowrap w-fit mx-auto md:mb-24">
           {category}

@@ -5,25 +5,16 @@ import vars from "../../vars";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
-const EditBlogCategory = () => {
-  const { name } = useParams();
+const AddBlogCategory = () => {
   const navigate = useNavigate();
   const loadCon = useContext(loaderContext);
   const { setProgress } = loadCon;
   const [catCreds, setCatCreds] = useState({});
-  const fetchCat = async () => {
-    setProgress(50);
-    const creds = await axios.get(
-      `${vars.host}/api/get-sp-bl-cat/${name.toString()}/`
-    );
-    setCatCreds(creds.data);
-    setProgress(100);
-  };
   const onChange = (e) => {
     setCatCreds({ ...catCreds, [e.target.name]: e.target.value });
   };
   useEffect(() => {
-    fetchCat();
+    setProgress(100);
   }, []);
   const catFormData = new FormData();
   const onSubmit = async (e) => {
@@ -34,18 +25,19 @@ const EditBlogCategory = () => {
     };
     try {
       catFormData.set("name", catCreds.name);
-      const up = await axios.put(
-        `${vars.host}/api/upda-sp-bl-cat/${name}/`,
+      const up = await axios.post(
+        `${vars.host}/api/add-sp-bl-cat/`,
         catFormData,
         { headers }
       );
       if (up.data.success) {
         navigate(-1);
+      } else {
+        toast.error("The Category Already Exists...!");
       }
     } catch (error) {
-      console.log(error);
       if (error.response.status === 409) {
-        toast.error("Another category with same name already exists...!");
+        toast.error("The category already exists...!");
       } else {
         toast.error(
           "Can't connect to the server. Please check your internet connection"
@@ -79,10 +71,10 @@ const EditBlogCategory = () => {
           type="submit"
           className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         >
-          Update
+          Add Category
         </button>
       </form>
     </>
   );
 };
-export default EditBlogCategory;
+export default AddBlogCategory;
