@@ -1,13 +1,9 @@
 import { Link } from "react-router-dom";
 import BookItemSearch from "./BookItemSearch";
-import { useEffect } from "react";
 
 
 const CategoryBookDisplay = (props) => {
 
-  useEffect(() => {
-    console.log(props.books);    
-  }, [])
   return (
     <div className="lg:my-52 my-8">
       <div className="lg:text-8xl italic font-Oswald lg:mb-8 text-2xl sm:text-4xl md:text-6xl md:mb-4">

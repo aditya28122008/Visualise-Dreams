@@ -13,15 +13,16 @@ const UserState = ({ children }) => {
     if (juser.is_superuser) {
       setBlogAdminAccess(true);
       setLibraryAdminAccess(true);
+      setUserAdminAccess(true);
     } else {
       juser.groups.map(async (group) => {
         const response = await fetch(`${vars.host}/api/group-name/${group}/`);
         const json = await response.json();
-        if ("Blogs" === json[0].name) {
+        if ("Blogs" === json.name) {
           setBlogAdminAccess(true);
-        } else if ("Elibrary" === json[0].name) {
+        } else if ("Elibrary" === json.name) {
           setLibraryAdminAccess(true);
-        } else if ("UserAdmin" === json[0].name) {
+        } else if ("UserAdmin" === json.name) {
           setUserAdminAccess(true);
         }
       });

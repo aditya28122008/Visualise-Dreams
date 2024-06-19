@@ -7,7 +7,7 @@ const BookItemSearch = (props) => {
     <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow-2xl dark:shadow-2xl dark:bg-gray-800 dark:border-gray-700">
       <div>
         <img
-          className="rounded-t-lg"
+          className="rounded-t-lg object-center h-32 object-cover"
           src={`${vars.host}${book.bookCover}`}
           alt=""
         />

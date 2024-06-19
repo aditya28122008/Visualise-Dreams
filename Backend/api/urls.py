@@ -5,6 +5,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 urlpatterns = [
     path('category-post/<str:cat>/', views.PostList.as_view()),
+    path('category-post-admin/<str:cat>/', views.AdminPostList.as_view()),
+    path('category-book-admin/<str:cat>/', views.AdminCatBookList.as_view()),
     path('cat-post/', views.CatPostList.as_view()),
     path('get-post-length/', views.BlogLength.as_view()),
     path('get-user-by-username/<str:username>/', views.GetUserByUsername.as_view()),
@@ -12,8 +14,10 @@ urlpatterns = [
     path('b-post-admin/', views.BlockedPostsList.as_view()),
     path('post/<str:slug>/', views.SinglePost.as_view()),
     path('all-books/<str:cat>/', views.BookList.as_view()),
+    path('admin-all-books/', views.BookListAdmin.as_view()),
     path('cat-books/', views.CatBookList.as_view()),
-    path('cr-books/', views.AddBook.as_view()),
+    path('admin-crud-books/<int:bookSno>/', views.AdminCRUDBooks.as_view()),
+    path('admin-crud-bk-cat/<int:sno>/', views.AdminCRUDBKCat.as_view()),
     path('post-user/<int:id>/', views.PostUser.as_view()),
     path('post-user-username/<str:username>/', views.PostUserByUsername.as_view()),
     path('ed-prof/', views.UpdateProfile.as_view()),
@@ -25,8 +29,12 @@ urlpatterns = [
     path('student-crud-blogs/<int:snoPost>/', views.StudentsBlogApi.as_view()),
     path('group-name/<str:id>/', views.GetGroupName.as_view()),
     path('get-all-categories/', views.GetCategoryList.as_view()),
+    path('get-all-bk-categories/', views.GetBlCategoryList.as_view()),
     path('get-sp-bl-cat/<str:name>/', views.GetSpBlCat.as_view()),
+    path('get-sp-bk-cat/<str:name>/', views.GetSpBkCat.as_view()),
+    path('get-user-p-blogs/<str:username>/', views.GetUserSpBlogs.as_view()),
     path('upda-sp-bl-cat/<str:name>/', views.UpdateBlCat.as_view()),
+    path('upda-sp-bk-cat/<str:name>/', views.UpdateBkCat.as_view()),
     path('del-sp-bl-cat/<str:name>/', views.DeleteBlCat.as_view()),
     path('add-sp-bl-cat/', views.AddBlCategory.as_view()),
 ]

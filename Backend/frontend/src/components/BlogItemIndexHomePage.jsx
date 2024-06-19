@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import vars from "../vars";
-import alertContext from "../context/alert/alertContext";
+  
 
 const BlogItemIndexHomePage = (props) => {
   const { post } = props;

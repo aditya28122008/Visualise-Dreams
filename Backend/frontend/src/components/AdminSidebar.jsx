@@ -9,11 +9,20 @@ import { toast } from "react-toastify";
 const AdminSidebar = () => {
   const navigate = useNavigate();
   const usCon = useContext(userContext);
-  const { blogAdminAccess, fetchUser } = usCon;
+  const { blogAdminAccess, fetchUser, libraryAdminAccess, userAdminAccess } =
+    usCon;
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  const [isLibraryDropdownOpen, setIsLibraryDropdownOpen] = useState(false);
   // Function to toggle the dropdown
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
+  };
+  const toggleLibraryDropdown = () => {
+    setIsLibraryDropdownOpen(!isLibraryDropdownOpen);
+  };
+  const toggleUserDropdown = () => {
+    setIsUserDropdownOpen(!isUserDropdownOpen);
   };
   const logout = async () => {
     localStorage.removeItem("MPSUser");
@@ -36,7 +45,7 @@ const AdminSidebar = () => {
             MPS Ajmer&apos;s Administration
           </h1>
           <div className="text-gray-600 dark:text-gray-400 text-center whitespace-pre-wrap lg:text-sm md:text-xs">
-            The most secure Administration
+            The most secure <br /> Admin Pannel in Ajmer...!
           </div>
         </div>
       </div>
@@ -68,7 +77,7 @@ const AdminSidebar = () => {
             </button>
             {/* Dropdown content */}
             <div
-              className={`absolute w-full bg-blue-600 text-white shadow-xl ${
+              className={`absolute w-full bg-blue-600 text-white shadow-xl z-10 ${
                 isDropdownOpen ? "block" : "hidden"
               }`}
             >
@@ -103,6 +112,121 @@ const AdminSidebar = () => {
             </div>
           </div>
         )}
+        {libraryAdminAccess && (
+          <>
+            <div className="relative">
+              <button
+                onClick={toggleLibraryDropdown}
+                className="w-full px-6 py-3 text-lg focus:text-white font-medium hover:bg-blue-600 focus:bg-blue-600 hover:text-white flex justify-between items-center focus:outline-none"
+              >
+                <span>Library</span>
+                <svg
+                  className={`w-6 h-6 transition-transform transform ${
+                    isLibraryDropdownOpen ? "rotate-180" : "rotate-0"
+                  }`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M19 9l-7 7-7-7"
+                  ></path>
+                </svg>
+              </button>
+              {/* Dropdown content */}
+              <div
+                className={`absolute w-full bg-blue-600 text-white shadow-xl z-10 ${
+                  isLibraryDropdownOpen ? "block" : "hidden"
+                }`}
+              >
+                <Link
+                  to="/admin/eb/all-bk"
+                  className="block px-4 py-2 text-lg hover:bg-blue-700"
+                  onClick={toggleLibraryDropdown}
+                >
+                  All Books
+                </Link>
+                <Link
+                  to="/admin/m-bk-cat"
+                  className="block px-4 py-2 text-lg hover:bg-blue-700"
+                  onClick={toggleLibraryDropdown}
+                >
+                  Manage Categories
+                </Link>
+                <Link
+                  to="/admin/eb/add"
+                  onClick={toggleLibraryDropdown}
+                  className="block px-4 py-2 text-lg hover:bg-blue-700"
+                >
+                  Add a Book
+                  <CiCirclePlus className="inline mx-2 font-bold text-2xl" />
+                </Link>
+              </div>
+            </div>
+          </>
+        )}
+        {userAdminAccess && (
+          <>
+            <div className="relative">
+              <button
+                onClick={toggleUserDropdown}
+                className="w-full px-6 py-3 text-lg focus:text-white font-medium hover:bg-blue-600 focus:bg-blue-600 hover:text-white flex justify-between items-center focus:outline-none"
+              >
+                <span>Manage Users</span>
+                <svg
+                  className={`w-6 h-6 transition-transform transform ${
+                    isUserDropdownOpen ? "rotate-180" : "rotate-0"
+                  }`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M19 9l-7 7-7-7"
+                  ></path>
+                </svg>
+              </button>
+              {/* Dropdown content */}
+              <div
+                className={`absolute w-full bg-blue-600 text-white shadow-xl z-10 ${
+                  isUserDropdownOpen ? "block" : "hidden"
+                }`}
+              >
+                <Link
+                  to="/admin/eb/all-bk"
+                  className="block px-4 py-2 text-lg hover:bg-blue-700"
+                  onClick={toggleUserDropdown}
+                >
+                  All Users
+                </Link>
+                <Link
+                  to="/admin/m-bk-cat"
+                  className="block px-4 py-2 text-lg hover:bg-blue-700"
+                  onClick={toggleLibraryDropdown}
+                >
+                  Manage Categories
+                </Link>
+                <Link
+                  to="/admin/eb/add"
+                  onClick={toggleUserDropdown}
+                  className="block px-4 py-2 text-lg hover:bg-blue-700"
+                >
+                  Add a Book
+                  <CiCirclePlus className="inline mx-2 font-bold text-2xl" />
+                </Link>
+              </div>
+            </div>
+          </>
+        )}
+
         <a
           onClick={logout}
           className="px-6 py-3 text-lg font-medium hover:bg-blue-600 hover:text-white"

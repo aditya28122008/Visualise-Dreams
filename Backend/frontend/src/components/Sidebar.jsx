@@ -13,7 +13,7 @@ import { TbCategoryFilled } from "react-icons/tb";
 const Sidebar = (props) => {
   const usContext = useContext(userContext);
   const [blogLen, setBlogLen] = useState("");
-  const { blogAdminAccess, libraryAdminAccess } = usContext;
+    const { blogAdminAccess, libraryAdminAccess, userAdminAccess } = usContext;
   useEffect(() => {
     getPostsLength();
   }, []);

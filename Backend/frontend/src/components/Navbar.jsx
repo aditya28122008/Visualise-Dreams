@@ -150,7 +150,7 @@ const Navbar = (props) => {
             </button>
             <form
               role="search"
-              onSubmit={searchFunc}
+              action={`/search/${query}`}
               className="search border-blue-600 md:mx-1 mr-1 hidden lg:block"
             >
               <input
@@ -298,7 +298,7 @@ const Navbar = (props) => {
           className="search-box-mobile mx-2 lg:hidden mt-2 focus:border-0 transition-all duration-300 -translate-y-52"
           id="searchFormMobile"
         >
-          <form onSubmit={searchFunc}>
+          <form action={`/search/${query}`}>
             <input
               type="text"
               className="w-full px-4 py-2 rounded-md border-4 border-blue-600 text-xl text-blue-700"

@@ -3,15 +3,14 @@ import React, { useEffect, useState, useContext } from "react";
 import { Link } from 'react-router-dom'
 import IndexInfo from "./IndexInfo";
 import vars from "../vars";
-import alertContext from "../context/alert/alertContext";
+  
 import BlogItemIndex from "./BlogItemIndex";
 import Home2Jpg from "../static/images/home2.jpg";
 import HomePng from "../static/images/Home.png";
 import {toast} from 'react-toastify'
 const Home = () => {
   const [posts, setPost] = useState([]);
-  const alContext = useContext(alertContext);
-  const { showAlert } = alContext;
+ 
   const blog = async () => {
     try {
       const response = await fetch(`${vars.host}/api/post/`);

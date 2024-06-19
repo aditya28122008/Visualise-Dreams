@@ -23,7 +23,7 @@ const AddBlog = () => {
   const [categories, setCategories] = useState([]);
   const [blImg, setBlImg] = useState(null);
   const usContext = useContext(userContext);
-  const { blogAdminAccess, libraryAdminAccess } = usContext;
+    const { blogAdminAccess, libraryAdminAccess, userAdminAccess } = usContext;
   const lodCon = useContext(loaderContext);
   const { setProgress } = lodCon;
   const handleFileUpload = (e) => {
@@ -58,6 +58,7 @@ const AddBlog = () => {
       const json = await response.json();
       // console.log(json);
       setCategories(json);
+      blogFormData.set("category", json[0].sno)
       // console.log(json);
     } catch (error) {
       // console.log(error);
@@ -202,7 +203,7 @@ const AddBlog = () => {
   }, []);
   return (
     <>
-      {libraryAdminAccess || blogAdminAccess ? (
+      {libraryAdminAccess || blogAdminAccess || userAdminAccess ? (
         <>
           <AdminSidebar />
           <div className="main flex md:justify-end justify-center">
@@ -280,6 +281,7 @@ const AddBlog = () => {
                             aria-describedby="file_input_help"
                             id="file_input"
                             type="file"
+                            accept=".jpg, .jpeg, .png, .svg, .webp, .bmp"
                             onChange={handleFileUpload}
                             ref={fileUploaderRef}
                             required
@@ -303,13 +305,23 @@ const AddBlog = () => {
                             onChange={onChange} // Ensure correct function name
                             value={blogCreds.category}
                           >
-                            {categories.map((cat) => {
-                              return (
-                                <option key={cat.sno} value={cat.sno}>
-                                  {cat.name}
-                                </option>
-                              );
-                            })}
+                            {categories.length > 0 ? (
+                              <>
+                                <option>-- Please Select A Valid Category --</option>
+
+                                {categories.map((cat) => {
+                                  return (
+                                    <option key={cat.sno} value={cat.sno}>
+                                      {cat.name}
+                                    </option>
+                                  );
+                                })}
+                              </>
+                            ) : (
+                              <>
+                                <option>-- NO CATEGORIES AVAILABLE --</option>
+                              </>
+                            )}
                           </select>
                           <label
                             htmlFor="countries"

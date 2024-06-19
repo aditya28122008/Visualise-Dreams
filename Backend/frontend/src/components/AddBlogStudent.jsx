@@ -42,6 +42,7 @@ const AddBlogStudent = () => {
       const json = await response.json();
       // console.log(json);
       setCategories(json);
+      blogFormData.set("category", json[0].sno);
       // console.log(json);
     } catch (error) {
       // console.log(error);
@@ -237,13 +238,22 @@ const AddBlogStudent = () => {
                       onChange={onChange} // Ensure correct function name
                       value={blogCreds.category}
                     >
-                      {categories.map((cat) => {
-                        return (
-                          <option key={cat.sno} value={cat.sno}>
-                            {cat.name}
-                          </option>
-                        );
-                      })}
+                      {categories.length > 0 ? (
+                        <>
+                          <option>-- Please Select A Valid Category --</option>
+                          {categories.map((cat) => {
+                            return (
+                              <option key={cat.sno} value={cat.sno}>
+                                {cat.name}
+                              </option>
+                            );
+                          })}
+                        </>
+                      ) : (
+                        <>
+                          <option>-- NO CATEGORIES AVAILABLE --</option>
+                        </>
+                      )}
                     </select>
                   </>
                 </div>
@@ -259,6 +269,7 @@ const AddBlogStudent = () => {
                       className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                       aria-describedby="file_input_help"
                       id="file_input"
+                      accept=".jpg, .jpeg, .png, .svg, .webp, .bmp"
                       type="file"
                       onChange={handleFileUpload}
                       ref={fileUploaderRef}

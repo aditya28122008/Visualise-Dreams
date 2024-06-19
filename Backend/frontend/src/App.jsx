@@ -7,8 +7,8 @@ import Library from "./components/Library";
 import Sidebar from "./components/Sidebar";
 import UserState from "./context/users/UserState";
 import Login from "./components/Login";
-import Alert from "./components/Alert";
-import alertContext from "./context/alert/alertContext";
+// import Alert from "./components/Alert";
+// import alertContext from "./context/alert/alertContext";
 import BlogRead from "./components/BlogRead";
 import Footer from "./components/Footer";
 import Profile from "./components/Profile";
@@ -19,7 +19,6 @@ import LoaadingBar from "./components/LoaadingBar";
 import AllowedPosts from "./components/admin/AllowedPosts";
 import AddBlogStudent from "./components/AddBlogStudent";
 import { ToastContainer } from "react-toastify";
-
 import "react-toastify/dist/ReactToastify.css";
 import NotFound from "./components/NotFound";
 import BlogState from "./context/admin/blogs/BlogState";
@@ -32,6 +31,14 @@ import Test from "./components/Test";
 import LibraryNew from "./components/LibraryNew";
 import EditBlogCategory from "./components/admin/EditBlogCategory";
 import AddBlogCategory from "./components/admin/AddBlogCategory";
+import AllBooks from "./components/admin/Library/AllBooks";
+import AddBooks from "./components/admin/Library/AddBook";
+import AdminCatBlogs from "./components/admin/AdminCatBlogs";
+import EditBook from "./components/admin/Library/EditBook";
+import BkManageCat from "./components/admin/Library/BkManageCat";
+import AdminCatBooks from "./components/admin/Library/AdminCatBooks";
+import AddBookCategory from "./components/admin/Library/AddBookCategory";
+import EditBookCategory from "./components/admin/Library/EditBookCategory";
 
 function App() {
   const [mode, setMode] = useState("");
@@ -39,17 +46,17 @@ function App() {
   const [progress, setProgress] = useState(10);
 
   // Managing Alert bar state
-  const [alert, setAlert] = useState(false);
-  const [message, setMessage] = useState(` `);
-  const [type, setType] = useState(` `);
-  const showAlert = (alMess, type) => {
-    setMessage(alMess);
-    setAlert(true);
-    setType(type);
-    setTimeout(() => {
-      setAlert(false);
-    }, 3000);
-  };
+  // const [alert, setAlert] = useState(false);
+  // const [message, setMessage] = useState(` `);
+  // const [type, setType] = useState(` `);
+  // const showAlert = (alMess, type) => {
+  //   setMessage(alMess);
+  //   setAlert(true);
+  //   setType(type);
+  //   setTimeout(() => {
+  //     setAlert(false);
+  //   }, 3000);
+  // };
 
   const sideShow = () => {
     document.getElementById("sidebar").classList.toggle("-translate-x-full");
@@ -65,7 +72,6 @@ function App() {
     <>
       <BlogState>
         <loaderContext.Provider value={{ progress, setProgress }}>
-          <alertContext.Provider value={{ message, alert, type, showAlert }}>
             <UserState>
               <BrowserRouter>
                 <div className={`${mode}`}>
@@ -77,7 +83,7 @@ function App() {
                     logo={logo}
                     sideShow={sideShow}
                   />
-                  <Alert />
+                  {/* <Alert /> */}
                   <ToastContainer
                     position="top-right"
                     autoClose={2500}
@@ -107,9 +113,16 @@ function App() {
                       <Routes>
                         <Route exact index element={<BlogNew />} />
                         <Route path="/blog/:slug" element={<BlogRead />} />
-                        <Route path="/category/:category" element={<CatBlog />} />
+                        <Route
+                          path="/category/:category"
+                          element={<CatBlog />}
+                        />
                         <Route path="/b-cat/:category" element={<Library />} />
-                        <Route exact path="/elibrary" element={<LibraryNew />} />
+                        <Route
+                          exact
+                          path="/elibrary"
+                          element={<LibraryNew />}
+                        />
                         <Route
                           path="/profile/:username"
                           element={<Profile />}
@@ -135,6 +148,10 @@ function App() {
                           element={<BlockedPosts />}
                         />
                         <Route
+                          path="/admin/cat-blog/:cat"
+                          element={<AdminCatBlogs />}
+                        />
+                        <Route
                           path="/admin/m-categories"
                           element={<ManageCat />}
                         />
@@ -143,6 +160,13 @@ function App() {
                           element={<EditBlog />}
                         />
                         <Route path="/admin/addblog" element={<AddBlog />} />
+                        <Route path="/admin/eb/all-bk" element={<AllBooks />} />
+                        <Route path="/admin/eb/add" element={<AddBooks />} />
+                        <Route path="/admin/eb/edit/:bookSno" element={<EditBook />} />
+                        <Route path="/admin/m-bk-cat" element={<BkManageCat />} />
+                        <Route path="/admin/cat-book/:cat" element={<AdminCatBooks />} />
+                        <Route path="/admin/add-bk-cat" element={<AddBookCategory />} />
+                        <Route path="/admin/ed-bk-cat/:name" element={<EditBookCategory />} />
                         <Route
                           exact
                           path="/login"
@@ -170,7 +194,6 @@ function App() {
                 </div>
               </BrowserRouter>
             </UserState>
-          </alertContext.Provider>
         </loaderContext.Provider>
       </BlogState>
     </>

@@ -1,16 +1,13 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect, useContext } from "react";
 import vars from "../vars";
-import { Link, useNavigate } from "react-router-dom";
-import alertContext from "../context/alert/alertContext";
+import { useNavigate } from "react-router-dom";
 import userContext from "../context/users/userContext";
 import loaderContext from "../context/loadingBar/loderContext";
 import { toast } from "react-toastify";
 const Login = (props) => {
   const loderCon = useContext(loaderContext);
   const { setProgress } = loderCon;
-  const alContext = useContext(alertContext);
-  const { showAlert } = alContext;
   const context = useContext(userContext);
   const { fetchUser } = context;
   const checkAuthenticated = () => {

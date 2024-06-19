@@ -1,5 +1,6 @@
 from .serializer import BlogSerializer, BlogUserSerializer, UserSerializer, BookSerializer, UpdateProfileSerializer, GroupSerializer, CategorySerializer, BookCategorySerializer
 from datetime import datetime
+from accounts.models import CustomUser
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.views import APIView
 from rest_framework.generics import RetrieveAPIView, ListAPIView, CreateAPIView
@@ -16,26 +17,76 @@ from Elibrary.models import Book, BookCategory
 from visualise_dreams import vars
 from django.utils import timezone
 from django.db.models import Prefetch
-from .pagination import BlogPaginations, AdminPostPaginations, SearchPagination, PageNumberPagination
+from .pagination import BlogPaginations, AdminPostPaginations, SearchPagination, PageNumberPagination, AdminBookPaginations
 from .permissions import IsSuperUserPermission, BlogPermission, ElibraryPermission
 
 
         
 
+"""
+Blogs And Elibrary Starts from Here
+"""
 
-
-
-class AddBook(CreateAPIView):
+class AdminCRUDBooks(APIView):
+    parser_classes = [MultiPartParser]
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated, ElibraryPermission]
-    queryset = Book.objects.all()
-    serializer_class = BookSerializer
+    def post(self, request, bookSno):
+        if bookSno == 0:
+            data = request.data
+            bookSer = BookSerializer(data=data)
+            if bookSer.is_valid():
+                bookSer.save()
+                return Response({"success": True, "data": bookSer.data}, status=status.HTTP_201_CREATED)
+            else:
+                return Response({"success": False, "err": bookSer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({"success": False}, status=status.HTTP_400_BAD_REQUEST)
+        
+
+    def delete(self, request, bookSno):
+        book = Book.objects.get(bookSno=bookSno)
+        if not book == None:
+            media_file_path_cov = f'{settings.MEDIA_ROOT}/{book.bookCover}'
+            media_file_path_pdf = f'{settings.MEDIA_ROOT}/{book.bookPDF}'
+            os.remove(media_file_path_cov)
+            os.remove(media_file_path_pdf)
+            book.delete()
+            return Response({"success": True}, status=status.HTTP_200_OK)
+        else:
+            return Response('Post Not Found', status=status.HTTP_404_NOT_FOUND)
+        
+    def put(self, request, bookSno):
+        try:
+            currBook = Book.objects.get(bookSno=bookSno)
+            bookSer = BookSerializer(currBook, data=request.data, partial=True)
+            if bookSer.is_valid():
+                bookSer.save()
+                return Response({"success": True, "data": bookSer.data}, status=status.HTTP_200_OK)
+            else:
+                return Response({"success": False, "err": bookSer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        except Book.DoesNotExist:
+            return Response({"success": False, "err": "Book not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"success": False, "err": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
+    def get(self, request, bookSno):
+        book = Book.objects.get(bookSno = bookSno)
+        serBook = BookSerializer(book)
+        return Response({"payload": serBook.data, "success": True})
 
 class GetSpBlCat(RetrieveAPIView):
     serializer_class = CategorySerializer
     queryset = Categories.objects.all()
     lookup_field = "name"
+
+
+class GetSpBkCat(RetrieveAPIView):
+    serializer_class = BookCategorySerializer
+    queryset = BookCategory.objects.all()
+    lookup_field = "name"
+
+
 
 class DeleteBlCat(APIView):
     authentication_classes = [JWTAuthentication]
@@ -49,6 +100,83 @@ class DeleteBlCat(APIView):
             return Response({"success": True}, status=status.HTTP_200_OK)
         else:
             return Response({"success": False, "code": "p_exists"})
+
+
+class AdminCatBookList(ListAPIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated, BlogPermission]
+    serializer_class = BookSerializer
+    pagination_class = AdminPostPaginations
+    def get_queryset(self):
+        cat = self.kwargs['cat']
+        category = BookCategory.objects.get(name = cat)
+        posts = Book.objects.filter(category=category)
+        return posts
+
+
+
+class AdminCRUDBKCat(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated, ElibraryPermission]
+    parser_classes = [MultiPartParser, JSONParser]
+
+
+    def get(sef, request, sno):
+        cats = BookCategory.objects.all()
+        serCats = BookCategorySerializer(cats, many=True)
+        return Response(serCats.data)
+    
+    
+    def post(self, request, sno):
+        if sno == 0:
+            data = request.data
+            cat = None
+            try:
+                cat = BookCategory.objects.get(name=data['name'])
+            except Exception as e:
+                pass
+            if not cat:
+                ser = BookCategorySerializer(data=data)
+                if ser.is_valid():
+                    ser.save()
+                    return Response({"success": True}, status=status.HTTP_201_CREATED)
+                return Response({"success": True}, status=status.HTTP_201_CREATED)
+            else:
+                return Response({"success": False}, status=status.HTTP_409_CONFLICT)
+        else:
+            return Response({"success": False}, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, sno):
+        cat = BookCategory.objects.get(sno = sno)
+        posts = Book.objects.filter(category = cat)
+        if len(posts) == 0:
+            cat.delete()
+            return Response({"success": True}, status=status.HTTP_200_OK)
+        else:
+            return Response({"success": False, "code": "p_exists"})
+        
+
+class UpdateBkCat(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated, ElibraryPermission]
+    parser_classes = [MultiPartParser]
+    def put(self, request, name):
+        data = request.data
+        cat = BookCategory.objects.filter(name=name)
+        if cat.exists():
+            newcat = cat.first()
+            new_name = data.get('name')
+            if BookCategory.objects.filter(name=new_name).exclude(sno=newcat.sno).exists():
+                return Response({"success": False, "message": "Category name already in use"}, status=status.HTTP_409_CONFLICT)
+            ser = BookCategorySerializer(instance=newcat, data=data)
+            if ser.is_valid():
+                ser.save()
+                return Response({"success": True}, status=status.HTTP_200_OK)
+            else:
+                return Response({"success": False}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({"success": False, "message": "Category not found"}, status=status.HTTP_404_NOT_FOUND)
+    
 
 
 class AddBlCategory(APIView):
@@ -75,16 +203,12 @@ class UpdateBlCat(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated, BlogPermission]
     parser_classes = [MultiPartParser]
-
     def put(self, request, name):
         data = request.data
         cat = Categories.objects.filter(name=name)
-        
         if cat.exists():
             newcat = cat.first()
             new_name = data.get('name')
-
-            # Check if another category with the new name exists
             if Categories.objects.filter(name=new_name).exclude(sno=newcat.sno).exists():
                 return Response({"success": False, "message": "Category name already in use"}, status=status.HTTP_409_CONFLICT)
 
@@ -94,9 +218,11 @@ class UpdateBlCat(APIView):
                 ser.save()
                 return Response({"success": True}, status=status.HTTP_200_OK)
             else:
-                return Response({"success": False, "errors": ser.errors}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"success": False}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({"success": False, "message": "Category not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
 
 class CatBookList(APIView):
     def get(self, request):
@@ -153,6 +279,18 @@ class PostList(ListAPIView):
         category = Categories.objects.get(name =cat)
         posts = Post.objects.filter(allowed = True, category=category).order_by("-allowd_at")
         return posts
+    
+
+class AdminPostList(ListAPIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated, BlogPermission]
+    serializer_class = BlogSerializer
+    pagination_class = AdminPostPaginations
+    def get_queryset(self):
+        cat = self.kwargs['cat']
+        category = Categories.objects.get(name = cat)
+        posts = Post.objects.filter(category=category).order_by("-timeStamp")
+        return posts
 
 
     
@@ -181,6 +319,10 @@ class GetCategoryList(ListAPIView):
     queryset = Categories.objects.all()
     serializer_class = CategorySerializer
     
+class GetBlCategoryList(ListAPIView):
+    queryset = BookCategory.objects.all()
+    serializer_class = BookCategorySerializer
+    
     
 class BlogLength(APIView):
     def get(self, request):
@@ -203,6 +345,12 @@ class BookList(ListAPIView):
         books = Book.objects.filter(category=mainCat)
         return books
     
+class BookListAdmin(ListAPIView):
+    pagination_class = AdminBookPaginations
+    pagination_class.page_size = 10
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    
 
 class PostUser(RetrieveAPIView):
     serializer_class = BlogUserSerializer
@@ -218,12 +366,10 @@ class PostUserByUsername(ListAPIView):
         return user
     
 
-class GetGroupName(ListAPIView):
+class GetGroupName(RetrieveAPIView):
     serializer_class = GroupSerializer
-    def get_queryset(self):
-        id = int(self.kwargs['id'])
-        group = Group.objects.filter(id=id)
-        return group
+    queryset = Group.objects.all()
+    lookup_field = 'id'
     
 
 
@@ -338,13 +484,24 @@ class GetUserData(APIView):
         return Response(serializer.data)
     
 
+class GetUserSpBlogs(ListAPIView):
+    serializer_class = BlogSerializer
+    queryset = Post.objects.all()
+    pagination_class = PageNumberPagination
+    pagination_class.page_size = 10
+    def get_queryset(self):
+        username = self.kwargs['username']
+        user = CustomUser.objects.get(username = username)
+        posts = Post.objects.filter(author = user, allowed=True)
+        return posts
+
 
 
 class UpdateProfile(APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
     parser_classes = (MultiPartParser, JSONParser)
-    
+
     def get(self, request):
         user = request.user
         serializer = UpdateProfileSerializer(user)
@@ -397,10 +554,13 @@ class SearchBook(APIView):
         query = data.get('query')
         books = Book.objects.filter(bookName__icontains = query)
         booksAuthor = Book.objects.filter(author__icontains = query)
-        booksCat = Book.objects.filter(category__name__icontains = query)
-        booksDesc = Book.objects.filter(desc__icontains = query)
-        allBooks = books.union(booksAuthor, booksCat, booksDesc)
+        booksCat = Book.objects.filter(category__name__icontains = str(query))
+        allBooks = books.union(booksAuthor, booksCat)
         paginated_books = paginator.paginate_queryset(allBooks, request)
         BookSer = BookSerializer(paginated_books, many=True)
         return paginator.get_paginated_response(BookSer.data)
     
+
+"""
+Blogs And Elibrary ends Here
+"""

@@ -197,12 +197,12 @@ STATICFILES_DIRS = [
 # STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Managing Messages
-MESSAGE_TAGS = {
-    messages.SUCCESS: "bg-green-100 text-green-700",
-    messages.WARNING: "bg-red-100 text-red-700",
-    messages.INFO: "bg-blue-500 text-white",
-    50: "critical",
-}
+# MESSAGE_TAGS = {
+#     messages.SUCCESS: "bg-green-100 text-green-700",
+#     messages.WARNING: "bg-red-100 text-red-700",
+#     messages.INFO: "bg-blue-500 text-white",
+#     50: "critical",
+# }
 # Managing Media
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'

@@ -15,9 +15,9 @@ urlpatterns = [
     path('reset_password_complete/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
     path('theBoss/', admin.site.urls),
     # re_path(r'^.*$', TemplateView.as_view(template_name='index.html')),
-    path('', views.index, name="home"),
-    path('blog/', include('blog.urls'), name="blog"),
-    path('library/', include('Elibrary.urls'), name="eLibrary"),
+    # path('', views.index, name="home"),
+    # path('blog/', include('blog.urls'), name="blog"),
+    # path('library/', include('Elibrary.urls'), name="eLibrary"),
     path('api/', include('api.urls'), name="api"),
     path('test-api/', include('fileUploadTest.urls'), name="api"),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -25,7 +25,7 @@ const EditBlog = () => {
   const { slug } = useParams();
   const [cantEdit, setCantEdit] = useState(false);
   const usContext = useContext(userContext);
-  const { blogAdminAccess, libraryAdminAccess } = usContext;
+    const { blogAdminAccess, libraryAdminAccess, userAdminAccess } = usContext;
   const lodCon = useContext(loaderContext);
   const { setProgress } = lodCon;
 
@@ -184,7 +184,7 @@ const EditBlog = () => {
 
   return (
     <>
-      {libraryAdminAccess || blogAdminAccess ? (
+      {libraryAdminAccess || blogAdminAccess || userAdminAccess ? (
         <>
           <AdminSidebar />
           {!cantEdit ? (

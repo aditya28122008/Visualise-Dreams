@@ -14,11 +14,9 @@ const LibraryNew = () => {
   const { setProgress } = loderCon;
   const [catBooks, setCatBooks] = useState([]);
   const fetchPagedBooks = async () => {
-    console.log(true);
     try {
       const res = await axios.get(`${categories.next}`);
       setCategories(res.data);
-      console.log("data:", res.data);
       setCategories(res.data);
       const newBooks = catBooks.concat(res.data.results);
       setCatBooks(newBooks);

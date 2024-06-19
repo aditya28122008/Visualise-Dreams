@@ -32,7 +32,6 @@ const Test = () => {
                     setProgress(percentCompleted)
                 },
             });
-            console.log(response.data);
             setUploadPercentage(0);
             setIsUploaded(true);
             setAlertMessage('File uploaded successfully!');

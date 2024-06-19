@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-// import React from 'react'
 import { toast } from "react-toastify";
 import vars from "../../vars";
 import loaderContext from "../../context/loadingBar/loderContext";
@@ -7,16 +6,17 @@ import { useContext, useEffect, useState } from "react";
 import userContext from "../../context/users/userContext";
 import AdminSidebar from "../AdminSidebar";
 import axios from "axios";
-import { FaPencilAlt } from "react-icons/fa";
-import { Link, json } from "react-router-dom";
+import { FaArrowRight, FaPencilAlt } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const ManageCat = () => {
   const usContext = useContext(userContext);
   const lodCon = useContext(loaderContext);
   const { setProgress } = lodCon;
   const [categories, setCategories] = useState([]);
-  const { blogAdminAccess, libraryAdminAccess } = usContext;
+    const { blogAdminAccess, libraryAdminAccess, userAdminAccess } = usContext;
   const getAllCategories = async () => {
+    setProgress(40)
     const res = await axios.get(`${vars.host}/api/get-all-categories/`);
     setCategories(res.data);
     setProgress(100);
@@ -27,18 +27,21 @@ const ManageCat = () => {
         Authorization: `Bearer ${localStorage.getItem("MPSUser")}`,
       };
       const del = await axios.get(`${vars.host}/api/del-sp-bl-cat/${name}/`, {
-        headers,
+        headers
       });
       if (del.data.success) {
         const newCat = categories.filter((cat) => {
           return cat.name !== name;
         });
         setCategories(newCat);
-      } else if(del.data.code === "p_exists"){
-        toast.error(`Some blogs with the category: ${name} exists. First delete them to delete the category.`)
+        toast.success("Category Deleted Successfully")
+      } else if (del.data.code === "p_exists") {
+        toast.warn(
+          `Some blogs with the category: ${name} exists. First delete them to delete the category.`
+        );
       }
     } catch (error) {
-      console.log(error);
+      toast.error("Can't connect to the server. Please check your internet connection")
     }
   };
   useEffect(() => {
@@ -48,7 +51,7 @@ const ManageCat = () => {
 
   return (
     <>
-      {libraryAdminAccess || blogAdminAccess ? (
+      {libraryAdminAccess || blogAdminAccess || userAdminAccess ? (
         <>
           <AdminSidebar />
           <div className="main flex md:justify-end justify-center">
@@ -78,6 +81,9 @@ const ManageCat = () => {
                               Edit
                             </th>
                             <th scope="col" className="px-6 py-3">
+                              View Associated Blogs
+                            </th>
+                            <th scope="col" className="px-6 py-3">
                               Remove
                             </th>
                           </tr>
@@ -96,6 +102,11 @@ const ManageCat = () => {
                                   <td className="px-6 py-4 cursor-pointer">
                                     <Link to={`/admin/ed-bl-cat/${cat.name}`}>
                                       <FaPencilAlt className="dark:text-white text-black" />
+                                    </Link>
+                                  </td>
+                                  <td className="px-6 py-4 cursor-pointer">
+                                    <Link to={`/admin/cat-blog/${cat.name}`}>
+                                      <FaArrowRight className="dark:text-white text-black" />
                                     </Link>
                                   </td>
                                   <td className="px-6 py-4">

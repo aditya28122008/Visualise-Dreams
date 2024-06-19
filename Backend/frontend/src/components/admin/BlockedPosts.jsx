@@ -19,7 +19,7 @@ const BlockedPosts = () => {
   const usContext = useContext(userContext);
   const [posts, setPost] = useState([]);
   const [page, setPage] = useState({});
-  const { blogAdminAccess, libraryAdminAccess } = usContext;
+    const { blogAdminAccess, libraryAdminAccess, userAdminAccess } = usContext;
   const lodCon = useContext(loaderContext);
   const { setProgress } = lodCon;
   const fetchPagedBlogs = async () => {
@@ -107,7 +107,7 @@ const BlockedPosts = () => {
   }, []);
   return (
     <>
-      {libraryAdminAccess || blogAdminAccess ? (
+      {libraryAdminAccess || blogAdminAccess || userAdminAccess ? (
         <>
           <AdminSidebar />
           <div className="main flex md:justify-end justify-center">

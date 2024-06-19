@@ -22,8 +22,6 @@ class BlogSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-
-
 class BlogUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
@@ -39,13 +37,13 @@ class UserSerializer(serializers.ModelSerializer):
 class UpdateProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ["bio", 'nickname', 'email', 'bannerImg', 'profile']
+        fields = ["bio", 'nickname', 'bannerImg', 'profile']
 
 
 class GroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
-        fields = ['name']
+        fields = ['name', 'id']
 
 class BookSerializer(serializers.ModelSerializer):
     class Meta:
