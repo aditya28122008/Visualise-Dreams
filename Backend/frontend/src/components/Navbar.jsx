@@ -33,11 +33,6 @@ const Navbar = (props) => {
     setQuery(e.target.value);
   };
 
-  const searchFunc = (e) => {
-    e.preventDefault();
-    navigate(`/search/${query}`);
-    setQuery("");
-  };
 
   useEffect(() => {
     fetchUser();
@@ -226,23 +221,23 @@ const Navbar = (props) => {
                   className="absolute bg-white text-blue-700 border-blue-400 border-2 px-3 py-3 rounded-xl top-20 md:-right-3 right-0 transition-all duration-500 -translate-y-96"
                   id="profDrop"
                 >
-                  <ul>
-                    <li onClick={dropProf} className="my-1 w-full rounded-xl hover:text-blue-400 duration-500 py-2 text-center cursor-pointer">
+                  <div>
+                    <div onClick={dropProf} className="my-1 w-full rounded-xl hover:text-blue-400 duration-500 py-2 text-center cursor-pointer">
                       <button onClick={logout}>Logout</button>
-                    </li>
+                    </div>
                     <hr className="bg-blue-500 h-[0.12rem] rounded-md" />
-                    <li onClick={dropProf} className="my-1 w-full rounded-xl hover:text-blue-400 py-2 text-center cursor-pointer">
+                    <div onClick={dropProf} className="my-1 w-full rounded-xl hover:text-blue-400 py-2 text-center cursor-pointer">
                       <Link to="/edit-profile">Edit Profile</Link>
-                    </li>
+                    </div>
                     <hr className="bg-blue-500 h-[0.12rem] rounded-md" />
-                    <li onClick={dropProf} className="my-1 w-full rounded-xl hover:text-blue-400 py-2 text-center cursor-pointer">
+                    <div onClick={dropProf} className="my-1 w-full rounded-xl hover:text-blue-400 py-2 text-center cursor-pointer">
                       <Link to={`/profile/${user.username}`}>My Profile</Link>
-                    </li>
+                    </div>
                     <hr className="bg-blue-500 h-[0.12rem] rounded-md" />
-                    <li onClick={dropProf} className="my-1 w-full rounded-xl hover:text-blue-400 py-2 text-center cursor-pointer">
-                      <Link to={`/add-blog`}>Add A Blog</Link>
-                    </li>
-                  </ul>
+                    <div onClick={dropProf} className="my-1 w-full rounded-xl hover:text-blue-400 py-2 text-center cursor-pointer">
+                      <Link to={`/u-admin`}>My Admin</Link>
+                    </div>
+                  </div>
                 </div>{" "}
               </div>
               // <div>

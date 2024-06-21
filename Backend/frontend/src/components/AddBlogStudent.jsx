@@ -54,7 +54,7 @@ const AddBlogStudent = () => {
   const categoryRef = useRef(null);
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (categoryRef.current.value === "Select Category") {
+    if (categoryRef.current.value === "-- Please Select A Valid Category --" || categoryRef.current.value === "-- NO CATEGORIES AVAILABLE --") {
       toast.error("Please choose a valid category....!");
       // console.log(categoryRef.current.value);
     } else {
@@ -74,7 +74,7 @@ const AddBlogStudent = () => {
         });
         const json = await response.json();
         if (json.success) {
-          navigate("/");
+          navigate("/u-admin");
         }
       } catch (error) {
         toast.error(
@@ -106,7 +106,6 @@ const AddBlogStudent = () => {
     const parser = new DOMParser();
     let doc = parser.parseFromString(cont, "text/html");
     let links = doc.querySelectorAll("a");
-
     links.forEach((l) => {
       l.classList = "";
       l.classList.add("underline");

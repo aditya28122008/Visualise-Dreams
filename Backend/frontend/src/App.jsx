@@ -27,7 +27,7 @@ import AddBlog from "./components/admin/AddBlog";
 import EditBlog from "./components/admin/EditBlog";
 import ManageCat from "./components/admin/ManageCat";
 import BlogNew from "./components/BlogNew";
-import Test from "./components/Test";
+// import Test from "./components/Test";
 import LibraryNew from "./components/LibraryNew";
 import EditBlogCategory from "./components/admin/EditBlogCategory";
 import AddBlogCategory from "./components/admin/AddBlogCategory";
@@ -39,6 +39,7 @@ import BkManageCat from "./components/admin/Library/BkManageCat";
 import AdminCatBooks from "./components/admin/Library/AdminCatBooks";
 import AddBookCategory from "./components/admin/Library/AddBookCategory";
 import EditBookCategory from "./components/admin/Library/EditBookCategory";
+import UserPerAdmin from "./components/user/UserPerAdmin";
 
 function App() {
   const [mode, setMode] = useState("");
@@ -72,44 +73,45 @@ function App() {
     <>
       <BlogState>
         <loaderContext.Provider value={{ progress, setProgress }}>
-            <UserState>
-              <BrowserRouter>
-                <div className={`${mode}`}>
-                  <LoaadingBar />
-                  <Navbar
-                    title="Mps Ajmer"
-                    setMode={setMode}
-                    mode={mode}
-                    logo={logo}
-                    sideShow={sideShow}
-                  />
-                  {/* <Alert /> */}
-                  <ToastContainer
-                    position="top-right"
-                    autoClose={2500}
-                    hideProgressBar={false}
-                    newestOnTop={false}
-                    closeOnClick
-                    rtl={false}
-                    pauseOnFocusLoss
-                    draggable
-                    pauseOnHover
-                    theme={`${mode}`}
-                  />
-                  <div className="main-cont flex">
-                    <div className="flex">
-                      <Sidebar sideShow={sideShow} />
-                      <div
-                        className="h-[100vh] w-[30%] bg-gray-700 opacity-50 md:h-[150vh] md:w-[80%] transition-all duration-300 z-[4] fixed right-0 top-0 translate-x-full cursor-pointer"
-                        onClick={() => sideShow()}
-                        id="quitSide"
-                      ></div>
-                    </div>
+          <UserState>
+            <BrowserRouter>
+              <div className={`${mode}`}>
+                <LoaadingBar />
+                <Navbar
+                  title="Mps Ajmer"
+                  setMode={setMode}
+                  mode={mode}
+                  logo={logo}
+                  sideShow={sideShow}
+                />
+                {/* <Alert /> */}
+                <ToastContainer
+                  position="top-right"
+                  autoClose={2500}
+                  hideProgressBar={false}
+                  newestOnTop={false}
+                  closeOnClick
+                  rtl={false}
+                  pauseOnFocusLoss
+                  draggable
+                  pauseOnHover
+                  theme={`${mode}`}
+                />
+                <div className="main-cont flex">
+                  <div className="flex">
+                    <Sidebar sideShow={sideShow} />
                     <div
-                      className="right-body md:px-16 px-8 mt-12 w-screen h-screen py-24 md:inline-block overflow-y-auto scroll-smooth bg-white dark:bg-gray-900 dark:text-white"
-                      // id="rightBody"
-                      id="scrollableDiv"
-                    >
+                      className="h-[100vh] w-[30%] bg-gray-700 opacity-50 md:h-[150vh] md:w-[80%] transition-all duration-300 z-[4] fixed right-0 top-0 translate-x-full cursor-pointer"
+                      onClick={() => sideShow()}
+                      id="quitSide"
+                    ></div>
+                  </div>
+                  <div
+                    className="right-body md:px-16 px-8 mt-12 w-screen h-screen py-24 md:inline-block overflow-y-auto scroll-smooth bg-white dark:bg-gray-900 dark:text-white"
+                    // id="rightBody"
+                    id="scrollableDiv"
+                  >
+                    <div className="min-h-52">
                       <Routes>
                         <Route exact index element={<BlogNew />} />
                         <Route path="/blog/:slug" element={<BlogRead />} />
@@ -130,7 +132,8 @@ function App() {
                         <Route path="/search/:query" element={<Search />} />
                         <Route path="/edit-profile" element={<EditProfile />} />
                         <Route path="/add-blog" element={<AddBlogStudent />} />
-                        <Route path="/test" element={<Test />} />
+                        {/* <Route path="/test" element={<Test />} /> */}
+                        <Route path="/u-admin" element={<UserPerAdmin />} />
                         <Route
                           path="/admin/a-posts"
                           element={<AllowedPosts />}
@@ -162,11 +165,26 @@ function App() {
                         <Route path="/admin/addblog" element={<AddBlog />} />
                         <Route path="/admin/eb/all-bk" element={<AllBooks />} />
                         <Route path="/admin/eb/add" element={<AddBooks />} />
-                        <Route path="/admin/eb/edit/:bookSno" element={<EditBook />} />
-                        <Route path="/admin/m-bk-cat" element={<BkManageCat />} />
-                        <Route path="/admin/cat-book/:cat" element={<AdminCatBooks />} />
-                        <Route path="/admin/add-bk-cat" element={<AddBookCategory />} />
-                        <Route path="/admin/ed-bk-cat/:name" element={<EditBookCategory />} />
+                        <Route
+                          path="/admin/eb/edit/:bookSno"
+                          element={<EditBook />}
+                        />
+                        <Route
+                          path="/admin/m-bk-cat"
+                          element={<BkManageCat />}
+                        />
+                        <Route
+                          path="/admin/cat-book/:cat"
+                          element={<AdminCatBooks />}
+                        />
+                        <Route
+                          path="/admin/add-bk-cat"
+                          element={<AddBookCategory />}
+                        />
+                        <Route
+                          path="/admin/ed-bk-cat/:name"
+                          element={<EditBookCategory />}
+                        />
                         <Route
                           exact
                           path="/login"
@@ -176,24 +194,25 @@ function App() {
                         />
                         <Route path="*" element={<NotFound />} />
                       </Routes>
-                      <Footer logo={logo} />
                     </div>
+                      <Footer logo={logo} />
                   </div>
-                  <div className="hidden text-9xl"></div>
-                  <div className="hidden text-8xl"></div>
-                  <div className="hidden text-7xl"></div>
-                  <div className="hidden text-6xl"></div>
-                  <div className="hidden text-5xl"></div>
-                  <div className="hidden text-4xl"></div>
-                  <div className="hidden text-3xl"></div>
-                  <div className="hidden text-2xl"></div>
-                  <div className="hidden text-xl"></div>
-                  <div className="hidden text-lg"></div>
-                  <div className="hidden text-base"></div>
-                  <div className="hidden text-sm"></div>
                 </div>
-              </BrowserRouter>
-            </UserState>
+                <div className="hidden text-9xl"></div>
+                <div className="hidden text-8xl"></div>
+                <div className="hidden text-7xl"></div>
+                <div className="hidden text-6xl"></div>
+                <div className="hidden text-5xl"></div>
+                <div className="hidden text-4xl"></div>
+                <div className="hidden text-3xl"></div>
+                <div className="hidden text-2xl"></div>
+                <div className="hidden text-xl"></div>
+                <div className="hidden text-lg"></div>
+                <div className="hidden text-base"></div>
+                <div className="hidden text-sm"></div>
+              </div>
+            </BrowserRouter>
+          </UserState>
         </loaderContext.Provider>
       </BlogState>
     </>

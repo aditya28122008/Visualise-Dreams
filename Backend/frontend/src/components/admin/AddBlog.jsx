@@ -58,9 +58,10 @@ const AddBlog = () => {
       const json = await response.json();
       // console.log(json);
       setCategories(json);
-      blogFormData.set("category", json[0].sno)
+      // blogFormData.set("category", json[0].sno)
       // console.log(json);
     } catch (error) {
+      // console.log(error);
       // console.log(error);
       toast.error(
         "Can't connect to the server. Please check your internet connection"
@@ -127,7 +128,7 @@ const AddBlog = () => {
   const categoryRef = useRef(null);
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (categoryRef.current.value === "Select Category") {
+    if (categoryRef.current.value === "-- Please Select A Valid Category --" || categoryRef.current.value === "-- NO CATEGORIES AVAILABLE --") {
       toast.error("Please choose a valid category....!");
       // console.log(categoryRef.current.value);
     } else {

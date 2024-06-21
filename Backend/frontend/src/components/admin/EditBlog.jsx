@@ -65,7 +65,7 @@ const EditBlog = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (categoryRef.current.value === "Select Category") {
+    if (categoryRef.current.value === "-- Please Select A Valid Category --" || categoryRef.current.value === "-- NO CATEGORIES AVAILABLE --") {
       toast.error("Please choose a valid category....!");
     } else {
       const newContent = await applyClasses(editorRef.current.getContent());

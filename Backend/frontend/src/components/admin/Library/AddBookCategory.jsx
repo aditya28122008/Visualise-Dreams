@@ -58,7 +58,7 @@ const AddBookCategory = () => {
           <AdminSidebar />
           <div className="main flex md:justify-end justify-center">
             <div className="right-main-content overflow-x-auto md:w-[75%]">
-              {blogAdminAccess && (
+              {libraryAdminAccess && (
                 <>
                   <form
                     className="max-w-sm mx-auto"

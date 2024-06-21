@@ -65,7 +65,7 @@ const BkManageCat = () => {
           <AdminSidebar />
           <div className="main flex md:justify-end justify-center">
             <div className="right-main-content overflow-x-auto md:w-[75%]">
-              {blogAdminAccess ? (
+              {libraryAdminAccess ? (
                 <>
                   <h1 className="text-4xl font-bold text-center mb-8 font-Oswald">
                     Manage Book Categories:-

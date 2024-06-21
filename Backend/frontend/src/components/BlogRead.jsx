@@ -137,7 +137,7 @@ const BlogRead = () => {
                         alt="Post Author Image"
                         className="w-16 h-16 rounded-full"
                       />
-                      <div className="">
+                      <div>
                         {postUser.status === 3 ? (
                           <a target="_blank" href={`https://mpsajmer.com`}>
                             <p className="text-xl font-semibold dark:text-white text-black cursor-pointer hover:underline hover:underline-offset-4">
@@ -164,7 +164,9 @@ const BlogRead = () => {
                           {!post.allowed ? (
                             <div className="flex space-x-2 justify-center items-center">
                               <button
-                                onClick={() => allowPost(post.snoPost)}
+                                onClick={() =>
+                                  allowPost(post.snoPost)
+                                }
                                 className="px-2 py-1 bg-green-600 hover:bg-green-400 rounded-md text-white"
                               >
                                 Publish
@@ -178,7 +180,9 @@ const BlogRead = () => {
                             </div>
                           ) : (
                             <button
-                              onClick={() => blockPost(post.snoPost)}
+                              onClick={() =>
+                                blockPost(post.snoPost)
+                              }
                               className="px-2 py-1 bg-red-600 hover:bg-red-400 rounded-md text-white"
                             >
                               Block

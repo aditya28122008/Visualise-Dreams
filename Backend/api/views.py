@@ -453,7 +453,30 @@ class StudentsBlogApi(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     parser_classes = [JSONParser, MultiPartParser]
+
+    def get(self, request, snoPost):
+        posts = Post.objects.filter(author = request.user)
+        paginator = PageNumberPagination()
+        paginator.page_size = 12
+        paginated = paginator.paginate_queryset(posts, request)
+        ser = BlogSerializer(paginated, many=True)
+        return paginator.get_paginated_response(ser.data)
     
+    def delete(self, request, snoPost):
+        try:
+            post = Post.objects.get(snoPost = snoPost)
+            if post.author == request.user:
+                if post.allowed == False:
+                    media_file_path = f"{settings.MEDIA_ROOT}/{post.image}"
+                    os.remove(media_file_path)
+                    post.delete()
+                    return Response({"success": True})
+                else:
+                    return Response({"success": False}, status=status.HTTP_403_FORBIDDEN)
+        except Post.DoesNotExist:
+            return Response({"success": False}, status=status.HTTP_404_NOT_FOUND)
+            
+
     def post(self, request, snoPost):
         data = request.data
         ser = BlogSerializer(data=data)
@@ -495,6 +518,13 @@ class GetUserSpBlogs(ListAPIView):
         posts = Post.objects.filter(author = user, allowed=True)
         return posts
 
+
+class AdminAdminUsSpBlogs(APIView):
+    authentication_classes = [JWTAuthentication]
+    parser_classes = [JSONParser, MultiPartParser]
+    permission_classes = [IsAuthenticated]
+
+    
 
 
 class UpdateProfile(APIView):
