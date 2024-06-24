@@ -309,7 +309,6 @@ const AddBlog = () => {
                             {categories.length > 0 ? (
                               <>
                                 <option>-- Please Select A Valid Category --</option>
-
                                 {categories.map((cat) => {
                                   return (
                                     <option key={cat.sno} value={cat.sno}>

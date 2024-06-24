@@ -20,6 +20,7 @@ const Navbar = (props) => {
     user,
     libraryAdminAccess,
     blogAdminAccess,
+    userAdminAccess,
   } = context;
   const { setMode } = props;
 
@@ -257,7 +258,7 @@ const Navbar = (props) => {
             >
               <NavbarLink name={`Blogs(${blogLen})`} to="/" />
               <NavbarLink name="Elibrary" to="/elibrary" />
-              {(libraryAdminAccess || blogAdminAccess) && (
+              {(libraryAdminAccess || blogAdminAccess || userAdminAccess ) && (
                 <NavbarLink name="Admin" to="/admin/a-posts" />
               )}
             </div>

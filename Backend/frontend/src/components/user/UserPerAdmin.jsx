@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 import { FaPencilAlt } from "react-icons/fa";
 import { PiPencilSimpleSlash } from "react-icons/pi";
 import { MdDelete } from "react-icons/md";
+import DeleteSlash from "../../static/delete-slash.svg";
 
 const UserPerAdmin = () => {
   const loadCon = useContext(loaderContext);
@@ -37,24 +38,26 @@ const UserPerAdmin = () => {
   };
 
   const deleteBlog = async (id) => {
-    try {
-      const res = await fetch(`${vars.host}/api/student-crud-blogs/${id}/`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("MPSUser")}`,
-        },
-      });
-      const json = await res.json();
-      if (json.success) {
-        setBlogs(blogs.filter((blog) => blog.snoPost !== id));
-        toast.success("Blog deleted successfully!");
-      } else {
-        toast.error("Error deleting blog");
+    if (window.confirm("Are You sure wanna Delete this blog?")) {
+      try {
+        const res = await fetch(`${vars.host}/api/student-crud-blogs/${id}/`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("MPSUser")}`,
+          },
+        });
+        const json = await res.json();
+        if (json.success) {
+          setBlogs(blogs.filter((blog) => blog.snoPost !== id));
+          toast.success("Blog deleted successfully!");
+        } else {
+          toast.error("Error deleting blog");
+        }
+      } catch (error) {
+        toast.error(
+          "Can't connect to the server. Please check your internet connection"
+        );
       }
-    } catch (error) {
-      toast.error(
-        "Can't connect to the server. Please check your internet connection"
-      );
     }
   };
   const fetchPagedBlogs = async () => {
@@ -164,10 +167,19 @@ const UserPerAdmin = () => {
                     </td>
                     <td className="px-6 py-4">
                       {post.allowed ? (
-                        <>Published</>
+                        <>
+                          <img
+                            src={DeleteSlash}
+                            alt=""
+                            className="h-5 dark:invert"
+                          />
+                        </>
                       ) : (
                         <>
-                          <MdDelete className="text-2xl cursor-pointer" />{" "}
+                          <MdDelete
+                            className="text-2xl cursor-pointer"
+                            onClick={() => deleteBlog(post.snoPost)}
+                          />
                         </>
                       )}
                     </td>

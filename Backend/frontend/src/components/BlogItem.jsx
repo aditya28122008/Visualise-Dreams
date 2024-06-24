@@ -98,7 +98,6 @@ const BlogItem = (props) => {
             </div>
             <div
               className="content text-justify dark:text-gray-400 hidden md:block text-gray-600 text-sm"
-              dangerouslySetInnerHTML={{ __html: props.post.content }}
               ref={contentRef}
             />
             <div className="content text-justify dark:text-gray-400 md:hidden text-gray-600 text-sm">

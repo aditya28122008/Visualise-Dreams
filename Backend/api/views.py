@@ -1,9 +1,9 @@
-from .serializer import BlogSerializer, BlogUserSerializer, UserSerializer, BookSerializer, UpdateProfileSerializer, GroupSerializer, CategorySerializer, BookCategorySerializer
+from .serializer import BlogSerializer, BlogUserSerializer, UserSerializer, BookSerializer, UpdateProfileSerializer, GroupSerializer, CategorySerializer, BookCategorySerializer, AdminUserSerializer
 from datetime import datetime
 from accounts.models import CustomUser
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.views import APIView
-from rest_framework.generics import RetrieveAPIView, ListAPIView, CreateAPIView
+from rest_framework.generics import RetrieveAPIView, ListAPIView
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, JSONParser
 from rest_framework.permissions import IsAuthenticated
@@ -18,7 +18,7 @@ from visualise_dreams import vars
 from django.utils import timezone
 from django.db.models import Prefetch
 from .pagination import BlogPaginations, AdminPostPaginations, SearchPagination, PageNumberPagination, AdminBookPaginations
-from .permissions import IsSuperUserPermission, BlogPermission, ElibraryPermission
+from .permissions import IsSuperUserPermission, BlogPermission, ElibraryPermission, UserAdminPermission
 
 
         
@@ -415,7 +415,6 @@ class CRUDPost(APIView):
             data = request.data
             serializer = BlogSerializer(data=data)
             serializer.instance = post
-            
             if serializer.is_valid():
                 try:
                     if serializer.validated_data['image']:
@@ -448,6 +447,21 @@ class CRUDPost(APIView):
             post.save()
             return Response({"success": True}, status=status.HTTP_200_OK)
         
+        
+class AdminCRUDUsers(APIView):
+    parser_classes = [MultiPartParser, JSONParser]
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated, UserAdminPermission]
+
+    def get(self, request, id):
+        paginator = PageNumberPagination()
+        paginator.page_size = 12
+        users = CustomUser.objects.all()
+        paginated = paginator.paginate_queryset(queryset=users, request=request)
+        ser = AdminUserSerializer(paginated, many = True)
+        return paginator.get_paginated_response(ser.data)
+        
+        
 
 class StudentsBlogApi(APIView):
     authentication_classes = [JWTAuthentication]
@@ -461,6 +475,30 @@ class StudentsBlogApi(APIView):
         paginated = paginator.paginate_queryset(posts, request)
         ser = BlogSerializer(paginated, many=True)
         return paginator.get_paginated_response(ser.data)
+
+    def put(self, request, snoPost):
+        try:
+            post = Post.objects.get(snoPost = snoPost)
+            data = request.data
+            if (not post.allowed) and (not post.by_admin) and (request.user == post.author):
+                ser = BlogSerializer(data=data, instance=post)
+                if ser.is_valid():
+                    try:
+                        if ser.validated_data['image']:
+                            media_file_path = f'{settings.MEDIA_ROOT}/{post.image}'
+                            os.remove(media_file_path)
+                    except Exception as error:
+                        return Response({"success": False}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                    ser.validated_data['author'] = request.user
+                    ser.validated_data['by_admin'] = post.by_admin
+                    ser.validated_data['allowed'] = post.allowed
+                    ser.validated_data['blocked_at'] = post.blocked_at
+                    ser.save()
+                return Response({"success": True, "data": ser.data})
+            else:
+                return Response({"success": False,}, status=status.HTTP_401_UNAUTHORIZED)
+        except Post.DoesNotExist:
+            return Response({"success": False}, status=status.HTTP_404_NOT_FOUND)
     
     def delete(self, request, snoPost):
         try:
@@ -487,11 +525,11 @@ class StudentsBlogApi(APIView):
                 ser.validated_data['allowed'] = False
                 ser.validated_data['blocked_at'] = datetime.now()
                 ser.save()
-                return Response({"success": True, "data": ser.data})            
+                return Response({"success": True, "data": ser.data})
             else:
-                return Response({}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                return Response({"success": False,}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response({}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+            return Response({"success": False,}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         
 
 

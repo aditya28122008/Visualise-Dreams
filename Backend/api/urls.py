@@ -26,6 +26,7 @@ urlpatterns = [
     path('search-blogs/', views.SearchBlog.as_view()),
     path('search-books/', views.SearchBook.as_view()),
     path('admin-crud-blogs/<int:snoPost>/', views.CRUDPost.as_view()),
+    path('admin-crud-users/<int:id>/', views.AdminCRUDUsers.as_view()),
     path('student-crud-blogs/<int:snoPost>/', views.StudentsBlogApi.as_view()),
     path('group-name/<str:id>/', views.GetGroupName.as_view()),
     path('get-all-categories/', views.GetCategoryList.as_view()),

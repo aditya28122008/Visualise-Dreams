@@ -32,6 +32,10 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ['id', 'username', 'first_name', 'last_name', 'profile', 'bannerImg', "bio", 'nickname', 'email', 'groups', "is_superuser"]
+class AdminUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'username', 'is_active', 'first_name', 'last_name', 'profile', 'bannerImg', "bio", 'nickname', 'email', 'groups', "is_superuser"]
 
 
 class UpdateProfileSerializer(serializers.ModelSerializer):

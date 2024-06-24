@@ -40,6 +40,7 @@ import AdminCatBooks from "./components/admin/Library/AdminCatBooks";
 import AddBookCategory from "./components/admin/Library/AddBookCategory";
 import EditBookCategory from "./components/admin/Library/EditBookCategory";
 import UserPerAdmin from "./components/user/UserPerAdmin";
+import EditBlogStudent from "./components/user/EditBlogStudent";
 
 function App() {
   const [mode, setMode] = useState("");
@@ -108,7 +109,6 @@ function App() {
                   </div>
                   <div
                     className="right-body md:px-16 px-8 mt-12 w-screen h-screen py-24 md:inline-block overflow-y-auto scroll-smooth bg-white dark:bg-gray-900 dark:text-white"
-                    // id="rightBody"
                     id="scrollableDiv"
                   >
                     <div className="min-h-52">
@@ -134,6 +134,7 @@ function App() {
                         <Route path="/add-blog" element={<AddBlogStudent />} />
                         {/* <Route path="/test" element={<Test />} /> */}
                         <Route path="/u-admin" element={<UserPerAdmin />} />
+                        <Route path="/stu/ed-bl/:slug" element={<EditBlogStudent />} />
                         <Route
                           path="/admin/a-posts"
                           element={<AllowedPosts />}
