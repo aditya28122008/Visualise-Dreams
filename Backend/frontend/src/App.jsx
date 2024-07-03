@@ -41,6 +41,10 @@ import AddBookCategory from "./components/admin/Library/AddBookCategory";
 import EditBookCategory from "./components/admin/Library/EditBookCategory";
 import UserPerAdmin from "./components/user/UserPerAdmin";
 import EditBlogStudent from "./components/user/EditBlogStudent";
+import AllUsers from "./components/admin/Users/AllUsers";
+import AddUser from "./components/admin/Users/AddUser";
+import UserSpBlogs from "./components/admin/Users/UserSpBlogs";
+import EditUser from "./components/admin/Users/EditUser";
 
 function App() {
   const [mode, setMode] = useState("");
@@ -192,6 +196,22 @@ function App() {
                           element={
                             <Login logo={logo} title={"Login to MPS Ajmer"} />
                           }
+                        />
+                        <Route
+                          path="/admin/all-users"
+                          element={<AllUsers />}
+                        />
+                        <Route
+                          path="/admin/add-user"
+                          element={<AddUser />}
+                        />
+                        <Route
+                          path="/admin/user-blogs/:id"
+                          element={<UserSpBlogs />}
+                        />
+                        <Route
+                          path="/admin/ed-user/:id"
+                          element={<EditUser />}
                         />
                         <Route path="*" element={<NotFound />} />
                       </Routes>

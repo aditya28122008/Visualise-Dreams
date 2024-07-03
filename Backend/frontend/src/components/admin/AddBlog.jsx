@@ -23,7 +23,7 @@ const AddBlog = () => {
   const [categories, setCategories] = useState([]);
   const [blImg, setBlImg] = useState(null);
   const usContext = useContext(userContext);
-    const { blogAdminAccess, libraryAdminAccess, userAdminAccess } = usContext;
+  const { blogAdminAccess, libraryAdminAccess, userAdminAccess } = usContext;
   const lodCon = useContext(loaderContext);
   const { setProgress } = lodCon;
   const handleFileUpload = (e) => {
@@ -128,7 +128,10 @@ const AddBlog = () => {
   const categoryRef = useRef(null);
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (categoryRef.current.value === "-- Please Select A Valid Category --" || categoryRef.current.value === "-- NO CATEGORIES AVAILABLE --") {
+    if (
+      categoryRef.current.value === "-- Please Select A Valid Category --" ||
+      categoryRef.current.value === "-- NO CATEGORIES AVAILABLE --"
+    ) {
       toast.error("Please choose a valid category....!");
       // console.log(categoryRef.current.value);
     } else {
@@ -308,7 +311,9 @@ const AddBlog = () => {
                           >
                             {categories.length > 0 ? (
                               <>
-                                <option>-- Please Select A Valid Category --</option>
+                                <option>
+                                  -- Please Select A Valid Category --
+                                </option>
                                 {categories.map((cat) => {
                                   return (
                                     <option key={cat.sno} value={cat.sno}>

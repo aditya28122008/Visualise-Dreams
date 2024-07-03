@@ -8,6 +8,7 @@ import userContext from "../context/users/userContext";
 import { toast } from "react-toastify";
 import { FaPencilAlt } from "react-icons/fa";
 import { IoIosCloseCircle } from "react-icons/io";
+import { IoBookSharp } from "react-icons/io5";
 import { TbCategoryFilled } from "react-icons/tb";
 
 const Sidebar = (props) => {
@@ -49,7 +50,7 @@ const Sidebar = (props) => {
           </div>
         </div>
         <hr className="h-[0.18rem] bg-blue-600 rounded-md md:mx-6 md:hidden" />
-        {(blogAdminAccess || libraryAdminAccess) && (
+        {(blogAdminAccess || libraryAdminAccess || userAdminAccess) && (
           <div className="actualNav text-black py-10 px-4 flex flex-col">
             <p className="dark:text-gray-200 text-black text-4xl font-bold text-center font-DancingScript">
               Admin:-
@@ -75,10 +76,10 @@ const Sidebar = (props) => {
                     }
                   />
                   <SideNavLink
-                    name="Manage Categories"
+                    name="Manage Blog Categories"
                     to="/admin/m-categories"
                     icon={
-                      <TbCategoryFilled className="text-3xl text-green-600 dark:text-red-500 rounded-full" />
+                      <TbCategoryFilled className="text-3xl text-green-600 dark:text-green-400 rounded-full" />
                     }
                   />
                   <SideNavLink
@@ -86,6 +87,34 @@ const Sidebar = (props) => {
                     to="/admin/addblog"
                     icon={
                       <FaPencilAlt className="text-3xl text-black-600 dark:text-red-500" />
+                    }
+                  />
+                </>
+              )}
+              <p className="dark:text-gray-300 text-black text-xl mt-4 font-bold text-center font-Oswald">
+                Elibrary:
+              </p>
+              {libraryAdminAccess && (
+                <>
+                  <SideNavLink
+                    name="All Books"
+                    to="/admin/eb/all-bk"
+                    icon={
+                      <IoBookSharp className="text-3xl text-green-600 dark:text-green-400" />
+                    }
+                  />
+                  <SideNavLink
+                    name="Manage Book Categories"
+                    to="/admin/m-bk-cat"
+                    icon={
+                      <TbCategoryFilled className="text-3xl text-green-600 dark:text-red-500 rounded-full" />
+                    }
+                  />
+                  <SideNavLink
+                    name="Add A Book"
+                    to="/admin/eb/add"
+                    icon={
+                      <FaPencilAlt className="text-3xl text-green-600 dark:text-green-400" />
                     }
                   />
                   <hr className="h-[0.18rem] bg-blue-600 rounded-md md:mx-6 md:hidden" />

@@ -5,6 +5,7 @@ import AdminSidebar from "../../AdminSidebar";
 import loaderContext from "../../../context/loadingBar/loderContext";
 import axios from "axios";
 import vars from "../../../vars";
+import { IoBookSharp } from "react-icons/io5";
 import { toast } from "react-toastify";
 import Spiner from "../../Spiner";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -84,6 +85,10 @@ const AllBooks = () => {
               <div className="right-main-content overflow-x-auto md:w-[75%]">
                 {libraryAdminAccess && (
                   <>
+                  <h1 className="text-4xl mb-4 text-center whitespace-nowrap w-fit mx-auto">
+                    Manage The Elibrary
+                    <IoBookSharp className="inline text-black dark:invert mx-2"/>
+                  </h1>
                     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                       <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">

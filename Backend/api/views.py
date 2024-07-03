@@ -1,14 +1,18 @@
-from .serializer import BlogSerializer, BlogUserSerializer, UserSerializer, BookSerializer, UpdateProfileSerializer, GroupSerializer, CategorySerializer, BookCategorySerializer, AdminUserSerializer
+import random
+import string
+from .serializer import BlogSerializer, BlogUserSerializer, UserSerializer, BookSerializer, UpdateProfileSerializer, GroupSerializer, CategorySerializer, BookCategorySerializer, AdminUserSerializer, AdminAddUserSerializer, LogEntrySerializer, LogEntry
 from datetime import datetime
+from django.contrib.auth.hashers import make_password
 from accounts.models import CustomUser
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.views import APIView
 from rest_framework.generics import RetrieveAPIView, ListAPIView
 from rest_framework.response import Response
-from rest_framework.parsers import MultiPartParser, JSONParser
+from rest_framework.parsers import MultiPartParser, JSONParser, FormParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status, permissions
 import os
+from django.core.mail import send_mail
 from visualise_dreams import settings
 from blog.models import Post, Categories
 from accounts.models import CustomUser as User
@@ -21,7 +25,104 @@ from .pagination import BlogPaginations, AdminPostPaginations, SearchPagination,
 from .permissions import IsSuperUserPermission, BlogPermission, ElibraryPermission, UserAdminPermission
 
 
-        
+"""
+Users Admin Starts From Here
+"""
+class AdminCRUDUsers(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated, UserAdminPermission]
+    parser_classes = [MultiPartParser, JSONParser, FormParser]
+    
+    
+    def generate_random_string(self, length=8):
+        """Generate a random string of letters and digits."""
+        return ''.join(random.choices(string.ascii_lowercase + string.digits, k=length))
+    def post(self, request, id):
+        data = request.data
+        email = data.get('email')
+        if not email:
+            return Response({"success": False, "message": "Email is required"}, status=status.HTTP_400_BAD_REQUEST)
+        checkEmail = CustomUser.objects.filter(email=email)
+        checkUsername = CustomUser.objects.filter(username = data.get('username'))
+        if len(checkUsername) == 0:
+            if len(checkEmail) == 0:
+                ser = AdminAddUserSerializer(data=data)
+                if ser.is_valid():
+                    password = self.generate_random_string()
+                    hashPassword = make_password(password)
+                    ser.validated_data['password'] = hashPassword
+                    try:
+                        send_mail(
+                            'Your New Account Credentials',
+                            f'Username: {ser.validated_data['username']}\nPassword: {password}',
+                            settings.EMAIL_HOST_USER,
+                            [email],
+                            fail_silently=False,
+                        )
+                        ser.validated_data['is_active'] = True
+                        ser.validated_data['is_staff'] = True
+                        ser.save()
+                        return Response({"success": True})
+                    except Exception as e:
+                        return Response({"success": False, "message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                else:
+                    return Response({"error": ser.errors})
+            else:
+                return Response({"code": "em_taken", "success": False})
+        else:
+            return Response({"code": "us_taken", "success": False})
+    def patch(self, request, id):
+        data = request.data
+        if data['command'] == "activate":
+            try:
+                tarUser = CustomUser.objects.get(id=id)
+                tarUser.is_active = True
+                tarUser.save()
+                return Response({"success": True}, status=status.HTTP_200_OK)
+            except CustomUser.DoesNotExist:
+                return Response({"success": False}, status=status.HTTP_404_NOT_FOUND)
+        if data['command'] == "deactivate":
+            try:
+                tarUser = CustomUser.objects.get(id=id)
+                tarUser.is_active = False
+                tarUser.save()
+                return Response({"success": True}, status=status.HTTP_200_OK)
+            except CustomUser.DoesNotExist:
+                return Response({"success": False}, status=status.HTTP_404_NOT_FOUND)
+            
+        if data['command'] == "us-bl":
+            user = CustomUser.objects.get(id=id)
+            posts = Post.objects.filter(author=user)
+            paginator = PageNumberPagination()
+            paginator.page_size = 12
+            paginated = paginator.paginate_queryset(queryset=posts, request=request)
+            ser = BlogSerializer(paginated, many=True)
+            return paginator.get_paginated_response(ser.data)
+        if data['command'] == "get-user":
+            user = CustomUser.objects.get(id=id)
+            ser = AdminUserSerializer(user)
+            return Response(ser.data)
+
+
+    def put(self, request, id):
+        paginator = PageNumberPagination()
+        paginator.page_size = 12
+        data = request.data
+        query = data['query']
+        users_nick = CustomUser.objects.filter(nickname__icontains = query)
+        users_fName = CustomUser.objects.filter(first_name__icontains = query)
+        users_lName = CustomUser.objects.filter(last_name__icontains = query)
+        users_username = CustomUser.objects.filter(username__icontains = query)
+        users_bio = CustomUser.objects.filter(bio__icontains = query)
+        users_email = CustomUser.objects.filter(email__icontains = query)
+        users = users_nick.union(users_bio, users_fName, users_lName, users_username, users_email)
+        paginated = paginator.paginate_queryset(users, request)
+        ser = AdminUserSerializer(paginated, many = True)
+        return paginator.get_paginated_response(ser.data)
+    
+"""
+User's Admin ends Here
+"""
 
 """
 Blogs And Elibrary Starts from Here
@@ -61,6 +162,17 @@ class AdminCRUDBooks(APIView):
             currBook = Book.objects.get(bookSno=bookSno)
             bookSer = BookSerializer(currBook, data=request.data, partial=True)
             if bookSer.is_valid():
+                try:
+                    if bookSer.validated_data['bookPDF']:
+                        media_file_path = f"{settings.MEDIA_ROOT}/{currBook.bookPDF}"
+                        os.remove(media_file_path)
+                    if bookSer.validated_data['bookCover']:
+                        media_file_path = f"{settings.MEDIA_ROOT}/{currBook.bookCover}"
+                        os.remove(media_file_path)
+                except KeyError as error:
+                    pass
+                except FileNotFoundError as e:
+                    pass
                 bookSer.save()
                 return Response({"success": True, "data": bookSer.data}, status=status.HTTP_200_OK)
             else:
@@ -413,14 +525,16 @@ class CRUDPost(APIView):
         post = Post.objects.get(snoPost = snoPost)
         if post.allowed == False:
             data = request.data
-            serializer = BlogSerializer(data=data)
-            serializer.instance = post
+            serializer = BlogSerializer(data=data, instance=post)
+            # serializer.instance = post
             if serializer.is_valid():
                 try:
                     if serializer.validated_data['image']:
                         media_file_path = f'{settings.MEDIA_ROOT}/{post.image}'
                         os.remove(media_file_path)
-                except Exception as error:
+                except KeyError as error:
+                    pass
+                except FileNotFoundError as e:
                     pass
                 if post.by_admin != True:
                     serializer.validated_data['author'] = post.author
@@ -448,18 +562,15 @@ class CRUDPost(APIView):
             return Response({"success": True}, status=status.HTTP_200_OK)
         
         
-class AdminCRUDUsers(APIView):
-    parser_classes = [MultiPartParser, JSONParser]
+        
+class AdminGetAllGroups(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated, UserAdminPermission]
+    def get(self, request):
+        groups = Group.objects.all()
+        group_data = GroupSerializer(groups, many=True)
+        return Response(group_data.data, status=status.HTTP_200_OK)
 
-    def get(self, request, id):
-        paginator = PageNumberPagination()
-        paginator.page_size = 12
-        users = CustomUser.objects.all()
-        paginated = paginator.paginate_queryset(queryset=users, request=request)
-        ser = AdminUserSerializer(paginated, many = True)
-        return paginator.get_paginated_response(ser.data)
         
         
 
@@ -480,23 +591,30 @@ class StudentsBlogApi(APIView):
         try:
             post = Post.objects.get(snoPost = snoPost)
             data = request.data
+            ser = BlogSerializer(data=data, instance=post)
             if (not post.allowed) and (not post.by_admin) and (request.user == post.author):
-                ser = BlogSerializer(data=data, instance=post)
                 if ser.is_valid():
+                    # print(ser.validated_data['image'])
                     try:
                         if ser.validated_data['image']:
                             media_file_path = f'{settings.MEDIA_ROOT}/{post.image}'
                             os.remove(media_file_path)
-                    except Exception as error:
+                        else:
+                            pass
+                    except KeyError as error:
+                        print(error)
+                    except FileNotFoundError as e:
                         return Response({"success": False}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                     ser.validated_data['author'] = request.user
                     ser.validated_data['by_admin'] = post.by_admin
                     ser.validated_data['allowed'] = post.allowed
                     ser.validated_data['blocked_at'] = post.blocked_at
                     ser.save()
-                return Response({"success": True, "data": ser.data})
+                    return Response({"success": True, "data": ser.data})
+                else:
+                    return Response({"success": False, "data": ser.errors})
             else:
-                return Response({"success": False,}, status=status.HTTP_401_UNAUTHORIZED)
+                return Response({"success": False}, status=status.HTTP_401_UNAUTHORIZED)
         except Post.DoesNotExist:
             return Response({"success": False}, status=status.HTTP_404_NOT_FOUND)
     

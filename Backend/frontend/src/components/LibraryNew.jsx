@@ -42,7 +42,7 @@ const LibraryNew = () => {
     setProgress(100);
   };
   useEffect(() => {
-    document.title = "Our Blogs - MPS Ajmer !";
+    document.title = "Our Elibrary - MPS Ajmer !";
     book();
     // eslint-disable-next-line
   }, []);
@@ -51,7 +51,7 @@ const LibraryNew = () => {
       <TopTitle />
       <div className="container px-5 mx-auto">
         <h1 className="text-blue-700 italic font-DancingScript dark:bg-gray-900 dark:text-blue-300 md:text-5xl lg:text-8xl text-4xl whitespace-nowrap w-fit mx-auto md:mb-24">
-          Our Popular Blogs...!
+          Our Encyclopedia...!
         </h1>
 
         {/* {loading && <Spiner />} */}
@@ -62,21 +62,23 @@ const LibraryNew = () => {
                 <CategoryBookDisplay key={cat.cat} books={cat} length={cat} />
               );
             })}
-            <InfiniteScroll
-              dataLength={categories.count}
-              next={fetchPagedBooks}
-              hasMore={categories.next ? true : false}
-              loader={<Spiner />}
-              endMessage={
-                <>
-                  <div className="text-center text-lg">
-                    You&apos;ve Reached the End Of the Module. <br />
-                    No More Blogs to Display.
-                  </div>
-                </>
-              }
-              scrollableTarget="scrollableDiv"
-            ></InfiniteScroll>
+            {categories.count > 3 && (
+              <InfiniteScroll
+                dataLength={categories.count}
+                next={fetchPagedBooks}
+                hasMore={categories.next ? true : false}
+                loader={<Spiner />}
+                endMessage={
+                  <>
+                    <div className="text-center text-lg">
+                      You&apos;ve Reached the End Of the Module. <br />
+                      No More Blogs to Display.
+                    </div>
+                  </>
+                }
+                scrollableTarget="scrollableDiv"
+              ></InfiniteScroll>
+            )}
             <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 sm:gap-3 md:gap-4 lg:gap-6 w-fit mx-auto my-4"></div>
           </div>
         </div>

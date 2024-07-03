@@ -16,7 +16,7 @@ const Search = () => {
   const { host } = vars;
   const [books, setBooks] = useState([]);
   const [bookPage, setBookPage] = useState({});
-  const [page, setPage] = useState({});
+  const [page, setPage] = useState({count: 0});
   const [posts, setPosts] = useState([]);
   const { query } = useParams();
   useEffect(() => {

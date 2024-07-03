@@ -3,6 +3,13 @@ from blog.models import Post, Categories
 from accounts.models import CustomUser
 from Elibrary.models import Book, BookCategory
 from django.contrib.auth.models import Group
+from django.contrib.admin.models import LogEntry
+
+
+class LogEntrySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LogEntry
+        fields = "__all__"
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -25,7 +32,7 @@ class BlogSerializer(serializers.ModelSerializer):
 class BlogUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['id', 'username', 'first_name', 'last_name', 'profile', 'bannerImg', "stuClass", "bio", "Status", 'nickname']
+        fields = ['id', 'username', 'first_name', 'last_name', 'profile', 'bannerImg', "bio", "Status", 'nickname']
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -35,7 +42,14 @@ class UserSerializer(serializers.ModelSerializer):
 class AdminUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['id', 'username', 'is_active', 'first_name', 'last_name', 'profile', 'bannerImg', "bio", 'nickname', 'email', 'groups', "is_superuser"]
+        fields = ['id', 'username', 'is_active', 'first_name', 'last_name', 'profile', 'bannerImg', "bio", 'nickname', 'email', 'groups', "is_superuser", "Status"]
+class AdminAddUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'username', 'password', 'is_active', 'first_name', 'last_name', 'profile', 'bannerImg', "bio", 'nickname', 'email', 'groups', "is_superuser", "Status"]
+        extra_kwargs = {
+            'password': {'write_only': True}  # Ensure password is write-only
+        }
 
 
 class UpdateProfileSerializer(serializers.ModelSerializer):

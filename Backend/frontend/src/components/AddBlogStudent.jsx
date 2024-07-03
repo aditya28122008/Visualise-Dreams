@@ -42,7 +42,7 @@ const AddBlogStudent = () => {
       const json = await response.json();
       // console.log(json);
       setCategories(json);
-      blogFormData.set("category", json[0].sno);
+      // blogFormData.set("category", json[0].sno);
       // console.log(json);
     } catch (error) {
       // console.log(error);

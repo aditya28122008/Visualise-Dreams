@@ -152,8 +152,9 @@ const BlogRead = () => {
                           </Link>
                         )}
                         <p className="text-gray-600 dark:text-gray-400 text-sm underline-offset-4">
-                          {postUser.status === 1 && "Student"}
-                          {postUser.status === 2 && "Teacher"}
+                          {postUser.status === "Student" && "Student"}
+                          {postUser.status === "Staff" && "Staff"}
+                          {postUser.status === "Teacher" && "Teacher"}
                           {postUser.status === 3 && "Admin"}
                         </p>
                       </div>

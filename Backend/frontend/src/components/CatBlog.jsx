@@ -11,7 +11,7 @@ import { useParams } from "react-router-dom";
 const CatBlog = () => {
   const { category } = useParams();
   const [posts, setPost] = useState([]);
-  const [page, setPage] = useState({});
+  const [page, setPage] = useState({count: 0});
   // const [hasMore, setHasMore] = useState(true);
   const loderCon = useContext(loaderContext);
   const { setProgress } = loderCon;
@@ -68,7 +68,7 @@ const CatBlog = () => {
             </div>
           </div>
           <InfiniteScroll
-            dataLength={posts.length}
+            dataLength={page.count}
             next={fetchPagedBlogs}
             hasMore={page.next ? true : false}
             loader={<Spiner />}

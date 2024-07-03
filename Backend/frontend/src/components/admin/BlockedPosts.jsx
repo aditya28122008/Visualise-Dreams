@@ -18,7 +18,7 @@ const BlockedPosts = () => {
   const { conDeleteBlogById } = bloCont;
   const usContext = useContext(userContext);
   const [posts, setPost] = useState([]);
-  const [page, setPage] = useState({});
+  const [page, setPage] = useState({count: 0});
     const { blogAdminAccess, libraryAdminAccess, userAdminAccess } = usContext;
   const lodCon = useContext(loaderContext);
   const { setProgress } = lodCon;
@@ -214,7 +214,7 @@ const BlockedPosts = () => {
                       </tbody>
                     </table>
                     <InfiniteScroll
-                      dataLength={posts.length}
+                      dataLength={page.count}
                       next={fetchPagedBlogs}
                       hasMore={page.next ? true : false}
                       loader={<Spiner />}

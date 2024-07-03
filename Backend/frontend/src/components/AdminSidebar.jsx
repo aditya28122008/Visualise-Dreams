@@ -201,7 +201,7 @@ const AdminSidebar = () => {
                 }`}
               >
                 <Link
-                  to="/admin/eb/all-bk"
+                  to="/admin/all-users"
                   className="block px-4 py-2 text-lg hover:bg-blue-700"
                   onClick={toggleUserDropdown}
                 >
@@ -215,11 +215,11 @@ const AdminSidebar = () => {
                   Manage Categories
                 </Link>
                 <Link
-                  to="/admin/eb/add"
+                  to="/admin/add-user"
                   onClick={toggleUserDropdown}
                   className="block px-4 py-2 text-lg hover:bg-blue-700"
                 >
-                  Add a Book
+                  Add a User
                   <CiCirclePlus className="inline mx-2 font-bold text-2xl" />
                 </Link>
               </div>

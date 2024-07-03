@@ -38,4 +38,5 @@ urlpatterns = [
     path('upda-sp-bk-cat/<str:name>/', views.UpdateBkCat.as_view()),
     path('del-sp-bl-cat/<str:name>/', views.DeleteBlCat.as_view()),
     path('add-sp-bl-cat/', views.AddBlCategory.as_view()),
+    path('groups/', views.AdminGetAllGroups.as_view()),
 ]

@@ -1,4 +1,4 @@
-import React from 'react'
+
 import loader from '../static/images/Loader.gif'
 const Spiner = () => {
   return (

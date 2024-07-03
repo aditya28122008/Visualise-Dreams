@@ -138,10 +138,6 @@ const EditBlogStudent = () => {
       const json = await response.json();
       if (json.success) {
         toast.success("Post Edited Successfully");
-        console.log("Content:", blogFormData.get("content"));
-        console.log("Title:", blogFormData.get("title"));
-        console.log("Category:", blogFormData.get("category"));
-        console.log("Response:", json);
         navigate("/u-admin");
       } else {
         toast.error("Failed to update the post");

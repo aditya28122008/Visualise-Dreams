@@ -1,37 +1,63 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useContext, useEffect, useState } from "react";
-import loaderContext from "../../context/loadingBar/loderContext";
-import userContext from "../../context/users/userContext";
-import { Link } from "react-router-dom";
-import vars from "../../vars";
+import { Link, useParams } from "react-router-dom";
+import vars from "../../../vars";
 import { toast } from "react-toastify";
-import Spiner from "../Spiner";
+import Spiner from "../../Spiner";
 import InfiniteScroll from "react-infinite-scroll-component";
-import AdminSidebar from "../AdminSidebar";
-import { FaCheckCircle } from "react-icons/fa";
-import blogContext from "../../context/admin/blogs/blogContext";
+import { PiPencilSimpleSlashLight } from "react-icons/pi";
+import { FaPencilAlt } from "react-icons/fa";
+import AdminSidebar from "../../AdminSidebar";
+import userContext from "../../../context/users/userContext";
+import loaderContext from "../../../context/loadingBar/loderContext";
 
-const AllowedPosts = () => {
-  const bloCont = useContext(blogContext);
-  const { conDeleteBlogById, conGetBlogs } = bloCont;
-  const usContext = useContext(userContext);
-  const [posts, setPost] = useState([]);
-  const [page, setPage] = useState({count: 0});
-  const { blogAdminAccess, libraryAdminAccess, userAdminAccess } = usContext;
-  const lodCon = useContext(loaderContext);
-  const { setProgress } = lodCon;
+const UserSpBlogs = () => {
+  const usCon = useContext(userContext);
+  const { blogAdminAccess, libraryAdminAccess, userAdminAccess } = usCon;
+  const loadCon = useContext(loaderContext);
+  const { setProgress } = loadCon;
+  const { id } = useParams();
+  const [blogs, setBlogs] = useState([]);
+  const [page, setPage] = useState({ count: 0 });
+
+  const getUserSpBlogs = async () => {
+    setProgress(40);
+    try {
+      const res = await fetch(`${vars.host}/api/admin-crud-users/${id}/`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("MPSUser")}`,
+          "Content-type": "application/json",
+        },
+        method: "PATCH",
+        body: JSON.stringify({ command: "us-bl" }),
+      });
+      const json = await res.json();
+      setPage(json);
+      setBlogs(json.results);
+    } catch (error) {
+      toast.error(
+        "Can't connect to the server. Please check your internet connection"
+      );
+    }
+    setProgress(100);
+  };
+  useEffect(() => {
+    getUserSpBlogs();
+  }, []);
   const fetchPagedBlogs = async () => {
     try {
       const response = await fetch(`${page.next}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("MPSUser")}`,
+          "Content-type": "application/json",
         },
+        method: "PATCH",
+        body: JSON.stringify({ command: "us-bl" }),
       });
       const json = await response.json();
       setPage(json);
-      const newPosts = posts.concat(json.results);
-      setPost(newPosts);
-      // document.documentElement.scrollTop = 0;
-      // document.body.scrollTop = 0;
+      const newblogs = blogs.concat(json.results);
+      setBlogs(newblogs);
     } catch (error) {
       toast.error(
         "Can't connect to the server. Please check your internet connection"
@@ -39,62 +65,6 @@ const AllowedPosts = () => {
     }
   };
 
-  const blog = async () => {
-    setProgress(40);
-    const json = await conGetBlogs();
-    if (json.success) {
-      setPage(json.json);
-      setPost(json.json.results);
-    }
-    setProgress(100);
-  };
-
-  const blockPost = async (id) => {
-    try {
-      const response = await fetch(`${vars.host}/api/admin-crud-blogs/${id}/`, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("MPSUser")}`,
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify({ command: "block" }),
-      });
-      const json = await response.json();
-      if (json.success) {
-        const newPosts = posts.filter((e) => {
-          return e.snoPost !== id;
-        });
-        setPost(newPosts);
-        toast.success("Post Blocked Successfully");
-        if (newPosts.length === 9) {
-          fetchPagedBlogs();
-        }
-      } else {
-        toast.error("An Error occoured");
-      }
-    } catch (error) {
-      toast.error(
-        "Can't connect to the server. Please check your internet connection"
-      );
-    }
-  };
-
-  const deleteBlogById = async (id) => {
-    if (window.confirm("Are You Sure Want to Delete?")) {
-      const res = await conDeleteBlogById(id);
-      if (res) {
-        const newPosts = posts.filter((p) => {
-          return p.snoPost !== id;
-        });
-        setPost(newPosts);
-      }
-    }
-  };
-  useEffect(() => {
-    document.title = "MPS Ajmer - Administration";
-    blog();
-    // eslint-disable-next-line
-  }, []);
   return (
     <>
       {libraryAdminAccess || blogAdminAccess || userAdminAccess ? (
@@ -102,14 +72,10 @@ const AllowedPosts = () => {
           <AdminSidebar />
           <div className="main flex md:justify-end justify-center">
             <div className="right-main-content overflow-x-auto md:w-[75%]">
-              {blogAdminAccess && (
+              {blogAdminAccess && userAdminAccess && (
                 <>
-                  <h1 className="text-4xl mb-4 text-center whitespace-nowrap w-fit mx-auto">
-                    Allowed Blog Posts
-                    <FaCheckCircle className="inline text-green-600 mx-2 bg-white rounded-full" />
-                    {/* <IoIosCloseCircle className="inline text-red-600 dark:text-red-500 mx-2  rounded-full"/> */}
-                  </h1>
-                  <div className="relative">
+                <div className="text-center text-4xl mb-4">User Associated Blogs</div>
+                  <div className="relative overflow-x-auto">
                     <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                       <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
@@ -123,19 +89,18 @@ const AllowedPosts = () => {
                             Posted On
                           </th>
                           <th scope="col" className="px-6 py-3">
+                            Publishing Status
+                          </th>
+                          <th scope="col" className="px-6 py-3">
                             Read Post
                           </th>
                           <th scope="col" className="px-6 py-3">
-                            Delete Post
-                          </th>
-                          <th scope="col" className="px-6 py-3">
-                            Block Post
+                            Edit Post
                           </th>
                         </tr>
                       </thead>
-
                       <tbody>
-                        {posts.map((post) => {
+                        {blogs.map((post) => {
                           return (
                             <tr
                               key={post.snoPost}
@@ -159,6 +124,13 @@ const AllowedPosts = () => {
                               >
                                 {new Date(post.timeStamp).toDateString()}
                               </th>
+                              <td className="px-6 py-4">
+                                {post.allowed ? (
+                                  <>Published</>
+                                ) : (
+                                  <>Not Yet Published</>
+                                )}
+                              </td>
                               <td className="px-6 py-4 view">
                                 <Link to={`/blog/${post.slug}`}>
                                   <svg
@@ -170,27 +142,21 @@ const AllowedPosts = () => {
                                   </svg>
                                 </Link>
                               </td>
-                              <td className="px-6 py-4 delete">
-                                <button
-                                  onClick={() => deleteBlogById(post.snoPost)}
-                                >
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 448 512"
-                                    className="dark:invert h-5 w-5 cursor-pointer"
-                                  >
-                                    <path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z" />
-                                  </svg>
-                                </button>
-                              </td>
-                              <td className="px-6 py-4">
-                                <button
-                                  className="px-2 py-1 bg-red-600 hover:bg-red-500 text-white rounded-lg"
-                                  onClick={() => blockPost(post.snoPost)}
-                                >
-                                  Block
-                                </button>
-                              </td>
+                              {!post.allowed ? (
+                                <>
+                                  <td className="px-6 py-4 view">
+                                    <Link to={`/admin/edit-blog/${post.slug}`}>
+                                      <FaPencilAlt className="dark:text-white text-black" />
+                                    </Link>
+                                  </td>
+                                </>
+                              ) : (
+                                <>
+                                  <button disabled>
+                                    <PiPencilSimpleSlashLight className="dark:text-white text-2xl mt-4 ml-8 text-black" />
+                                  </button>
+                                </>
+                              )}
                             </tr>
                           );
                         })}
@@ -226,4 +192,4 @@ const AllowedPosts = () => {
   );
 };
 
-export default AllowedPosts;
+export default UserSpBlogs;
