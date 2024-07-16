@@ -4,8 +4,9 @@ import loaderContext from "../../context/loadingBar/loderContext";
 import userContext from "../../context/users/userContext";
 import AdminSidebar from "../AdminSidebar";
 import { FaPencilAlt } from "react-icons/fa";
-import { Editor } from "@tinymce/tinymce-react";
+// import { Editor } from "@tinymce/tinymce-react";
 import { toast } from "react-toastify";
+import JoditEditor from "jodit-react";
 import vars from "../../vars";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -14,6 +15,7 @@ const EditBlog = () => {
   const maxFileNameLength = 100;
   const fileUploaderRef = useRef(null);
   const editorRef = useRef(null);
+  const [content, setContent] = useState("");
   const blogFormData = new FormData();
   const [blogCreds, setBlogCreds] = useState({
     title: "",
@@ -25,7 +27,7 @@ const EditBlog = () => {
   const { slug } = useParams();
   const [cantEdit, setCantEdit] = useState(false);
   const usContext = useContext(userContext);
-    const { blogAdminAccess, libraryAdminAccess, userAdminAccess } = usContext;
+  const { blogAdminAccess, libraryAdminAccess, userAdminAccess } = usContext;
   const lodCon = useContext(loaderContext);
   const { setProgress } = lodCon;
 
@@ -52,6 +54,7 @@ const EditBlog = () => {
       } else {
         setCantEdit(false);
         setBlogCreds(json);
+        setContent(json.content)
       }
     } catch (error) {
       toast.error(
@@ -65,10 +68,13 @@ const EditBlog = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (categoryRef.current.value === "-- Please Select A Valid Category --" || categoryRef.current.value === "-- NO CATEGORIES AVAILABLE --") {
+    if (
+      categoryRef.current.value === "-- Please Select A Valid Category --" ||
+      categoryRef.current.value === "-- NO CATEGORIES AVAILABLE --"
+    ) {
       toast.error("Please choose a valid category....!");
     } else {
-      const newContent = await applyClasses(editorRef.current.getContent());
+      const newContent = await applyClasses(content);
       await blogFormData.set("title", blogCreds.title);
       await blogFormData.set("tagline", blogCreds.tagline);
       await blogFormData.set("content", newContent);
@@ -122,10 +128,10 @@ const EditBlog = () => {
   const applyClasses = async (cont) => {
     const parser = new DOMParser();
     let doc = parser.parseFromString(cont, "text/html");
-    let links = doc.querySelectorAll("a")
-    
+    let links = doc.querySelectorAll("a");
+
     links.forEach((l) => {
-      l.classList = ""
+      l.classList = "";
       l.classList.add("underline");
       l.classList.add("underline-offset-2");
       l.classList.add("text-blue-500");
@@ -134,43 +140,43 @@ const EditBlog = () => {
     });
     let HOne = doc.querySelectorAll("h1");
     HOne.forEach((h) => {
-      h.classList = ""
+      h.classList = "";
       h.classList.add("text-4xl");
       h.classList.add("font-bold");
     });
     let HTwo = doc.querySelectorAll("h2");
     HTwo.forEach((h) => {
-      h.classList = ""
+      h.classList = "";
       h.classList.add("text-3xl");
       h.classList.add("font-bold");
     });
     let HThree = doc.querySelectorAll("h3");
     HThree.forEach((h) => {
-      h.classList = ""
+      h.classList = "";
       h.classList.add("text-2xl");
       h.classList.add("font-bold");
     });
     let Hfour = doc.querySelectorAll("h4");
     Hfour.forEach((h) => {
-      h.classList = ""
+      h.classList = "";
       h.classList.add("text-xl");
       h.classList.add("font-bold");
     });
     let Hfive = doc.querySelectorAll("h5");
     Hfive.forEach((h) => {
-      h.classList = ""
+      h.classList = "";
       h.classList.add("text-lg");
       h.classList.add("font-bold");
     });
     let Hsix = doc.querySelectorAll("h6");
     Hsix.forEach((h) => {
-      h.classList = ""
+      h.classList = "";
       h.classList.add("text-base");
       h.classList.add("font-bold");
     });
     let PRE = doc.querySelectorAll("pre");
     PRE.forEach((h) => {
-      h.classList = ""
+      h.classList = "";
       h.classList.add("text-lg");
     });
     let modifiedContent = doc.body.innerHTML;
@@ -238,7 +244,7 @@ const EditBlog = () => {
                           </label>
                         </div>
                         <div className="relative z-0 w-full mb-5 group">
-                          <Editor
+                          {/* <Editor
                             apiKey={`${vars.tinyAPIKey}`}
                             onInit={(evt, editor) =>
                               (editorRef.current = editor)
@@ -248,6 +254,16 @@ const EditBlog = () => {
                               toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat | preview',
                             }}
                             initialValue={blogCreds.content}
+                          /> */}
+                          <JoditEditor
+                            ref={editorRef}
+                            value={content}
+                            // config={config}
+                            tabIndex={100} // tabIndex of textarea
+                            onBlur={(newContent) => setContent(newContent)} // preferred to use only this option to update the content for performance reasons
+                            onChange={(newContent) => {
+                              setContent(newContent);
+                            }}
                           />
                         </div>
                         <>

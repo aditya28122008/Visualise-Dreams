@@ -241,6 +241,7 @@ Managing Django CORS:-
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "https://tjcrgnj2-5173.inc1.devtunnels.ms"
 ]
 
 

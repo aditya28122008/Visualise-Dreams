@@ -208,13 +208,6 @@ const AdminSidebar = () => {
                   All Users
                 </Link>
                 <Link
-                  to="/admin/m-bk-cat"
-                  className="block px-4 py-2 text-lg hover:bg-blue-700"
-                  onClick={toggleLibraryDropdown}
-                >
-                  Manage Categories
-                </Link>
-                <Link
                   to="/admin/add-user"
                   onClick={toggleUserDropdown}
                   className="block px-4 py-2 text-lg hover:bg-blue-700"

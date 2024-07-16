@@ -3,14 +3,16 @@ import loaderContext from "../../context/loadingBar/loderContext";
 import userContext from "../../context/users/userContext";
 import AdminSidebar from "../AdminSidebar";
 import { FaPencilAlt } from "react-icons/fa";
-import { Editor } from "@tinymce/tinymce-react";
+// import { Editor } from "@tinymce/tinymce-react";
 import { toast } from "react-toastify";
 import vars from "../../vars";
 import { useNavigate } from "react-router-dom";
+import JoditEditor from "jodit-react";
 
 const AddBlog = () => {
   const navigate = useNavigate();
   const maxFileNameLength = 100;
+  const [content, setContent] = useState("");
   const fileUploaderRef = useRef(null);
   const editorRef = useRef(null);
   const blogFormData = new FormData();
@@ -135,7 +137,7 @@ const AddBlog = () => {
       toast.error("Please choose a valid category....!");
       // console.log(categoryRef.current.value);
     } else {
-      const newContent = await applyClasses(editorRef.current.getContent());
+      const newContent = await applyClasses(content);
       await blogFormData.set("title", blogCreds.title);
       await blogFormData.set("tagline", blogCreds.tagline);
       await blogFormData.set("content", newContent);
@@ -260,16 +262,15 @@ const AddBlog = () => {
                         </label>
                       </div>
                       <div className="relative z-0 w-full mb-5 group">
-                        <Editor
-                          onInit={(evt, editor) => (editorRef.current = editor)}
-                          apiKey={`${vars.tinyAPIKey}`}
-                          init={{
-                            plugins:
-                              "anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount linkchecker markdown",
-                            toolbar:
-                              "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat",
+                        <JoditEditor
+                          ref={editorRef}
+                          value={content}
+                          // config={config}
+                          tabIndex={100} // tabIndex of textarea
+                          onBlur={(newContent) => setContent(newContent)} // preferred to use only this option to update the content for performance reasons
+                          onChange={(newContent) => {
+                            setContent(newContent);
                           }}
-                          initialValue={""}
                         />
                       </div>
                       <div className="relative z-0 w-full mb-5 group">

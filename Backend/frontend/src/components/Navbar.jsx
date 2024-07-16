@@ -259,7 +259,7 @@ const Navbar = (props) => {
               <NavbarLink name={`Blogs(${blogLen})`} to="/" />
               <NavbarLink name="Elibrary" to="/elibrary" />
               {(libraryAdminAccess || blogAdminAccess || userAdminAccess ) && (
-                <NavbarLink name="Admin" to="/admin/a-posts" />
+                <NavbarLink name="Admin" to="/admin" />
               )}
             </div>
           </div>

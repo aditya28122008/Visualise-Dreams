@@ -1,8 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import { useState, useRef, useEffect, useContext } from "react";
-import { Editor } from "@tinymce/tinymce-react";
+// import { Editor } from "@tinymce/tinymce-react";
 import { toast } from "react-toastify";
+import JoditEditor from "jodit-react";
 import { useNavigate } from "react-router-dom";
 import { CiPen } from "react-icons/ci";
 import vars from "../vars";
@@ -15,6 +16,7 @@ const AddBlogStudent = () => {
   const maxFileNameLength = 100;
   const fileUploaderRef = useRef(null);
   const editorRef = useRef(null);
+  const [content, setContent] = useState("");
   const navigate = useNavigate();
   const [blogCreds, setBlogCreds] = useState({
     title: "",
@@ -54,11 +56,14 @@ const AddBlogStudent = () => {
   const categoryRef = useRef(null);
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (categoryRef.current.value === "-- Please Select A Valid Category --" || categoryRef.current.value === "-- NO CATEGORIES AVAILABLE --") {
+    if (
+      categoryRef.current.value === "-- Please Select A Valid Category --" ||
+      categoryRef.current.value === "-- NO CATEGORIES AVAILABLE --"
+    ) {
       toast.error("Please choose a valid category....!");
       // console.log(categoryRef.current.value);
     } else {
-      const newContent = await applyClasses(editorRef.current.getContent());
+      const newContent = await applyClasses(content);
       await blogFormData.set("title", blogCreds.title);
       await blogFormData.set("tagline", blogCreds.tagline);
       await blogFormData.set("content", newContent);
@@ -89,13 +94,6 @@ const AddBlogStudent = () => {
       ...prevState,
       [name]: value,
     }));
-  };
-  const chooseCategory = (sno) => {
-    if (blogFormData.has("category")) {
-      blogFormData.delete("category");
-    }
-    blogFormData.set("category", sno);
-    // console.log(sno);
   };
   useEffect(() => {
     document.title = "Express Your Ideas";
@@ -209,7 +207,7 @@ const AddBlogStudent = () => {
                   </label>
                 </div>
                 <div className="relative z-0 w-full mb-5 group">
-                  <Editor
+                  {/* <Editor
                     onInit={(evt, editor) => (editorRef.current = editor)}
                     apiKey={`${vars.tinyAPIKey}`}
                     init={{
@@ -219,6 +217,16 @@ const AddBlogStudent = () => {
                         "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat",
                     }}
                     initialValue={""}
+                  /> */}
+                  <JoditEditor
+                    ref={editorRef}
+                    value={content}
+                    // config={config}
+                    tabIndex={100} // tabIndex of textarea
+                    onBlur={(newContent) => setContent(newContent)} // preferred to use only this option to update the content for performance reasons
+                    onChange={(newContent) => {
+                      setContent(newContent);
+                    }}
                   />
                 </div>
                 <div className="relative z-0 w-full mb-5 group">

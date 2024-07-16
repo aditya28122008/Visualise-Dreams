@@ -4,8 +4,11 @@ import userContext from "../../../context/users/userContext";
 import AdminSidebar from "../../AdminSidebar";
 import vars from "../../../vars";
 import { toast } from "react-toastify";
+import loaderContext from "../../../context/loadingBar/loderContext";
 import { useNavigate } from "react-router-dom";
 const AddUser = () => {
+  const loadCon = useContext(loaderContext)
+  const {setProgress} = loadCon
   const navigate = useNavigate()
   const usCon = useContext(userContext);
   const { blogAdminAccess, libraryAdminAccess, userAdminAccess } = usCon;
@@ -26,6 +29,7 @@ const AddUser = () => {
         userFormData.set(key, userCreds[key]);
       }
       userFormData.set("password", "____")
+      setProgress(40)
       const res = await fetch(`${vars.host}/api/admin-crud-users/0/`, {
         method: "POST",
         headers: {
@@ -34,6 +38,7 @@ const AddUser = () => {
         body: userFormData
       });
       const json = await res.json();
+      
       // console.log(json);
       if(json.success){
         toast.success("User Added Successfully")

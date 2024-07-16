@@ -1,19 +1,19 @@
-
+/* eslint-disable react/prop-types */
 
 const BookItem = (props) => {
-    const { book } = props;
+  const { book } = props;
   return (
     <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow-2xl dark:shadow-2xl dark:bg-gray-800 dark:border-gray-700 md:my-0 my-3">
       <div>
-          <img
-            className="rounded-t-lg"
-            src={`${book.bookCover}`}
-            alt=""
-          />
+        <img
+          className="rounded-t-lg w-full h-52"
+          src={`${book.bookCover}`}
+          alt=""
+        />
         <div className="p-5">
-            <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-              {book.bookName}
-            </h5>
+          <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+            {book.bookName}
+          </h5>
           <p className="my-2 font-normal text-gray-700 dark:text-gray-400">
             {book.author}
           </p>
@@ -32,7 +32,7 @@ const BookItem = (props) => {
               viewBox="0 0 14 10"
             >
               <path
-                stroke ="currentColor"
+                stroke="currentColor"
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth={2}

@@ -236,7 +236,6 @@ const EditBook = () => {
                       </div>
                       <div className="text-blue-600 hover:text-blue-400 hover:underline text-center">
                         <a
-                          target="_blank"
                           href={`${vars.host}/${bookCreds.bookPDF}`}
                         >
                           View Current Book PDF

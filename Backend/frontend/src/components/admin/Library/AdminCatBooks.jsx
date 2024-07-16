@@ -196,7 +196,7 @@ const AdminCatBooks = () => {
                         <>
                           <div className="text-center text-lg">
                             You&apos;ve Reached the End Of the Module. <br />
-                            No More Blogs to Display.
+                            No More Items to Display.
                           </div>
                         </>
                       }

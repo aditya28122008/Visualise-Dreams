@@ -45,6 +45,8 @@ import AllUsers from "./components/admin/Users/AllUsers";
 import AddUser from "./components/admin/Users/AddUser";
 import UserSpBlogs from "./components/admin/Users/UserSpBlogs";
 import EditUser from "./components/admin/Users/EditUser";
+import Test from "./components/Test";
+import AdminOptions from "./components/AdminOptions";
 
 function App() {
   const [mode, setMode] = useState("");
@@ -140,9 +142,14 @@ function App() {
                         <Route path="/u-admin" element={<UserPerAdmin />} />
                         <Route path="/stu/ed-bl/:slug" element={<EditBlogStudent />} />
                         <Route
+                          path="/admin"
+                          element={<AdminOptions />}
+                        />
+                        <Route
                           path="/admin/a-posts"
                           element={<AllowedPosts />}
                         />
+
                         <Route
                           path="/admin/ed-bl-cat/:name"
                           element={<EditBlogCategory />}
@@ -208,6 +215,10 @@ function App() {
                         <Route
                           path="/admin/user-blogs/:id"
                           element={<UserSpBlogs />}
+                        />
+                        <Route
+                          path="/test"
+                          element={<Test />}
                         />
                         <Route
                           path="/admin/ed-user/:id"

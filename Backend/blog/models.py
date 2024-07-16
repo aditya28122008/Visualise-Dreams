@@ -22,9 +22,9 @@ class Categories(models.Model):
 class Post(models.Model):
     snoPost = models.AutoField(primary_key=True)
     author = models.ForeignKey(to=CustomUser, on_delete=models.CASCADE, default="", null=True, blank=True)
-    title = models.CharField(max_length=200, validators=[MinLengthValidator(10), MaxLengthValidator(150)])
+    title = models.CharField(max_length=200, validators=[MinLengthValidator(5), MaxLengthValidator(150)])
     tagline = models.CharField(max_length=100, default="")
-    content = models.TextField(validators=[MinLengthValidator(20)])
+    content = models.TextField(validators=[MinLengthValidator(5)])
     slug = models.SlugField(unique=True, blank=True, max_length = 200)
     timeStamp = models.DateTimeField(blank=True, auto_now_add=True)
     image = models.FileField(upload_to="blog/images", default="")

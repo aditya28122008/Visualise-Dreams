@@ -13,7 +13,7 @@ import AdminSidebar from "../../AdminSidebar";
 import { FaCheckCircle, FaUserShield } from "react-icons/fa";
 import { IoIosCloseCircle } from "react-icons/io";
 import loaderContext from "../../../context/loadingBar/loderContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 const AllUsers = () => {
   const usCon = useContext(userContext);
   const loadCon = useContext(loaderContext);
@@ -27,16 +27,15 @@ const AllUsers = () => {
     setProgress(40);
     try {
       const res = await fetch(`${vars.host}/api/admin-crud-users/0/`, {
-        method: "PUT",
+        method: "PATCH",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("MPSUser")}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ query: que }),
+        body: JSON.stringify({ query: que, command: "serh" }),
       });
       // console.log(res);
       const json = await res.json();
-      console.log(json);
       setPage(json);
       setUsers(json.results);
     } catch (error) {
@@ -112,12 +111,12 @@ const AllUsers = () => {
   const fetchMoreUsers = async () => {
     try {
       const res = await fetch(`${page.next}`, {
-        method: "PUT",
+        method: "PATCH",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("MPSUser")}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ query: searchCreds }),
+        body: JSON.stringify({ query: searchCreds, command: "serh" }),
       });
       const json = await res.json();
       setPage(json);
@@ -133,6 +132,48 @@ const AllUsers = () => {
   const handleChange = async (e) => {
     setSearchCreds(e.target.value);
     getAllUsers(e.target.value);
+  };
+  const deletUser = async (id) => {
+    if (id !== loggedUser.id) {
+      if (window.confirm("Are you sure wanna delete this user?")) {
+        try {
+          const res = await fetch(`${vars.host}/api/admin-crud-users/${id}/`, {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("MPSUser")}`,
+            },
+          });
+          const json = await res.json();
+          if (json.success) {
+            const newUsers = users.filter((us) => {
+              return us.id !== id;
+            });
+            setUsers(newUsers);
+            toast.success("User Deleted Successfully");
+          } else if (json.code === "p_exists") {
+            toast.warn(
+              `Some blogs associated with this user exists. First delete them to delete the user.`
+            );
+          } else {
+            toast.error("Error deleting user");
+          }
+        } catch (error) {
+          toast.error(
+            "Can't connect to the server. Please check your internet connection"
+          );
+        }
+      }
+    } else {
+      toast.warning("Can't Delete your own user entity...!");
+    }
+  };
+  const navigate = useNavigate();
+  const onEditUser = (id) => {
+    if (id !== loggedUser.id) {
+      navigate(`/admin/ed-user/${id}`);
+    } else {
+      toast.warning("Can't Edit your own user entity...!");
+    }
   };
   return (
     <>
@@ -199,6 +240,9 @@ const AllUsers = () => {
                             ACTIVATE / DEACTIVATE
                           </th>
                           <th scope="col" className="px-6 py-3">
+                            VIEW
+                          </th>
+                          <th scope="col" className="px-6 py-3">
                             EDIT
                           </th>
                           {loggedUser.is_superuser && (
@@ -243,7 +287,7 @@ const AllUsers = () => {
                                   </>
                                 )}
                               </th>
-                              
+
                               <th
                                 scope="row"
                                 className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
@@ -260,13 +304,23 @@ const AllUsers = () => {
                                 scope="row"
                                 className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                               >
-                                <a target="_blannk" href={`${vars.host}/${user.profile}`} className="cursor-pointer text-blue-600 dark:text-blue-400 hover:underline hover:underline-offset-4">Click To View Profile</a>
+                                <a
+                                  href={`${vars.host}/${user.profile}`}
+                                  className="cursor-pointer text-blue-600 dark:text-blue-400 hover:underline hover:underline-offset-4"
+                                >
+                                  Click To View Profile
+                                </a>
                               </th>
                               <th
                                 scope="row"
                                 className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                               >
-                                <a target="_blannk" href={`${vars.host}/${user.bannerImg}`} className="cursor-pointer text-blue-600 dark:text-blue-400 hover:underline hover:underline-offset-4">Click To View Banner</a>
+                                <a
+                                  href={`${vars.host}/${user.bannerImg}`}
+                                  className="cursor-pointer text-blue-600 dark:text-blue-400 hover:underline hover:underline-offset-4"
+                                >
+                                  Click To View Banner
+                                </a>
                               </th>
                               <th
                                 scope="row"
@@ -282,29 +336,69 @@ const AllUsers = () => {
                                 scope="row"
                                 className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                               >
-                                {user.is_active ? (
-                                  <button
-                                    className="bg-red-600 text-white px-2 py-1 rounded-md hover:bg-red-500"
-                                    onClick={() => deActivateUser(user.id)}
-                                  >
-                                    Deactivate
-                                  </button>
+                                {user.id !== currUser.id ? (
+                                  <>
+                                    {user.is_active ? (
+                                      <button
+                                        className="bg-red-600 text-white px-2 py-1 rounded-md hover:bg-red-500"
+                                        onClick={() => deActivateUser(user.id)}
+                                      >
+                                        Deactivate
+                                      </button>
+                                    ) : (
+                                      <button
+                                        className="bg-green-600 text-white rounded-md px-2 py-1 hover:bg-green-500"
+                                        onClick={() => activateUser(user.id)}
+                                      >
+                                        Activate
+                                      </button>
+                                    )}
+                                  </>
                                 ) : (
-                                  <button
-                                    className="bg-green-600 text-white rounded-md px-2 py-1 hover:bg-greenz-500"
-                                    onClick={() => activateUser(user.id)}
-                                  >
-                                    Activate
-                                  </button>
+                                  <>
+                                    {user.is_active ? (
+                                      <button
+                                        className="bg-red-600 text-white px-2 py-1 rounded-md"
+                                        disabled
+                                        onClick={() => deActivateUser(user.id)}
+                                      >
+                                        Deactivate
+                                      </button>
+                                    ) : (
+                                      <button
+                                        className="bg-green-600 text-white rounded-md px-2 py-1 "
+                                        disabled
+                                        onClick={() => activateUser(user.id)}
+                                      >
+                                        Activate
+                                      </button>
+                                    )}
+                                  </>
                                 )}
+                              </th>
+                              <th scope="col" className="px-6 py-3">
+                                <Link to={`/profile/${user.username}`}>
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 576 512"
+                                    className="dark:invert h-5 w-5 cursor-pointer"
+                                  >
+                                    <path d="M288 80c-65.2 0-118.8 29.6-159.9 67.7C89.6 183.5 63 226 49.4 256c13.6 30 40.2 72.5 78.6 108.3C169.2 402.4 222.8 432 288 432s118.8-29.6 159.9-67.7C486.4 328.5 513 286 526.6 256c-13.6-30-40.2-72.5-78.6-108.3C406.8 109.6 353.2 80 288 80zM95.4 112.6C142.5 68.8 207.2 32 288 32s145.5 36.8 192.6 80.6c46.8 43.5 78.1 95.4 93 131.1c3.3 7.9 3.3 16.7 0 24.6c-14.9 35.7-46.2 87.7-93 131.1C433.5 443.2 368.8 480 288 480s-145.5-36.8-192.6-80.6C48.6 356 17.3 304 2.5 268.3c-3.3-7.9-3.3-16.7 0-24.6C17.3 208 48.6 156 95.4 112.6zM288 336c44.2 0 80-35.8 80-80s-35.8-80-80-80c-.7 0-1.3 0-2 0c1.3 5.1 2 10.5 2 16c0 35.3-28.7 64-64 64c-5.5 0-10.9-.7-16-2c0 .7 0 1.3 0 2c0 44.2 35.8 80 80 80zm0-208a128 128 0 1 1 0 256 128 128 0 1 1 0-256z" />
+                                  </svg>
+                                </Link>
                               </th>
                               <th
                                 scope="row"
                                 className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                               >
-                                <Link to={`/admin/ed-user/${user.id}`}>
-                                  <FaPencilAlt className="text-xl" />
-                                </Link>
+                                <div onClick={() => onEditUser(user.id)}>
+                                  <FaPencilAlt
+                                    className={`text-xl ${
+                                      loggedUser.id !== user.id &&
+                                      "cursor-pointer"
+                                    }`}
+                                  />
+                                </div>
                               </th>
                               {loggedUser.is_superuser && (
                                 <>
@@ -312,7 +406,13 @@ const AllUsers = () => {
                                     scope="row"
                                     className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                                   >
-                                    <MdDelete className="text-2xl cursor-pointer" />
+                                    <MdDelete
+                                      className={`text-2xl ${
+                                        loggedUser.id !== user.id &&
+                                        "cursor-pointer"
+                                      }`}
+                                      onClick={() => deletUser(user.id)}
+                                    />
                                   </th>
                                 </>
                               )}
@@ -340,7 +440,7 @@ const AllUsers = () => {
                         <>
                           <div className="text-center text-lg">
                             You&apos;ve Reached the End Of the Module. <br />
-                            No More Blogs to Display.
+                            No More Items to Display.
                           </div>
                         </>
                       }

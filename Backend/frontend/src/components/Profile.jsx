@@ -65,7 +65,7 @@ const Profile = () => {
       setPage(json);
       setBlogs(json.results);
     } catch (error) {
-      console.log(error);
+      toast.error("Can't connect to the server. Please check your internet connection")
     }
   };
   useEffect(() => {

@@ -10,10 +10,10 @@ from rest_framework.generics import RetrieveAPIView, ListAPIView
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, JSONParser, FormParser
 from rest_framework.permissions import IsAuthenticated
-from rest_framework import status, permissions
+from rest_framework import status
 import os
 from django.core.mail import send_mail
-from visualise_dreams import settings
+from django.conf import settings
 from blog.models import Post, Categories
 from accounts.models import CustomUser as User
 from django.contrib.auth.models import Group
@@ -40,8 +40,14 @@ class AdminCRUDUsers(APIView):
     def post(self, request, id):
         data = request.data
         email = data.get('email')
+        first_name = data.get("first_name")
+        last_name = data.get("last_name")
         if not email:
             return Response({"success": False, "message": "Email is required"}, status=status.HTTP_400_BAD_REQUEST)
+        if not first_name:
+            return Response({"success": False, "message": "first_name is required"}, status=status.HTTP_400_BAD_REQUEST)
+        if not last_name:
+            return Response({"success": False, "message": "last_name is required"}, status=status.HTTP_400_BAD_REQUEST)
         checkEmail = CustomUser.objects.filter(email=email)
         checkUsername = CustomUser.objects.filter(username = data.get('username'))
         if len(checkUsername) == 0:
@@ -53,7 +59,7 @@ class AdminCRUDUsers(APIView):
                     ser.validated_data['password'] = hashPassword
                     try:
                         send_mail(
-                            'Your New Account Credentials',
+                            'Your New Account Credentials for MPS Ajmer Blogs are:-',
                             f'Username: {ser.validated_data['username']}\nPassword: {password}',
                             settings.EMAIL_HOST_USER,
                             [email],
@@ -76,17 +82,23 @@ class AdminCRUDUsers(APIView):
         if data['command'] == "activate":
             try:
                 tarUser = CustomUser.objects.get(id=id)
-                tarUser.is_active = True
-                tarUser.save()
+                if request.user != tarUser:
+                    tarUser.is_active = True
+                    tarUser.save()
+                else:
+                    return Response({"success": False}, status=status.HTTP_401_UNAUTHORIZED)
                 return Response({"success": True}, status=status.HTTP_200_OK)
             except CustomUser.DoesNotExist:
                 return Response({"success": False}, status=status.HTTP_404_NOT_FOUND)
         if data['command'] == "deactivate":
             try:
                 tarUser = CustomUser.objects.get(id=id)
-                tarUser.is_active = False
-                tarUser.save()
-                return Response({"success": True}, status=status.HTTP_200_OK)
+                if request.user != tarUser:
+                    tarUser.is_active = False
+                    tarUser.save()
+                    return Response({"success": True}, status=status.HTTP_200_OK)
+                else:
+                    return Response({"success": False}, status=status.HTTP_401_UNAUTHORIZED)
             except CustomUser.DoesNotExist:
                 return Response({"success": False}, status=status.HTTP_404_NOT_FOUND)
             
@@ -102,23 +114,76 @@ class AdminCRUDUsers(APIView):
             user = CustomUser.objects.get(id=id)
             ser = AdminUserSerializer(user)
             return Response(ser.data)
+        if data['command'] == "serh":
+            paginator = PageNumberPagination()
+            paginator.page_size = 12
+            data = request.data
+            query = data['query']
+            users_nick = CustomUser.objects.filter(nickname__icontains = query)
+            users_fName = CustomUser.objects.filter(first_name__icontains = query)
+            users_lName = CustomUser.objects.filter(last_name__icontains = query)
+            users_username = CustomUser.objects.filter(username__icontains = query)
+            users_bio = CustomUser.objects.filter(bio__icontains = query)
+            users_email = CustomUser.objects.filter(email__icontains = query)
+            users = users_nick.union(users_bio, users_fName, users_lName, users_username, users_email)
+            paginated = paginator.paginate_queryset(users, request)
+            ser = AdminUserSerializer(paginated, many = True)
+            return paginator.get_paginated_response(ser.data)
+
+    def delete(self, request, id):
+        if request.user.is_superuser and id != request.user.id:
+            currUser = CustomUser.objects.get(id=id)
+            pos = Post.objects.filter(author=currUser)
+            if len(pos) == 0:
+                if currUser.profile != 'user/blank.jpg':
+                    profile = f"{settings.MEDIA_ROOT}/{currUser.profile}"
+                    os.remove(profile)
+                if currUser.bannerImg != 'user/blank.jpg':
+                    bannerImg = f"{settings.MEDIA_ROOT}/{currUser.bannerImg}"
+                    os.remove(bannerImg)
+                currUser.delete()
+                return Response({"success": True}, status=status.HTTP_200_OK)
+            else:
+                return Response({"success": False, "code": "p_exists"})
+        else:
+            return Response({"success": False}, status=status.HTTP_401_UNAUTHORIZED)
+        
 
 
     def put(self, request, id):
-        paginator = PageNumberPagination()
-        paginator.page_size = 12
         data = request.data
-        query = data['query']
-        users_nick = CustomUser.objects.filter(nickname__icontains = query)
-        users_fName = CustomUser.objects.filter(first_name__icontains = query)
-        users_lName = CustomUser.objects.filter(last_name__icontains = query)
-        users_username = CustomUser.objects.filter(username__icontains = query)
-        users_bio = CustomUser.objects.filter(bio__icontains = query)
-        users_email = CustomUser.objects.filter(email__icontains = query)
-        users = users_nick.union(users_bio, users_fName, users_lName, users_username, users_email)
-        paginated = paginator.paginate_queryset(users, request)
-        ser = AdminUserSerializer(paginated, many = True)
-        return paginator.get_paginated_response(ser.data)
+        try:
+            user = CustomUser.objects.get(id=id)
+            if user != request.user:
+                ser = AdminUserSerializer(data=data, instance=user)
+                if ser.is_valid():
+                    try:
+                        if ser.validated_data['profile']:
+                            if user.profile != 'user/blank.jpg':
+                                media_file_path = f'{settings.MEDIA_ROOT}/{user.profile}'
+                                os.remove(media_file_path)
+                    except Exception as error:
+                        pass
+                    try:
+                        if ser.validated_data['bannerImg']:
+                            if user.bannerImg != 'user/blank.jpg':
+                                media_file_path = f'{settings.MEDIA_ROOT}/{user.bannerImg}'
+                                os.remove(media_file_path)
+                    except Exception as error:
+                        pass
+                    
+                    # print(ser.validated_data['is_active'])
+                    ser.validated_data['is_active'] = user.is_active
+
+                    ser.save()
+                    return Response({"success": True}, status=status.HTTP_200_OK)
+                else:
+                    return Response({"success": False, "err": ser.errors}, status=status.HTTP_200_OK)
+            else:
+                return Response({"success": False}, status=status.HTTP_401_UNAUTHORIZED)    
+        except CustomUser.DoesNotExist:
+            return Response({"success": False}, status=status.HTTP_404_NOT_FOUND)
+        
     
 """
 User's Admin ends Here
@@ -500,14 +565,14 @@ class CRUDPost(APIView):
         
     def post(self, request, snoPost):
         data = request.data
+        serializer = BlogSerializer(data=data)
         if snoPost == 0:
-            serializer = BlogSerializer(data=data)
             if serializer.is_valid():
                 serializer.validated_data['allowed'] = True
                 serializer.validated_data['allowd_at'] = datetime.now()
                 serializer.save()
                 return Response({"success": True, "data": serializer.data}, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"erroe": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
@@ -645,7 +710,7 @@ class StudentsBlogApi(APIView):
                 ser.save()
                 return Response({"success": True, "data": ser.data})
             else:
-                return Response({"success": False,}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"success": False, "err": ser.errors}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({"success": False,}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         
@@ -698,14 +763,14 @@ class UpdateProfile(APIView):
         if serializer.is_valid():
             try:
                 if serializer.validated_data['profile']:
-                    if request.user.profile != 'user/blank.webp':
+                    if request.user.profile != 'user/blank.jpg':
                         media_file_path = f'{settings.MEDIA_ROOT}/{request.user.profile}'
                         os.remove(media_file_path)
             except Exception as error:
                 pass
             try:
                 if serializer.validated_data['bannerImg']:
-                    if request.user.bannerImg != 'user/blank.webp':
+                    if request.user.bannerImg != 'user/blank.jpg':
                         media_file_path = f'{settings.MEDIA_ROOT}/{request.user.bannerImg}'
                         os.remove(media_file_path)
             except Exception as error:

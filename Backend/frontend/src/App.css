@@ -3,6 +3,15 @@
 @tailwind base;
 @tailwind components;
 
+@layer no-tailwindcss {
+  /* This layer is disabled */
+  @layer utilities {
+    .no-tailwindcss {
+      all: unset;
+    }
+  }
+}
+
 @layer utilities {
   .link-active {
     @apply underline underline-offset-8;

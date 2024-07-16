@@ -7,7 +7,7 @@ const BookItemSearch = (props) => {
     <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow-2xl dark:shadow-2xl dark:bg-gray-800 dark:border-gray-700">
       <div>
         <img
-          className="rounded-t-lg object-center h-32 object-cover"
+          className="rounded-t-lg w-full h-52"
           src={`${vars.host}${book.bookCover}`}
           alt=""
         />
@@ -20,7 +20,6 @@ const BookItemSearch = (props) => {
           </p>
           <a
             href={`${vars.host}${book.bookPDF}`}
-            target="_blank"
             rel="noreferrer"
             className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white  rounded-lg  focus:ring-4 focus:outline-none bg-blue-600 hover:bg-blue-700 focus:ring-blue-800"
           >

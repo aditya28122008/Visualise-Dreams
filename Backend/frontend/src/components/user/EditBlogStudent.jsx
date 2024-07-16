@@ -3,7 +3,8 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import vars from "../../vars";
 import { toast } from "react-toastify";
-import { Editor } from "@tinymce/tinymce-react";
+import JoditEditor from "jodit-react";
+// import { Editor } from "@tinymce/tinymce-react";
 import userContext from "../../context/users/userContext";
 import loaderContext from "../../context/loadingBar/loderContext";
 
@@ -11,8 +12,9 @@ const EditBlogStudent = () => {
   const { slug } = useParams();
   const [blogCreds, setBlogCreds] = useState({});
   const [categories, setCategories] = useState([]);
-  const loadCon = useContext(loaderContext)
-  const {setProgress}= loadCon;
+  const loadCon = useContext(loaderContext);
+  const { setProgress } = loadCon;
+  const [content, setContent] = useState("");
   const usCon = useContext(userContext);
   const { user } = usCon;
   const maxFileNameLength = 100;
@@ -21,18 +23,21 @@ const EditBlogStudent = () => {
   const editorRef = useRef(null);
   const [notAvail, setNotAvail] = useState(false);
   const getCurrentBlog = async () => {
-    setProgress(40)
+    setProgress(40);
     try {
       const res = await fetch(`${vars.host}/api/post/${slug}/`);
       const json = await res.json();
       setBlogCreds(json);
+      setContent(json.content);
       if (json.detail === "Not found.") {
         setNotAvail(true);
       }
     } catch (error) {
-      console.log(error);
+      toast.error(
+        "Can't connect to the server. Please check your internet connection"
+      );
     }
-    setProgress(100)
+    setProgress(100);
   };
   const navigate = useNavigate();
   useEffect(() => {
@@ -49,7 +54,7 @@ const EditBlogStudent = () => {
       );
     } else {
       setBlImg(blogImage);
-      blogFormData.set("image", blogImage)
+      blogFormData.set("image", blogImage);
     }
   };
   const applyClasses = async (cont) => {
@@ -118,7 +123,7 @@ const EditBlogStudent = () => {
   const blogFormData = new FormData();
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const newContent = await applyClasses(editorRef.current.getContent());
+    const newContent = await applyClasses(content);
     blogFormData.set("title", blogCreds.title);
     blogFormData.set("tagline", blogCreds.tagline);
     blogFormData.set("content", newContent);
@@ -126,15 +131,18 @@ const EditBlogStudent = () => {
       blogFormData.set("image", blImg);
     }
     blogFormData.set("category", blogCreds.category);
-  
+
     try {
-      const response = await fetch(`${vars.host}/api/student-crud-blogs/${blogCreds.snoPost}/`, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("MPSUser")}`,
-        },
-        body: blogFormData,
-      });
+      const response = await fetch(
+        `${vars.host}/api/student-crud-blogs/${blogCreds.snoPost}/`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("MPSUser")}`,
+          },
+          body: blogFormData,
+        }
+      );
       const json = await response.json();
       if (json.success) {
         toast.success("Post Edited Successfully");
@@ -150,7 +158,7 @@ const EditBlogStudent = () => {
       console.error("Request Error:", error);
     }
   };
-  
+
   const getAllCategories = async () => {
     try {
       const response = await fetch(`${vars.host}/api/get-all-categories/`);
@@ -169,7 +177,7 @@ const EditBlogStudent = () => {
   const categoryRef = useRef(null);
   return (
     <>
-      {(!blogCreds.allowed && user.id === blogCreds.author && !notAvail) ? (
+      {!blogCreds.allowed && user.id === blogCreds.author && !notAvail ? (
         <>
           <div className="main flex justify-center">
             <div className="right-main-content overflow-x-auto md:w-[75%]">
@@ -219,7 +227,7 @@ const EditBlogStudent = () => {
                       </label>
                     </div>
                     <div className="relative z-0 w-full mb-5 group">
-                      <Editor
+                      {/* <Editor
                         onInit={(evt, editor) => (editorRef.current = editor)}
                         apiKey={`${vars.tinyAPIKey}`}
                         init={{
@@ -229,6 +237,16 @@ const EditBlogStudent = () => {
                             "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat",
                         }}
                         initialValue={blogCreds.content}
+                      /> */}
+                      <JoditEditor
+                        ref={editorRef}
+                        value={content}
+                        // config={config}
+                        tabIndex={100} // tabIndex of textarea
+                        onBlur={(newContent) => setContent(newContent)} // preferred to use only this option to update the content for performance reasons
+                        onChange={(newContent) => {
+                          setContent(newContent);
+                        }}
                       />
                     </div>
                     <div className="relative z-0 w-full mb-5 group">
