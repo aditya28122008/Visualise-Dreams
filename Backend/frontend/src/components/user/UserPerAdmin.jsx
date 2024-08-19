@@ -192,7 +192,7 @@ const UserPerAdmin = () => {
       </div>
 
       <InfiniteScroll
-        dataLength={page.count}
+        dataLength={blogs.length}
         next={fetchPagedBlogs}
         hasMore={page.next ? true : false}
         loader={<Spiner />}

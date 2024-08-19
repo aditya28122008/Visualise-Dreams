@@ -68,7 +68,7 @@ const CatBlog = () => {
             </div>
           </div>
           <InfiniteScroll
-            dataLength={page.count}
+            dataLength={posts.length}
             next={fetchPagedBlogs}
             hasMore={page.next ? true : false}
             loader={<Spiner />}

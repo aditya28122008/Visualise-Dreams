@@ -94,7 +94,7 @@ function App() {
                 {/* <Alert /> */}
                 <ToastContainer
                   position="top-right"
-                  autoClose={2500}
+                  autoClose={1500}
                   hideProgressBar={false}
                   newestOnTop={false}
                   closeOnClick
@@ -225,6 +225,7 @@ function App() {
                           element={<EditUser />}
                         />
                         <Route path="*" element={<NotFound />} />
+                        <Route path="/api/*" element={<NotFound />} />
                       </Routes>
                     </div>
                       <Footer logo={logo} />

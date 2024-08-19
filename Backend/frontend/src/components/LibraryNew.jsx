@@ -17,7 +17,6 @@ const LibraryNew = () => {
     try {
       const res = await axios.get(`${categories.next}`);
       setCategories(res.data);
-      setCategories(res.data);
       const newBooks = catBooks.concat(res.data.results);
       setCatBooks(newBooks);
     } catch (error) {
@@ -64,7 +63,7 @@ const LibraryNew = () => {
             })}
             {categories.count > 3 && (
               <InfiniteScroll
-                dataLength={categories.count}
+                dataLength={catBooks.length}
                 next={fetchPagedBooks}
                 hasMore={categories.next ? true : false}
                 loader={<Spiner />}

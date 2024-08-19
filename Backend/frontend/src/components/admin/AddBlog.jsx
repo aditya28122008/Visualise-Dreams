@@ -229,6 +229,8 @@ const AddBlog = () => {
                         <input
                           type="text"
                           name="title"
+                          minLength={5}
+                          maxLength={150}
                           id="title"
                           className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                           placeholder=" "
@@ -261,15 +263,27 @@ const AddBlog = () => {
                           Tagline
                         </label>
                       </div>
-                      <div className="relative z-0 w-full mb-5 group">
+                      <div className="relative z-0 w-full mb-5 group text-black">
                         <JoditEditor
                           ref={editorRef}
                           value={content}
                           // config={config}
                           tabIndex={100} // tabIndex of textarea
                           onBlur={(newContent) => setContent(newContent)} // preferred to use only this option to update the content for performance reasons
-                          onChange={(newContent) => {
-                            setContent(newContent);
+                          // onChange={(newContent) => {
+                          //   setContent(newContent);
+                          // }}
+                          config={{
+                            autofocus: false,
+                            uploader: {
+                              insertImageAsBase64URI: true,
+                            },
+                            spellcheck: true,
+                            // inline: true,
+                            iframe: true,
+                            toolbarInlineForSelection: true,
+                            showPlaceholder: true,
+                            toolbarStickyOffset: 1,
                           }}
                         />
                       </div>

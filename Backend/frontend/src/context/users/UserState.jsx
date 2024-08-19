@@ -58,7 +58,7 @@ const UserState = ({ children }) => {
       }
     } catch (error) {
       toast.error(
-        "Can't connect to the server. Please check your internet connection"
+        "Can't connect to the server. Please check your internet connection", {autoClose: 2500}
       );
     }
   };

@@ -1,9 +1,8 @@
-{% load static %}
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" href="/staticLogo.png" />
+    <link rel="icon" href="Logo.png" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MPS Ajmer</title>
@@ -29,10 +28,34 @@
     />
     <meta name="description" content="MPS Ajmer Blogs & Elibrary" />
     <style>
-      
+      body::-webkit-scrollbar {
+        width: 0px;
+      }
+      body {
+        overflow-y: hidden;
+      }
+      #scrollableDiv::-webkit-scrollbar-track {
+        width: 10px;
+        background-color: #1e40af8f;
+      }
+      @media (max-width: 768px) {
+        #scrollableDiv::-webkit-scrollbar {
+          width: 0px;
+        }
+      }
+      #scrollableDiv::-webkit-scrollbar-thumb {
+        background-color: #1e40af;
+        border-radius: 40px;
+      }
+      #scrollableDiv::-webkit-scrollbar {
+        width: 10px;
+      }
+      #scrollableDiv {
+        overflow-x: hidden;
+      }
     </style>
-    <script type="module" crossorigin src="/static/assets/index-ntZZlfJn.js"></script>
-    <link rel="stylesheet" crossorigin href="/static/assets/index-DzUlgGmC.css">
+    <script type="module" crossorigin src="/assets/index-ntZZlfJn.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DzUlgGmC.css">
   </head>
   <body>
     <div id="root"></div>

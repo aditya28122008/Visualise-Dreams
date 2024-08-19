@@ -128,7 +128,7 @@ const BlogRead = () => {
         <section className="dark:bg-gray-900 bg-white body-font">
           <div className="lg:w-[80%] mx-auto">
             <div className="container px-5 py-24 mx-auto flex flex-col">
-              <div className="dark:bg-gray-800 px-8 rounded-md dark:shadow-none shadow-lg">
+              <div className="bg-white px-8 rounded-md dark:shadow-blue-300 shadow-lg">
                 <div className="mb-6">
                   <div className="mt-10 w-full items-center whitespace-nowrap flex justify-between">
                     <div className="top flex space-x-3 justify-center items-center my-4">
@@ -140,18 +140,18 @@ const BlogRead = () => {
                       <div>
                         {postUser.status === 3 ? (
                           <a target="_blank" href={`https://mpsajmer.com`}>
-                            <p className="text-xl font-semibold dark:text-white text-black cursor-pointer hover:underline hover:underline-offset-4">
+                            <p className="text-xl font-semibold  text-black cursor-pointer hover:underline hover:underline-offset-4">
                               {postUser.fName} {postUser.lName}
                             </p>
                           </a>
                         ) : (
                           <Link to={`/profile/${postUser.username}`}>
-                            <p className="text-xl font-semibold dark:text-white text-black cursor-pointer hover:underline hover:underline-offset-4">
+                            <p className="text-xl font-semibold text-black cursor-pointer hover:underline hover:underline-offset-4">
                               {postUser.fName} {postUser.lName}
                             </p>
                           </Link>
                         )}
-                        <p className="text-gray-600 dark:text-gray-400 text-sm underline-offset-4">
+                        <p className="text-gray-600 text-sm underline-offset-4">
                           {postUser.status === "Student" && "Student"}
                           {postUser.status === "Staff" && "Staff"}
                           {postUser.status === "Teacher" && "Teacher"}
@@ -194,10 +194,16 @@ const BlogRead = () => {
                     </div>
                   </div>
                 </div>
-                <div className="mx-auto w-fit text-black mb-6 dark:text-white font-bold italic text-3xl md:text-6xl text-justify">
+                <div className="mx-auto w-fit text-black mb-6 font-bold italic text-3xl md:text-6xl text-justify">
                   <p>{post.title}</p>
-                  <p className="text-lg not-italic text-gray-600 dark:text-gray-400 text-right mt-2">
+                  <p className="text-lg not-italic text-gray-600 text-right mt-2">
+                    {post.allowed ? <>
+                    
+                    {new Date(post.allowd_at).toDateString().slice(4)}
+                    </>: <>
+                    
                     {new Date(post.timeStamp).toDateString().slice(4)}
+                    </>}
                   </p>
                 </div>
                 <div className="rounded-lg h-96 w-full overflow-hidden">
@@ -207,9 +213,9 @@ const BlogRead = () => {
                     src={post.image}
                   />
                 </div>
-                <div className="my-10 px-2 py-4 rounded-md">
+                <div className="my-10 px-2 py-4 rounded-md ">
                   <p
-                    className="leading-relaxed"
+                    className="leading-relaxed text-black"
                     dangerouslySetInnerHTML={{ __html: post.content }}
                   />
                 </div>

@@ -222,6 +222,9 @@ const AllUsers = () => {
                             NAME
                           </th>
                           <th scope="col" className="px-6 py-3">
+                            USERNAME
+                          </th>
+                          <th scope="col" className="px-6 py-3">
                             STATUS
                           </th>
                           <th scope="col" className="px-6 py-3">
@@ -287,6 +290,12 @@ const AllUsers = () => {
                                   </>
                                 )}
                               </th>
+                              <th
+                                scope="row"
+                                className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                              >
+                                {user.username}
+                              </th>
 
                               <th
                                 scope="row"
@@ -305,7 +314,8 @@ const AllUsers = () => {
                                 className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                               >
                                 <a
-                                  href={`${vars.host}/${user.profile}`}
+                                  href={`${vars.host}${user.profile}`}
+                                  target="_blank"
                                   className="cursor-pointer text-blue-600 dark:text-blue-400 hover:underline hover:underline-offset-4"
                                 >
                                   Click To View Profile
@@ -316,7 +326,8 @@ const AllUsers = () => {
                                 className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                               >
                                 <a
-                                  href={`${vars.host}/${user.bannerImg}`}
+                                  href={`${vars.host}${user.bannerImg}`}
+                                  target="_blank"
                                   className="cursor-pointer text-blue-600 dark:text-blue-400 hover:underline hover:underline-offset-4"
                                 >
                                   Click To View Banner
@@ -432,7 +443,7 @@ const AllUsers = () => {
                       </tbody>
                     </table>
                     <InfiniteScroll
-                      dataLength={page.count}
+                      dataLength={users.length}
                       next={fetchMoreUsers}
                       hasMore={page.next ? true : false}
                       loader={<Spiner />}

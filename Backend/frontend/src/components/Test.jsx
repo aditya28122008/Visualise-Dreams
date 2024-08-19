@@ -1,5 +1,5 @@
 import JoditEditor from "jodit-react";
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 const Test = () => {
   const editor = useRef(null);
@@ -11,23 +11,34 @@ const Test = () => {
   // 	},
   // 	[placeholder]
   // );
+  const displayRef = useRef(null);
   return (
     <div className="dark:text-black">
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          console.log(content);
+          displayRef.current.innerHTML = content;
         }}
       >
-        <div className="no-tailwindcss">
+        <div className="dark:bg-white text-black">
           <JoditEditor
             ref={editor}
             value={content}
             // config={config}
             tabIndex={8} // tabIndex of textarea
             onBlur={(newContent) => setContent(newContent)} // preferred to use only this option to update the content for performance reasons
-            onChange={(newContent) => {
-              setContent(newContent);
+            // onChange={(newContent) => {
+            //   setContent(newContent);
+            // }}
+            config={{
+              autofocus: true,
+              uploader: {
+                insertImageAsBase64URI: true,
+              },
+              spellcheck: true,
+              // inline: true,
+              toolbarInlineForSelection: true,
+              showPlaceholder: false,
             }}
           />
         </div>
@@ -36,6 +47,8 @@ const Test = () => {
           Submit
         </button>
       </form>
+
+      <div ref={displayRef}></div>
     </div>
   );
 };

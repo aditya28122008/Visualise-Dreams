@@ -3,14 +3,32 @@
 @tailwind base;
 @tailwind components;
 
-@layer no-tailwindcss {
-  /* This layer is disabled */
-  @layer utilities {
-    .no-tailwindcss {
-      all: unset;
-    }
+body::-webkit-scrollbar {
+  width: 0px;
+}
+body {
+  overflow-y: hidden;
+}
+#scrollableDiv::-webkit-scrollbar-track {
+  width: 10px;
+  background-color: #1e40af8f;
+}
+@media (max-width: 768px) {
+  #scrollableDiv::-webkit-scrollbar {
+    width: 0px;
   }
 }
+#scrollableDiv::-webkit-scrollbar-thumb {
+  background-color: #1e40af;
+  border-radius: 40px;
+}
+#scrollableDiv::-webkit-scrollbar {
+  width: 10px;
+}
+#scrollableDiv {
+  overflow-x: hidden;
+}
+
 
 @layer utilities {
   .link-active {

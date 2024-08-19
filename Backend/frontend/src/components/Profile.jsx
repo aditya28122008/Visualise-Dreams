@@ -63,7 +63,7 @@ const Profile = () => {
       );
       const json = await response.json();
       setPage(json);
-      setBlogs(json.results);
+      setBlogs(blogs.concat(json.results));
     } catch (error) {
       toast.error("Can't connect to the server. Please check your internet connection")
     }
@@ -162,7 +162,7 @@ const Profile = () => {
                 </div>
               </div>
               <InfiniteScroll
-                dataLength={page.count}
+                dataLength={blogs.length}
                 next={fetchPagedBlogs}
                 hasMore={page.next ? true : false}
                 loader={<Spiner />}

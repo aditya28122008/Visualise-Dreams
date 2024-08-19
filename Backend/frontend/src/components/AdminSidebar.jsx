@@ -35,19 +35,21 @@ const AdminSidebar = () => {
     <div className="w-[25%] transition-transform duration-500 shadow-2xl shadow-gray-400 dark:bg-gray-800 bg-purple-100 dark:shadow-none z-20 fixed hidden md:block -top-4 mt-3 left-0 py-4 bottom-0">
       {/* Sidebar header */}
       <div className="flex items-center justify-center md:flex-col lg:flex-row space-x-2 py-4 px-4">
-        <img
-          src={logo}
-          className="w-16 mx-auto border-none rounded-full"
-          alt=""
-        />
-        <div className="">
-          <h1 className="lg:text-lg md:text-base text-center whitespace-pre-wrap font-medium lg:font-semibold font-Kalnia">
-            MPS Ajmer&apos;s Administration
-          </h1>
-          <div className="text-gray-600 dark:text-gray-400 text-center whitespace-pre-wrap lg:text-sm md:text-xs">
-            The most secure <br /> Admin Pannel in Ajmer...!
+        <Link to={"/admin"}>
+          <img
+            src={logo}
+            className="w-16 mx-auto border-none rounded-full"
+            alt=""
+          />
+          <div className="">
+            <h1 className="lg:text-lg md:text-base text-center whitespace-pre-wrap font-medium lg:font-semibold font-Kalnia">
+              MPS Ajmer&apos;s Administration
+            </h1>
+            <div className="text-gray-600 dark:text-gray-400 text-center whitespace-pre-wrap lg:text-sm md:text-xs">
+              The most secure <br /> Admin Pannel in Ajmer...!
+            </div>
           </div>
-        </div>
+        </Link>
       </div>
       {/* Sidebar links */}
       <div className="flex flex-col flex-grow dark:text-white text-black">

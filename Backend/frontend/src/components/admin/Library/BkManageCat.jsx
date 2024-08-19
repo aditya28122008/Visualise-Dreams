@@ -15,13 +15,15 @@ const BkManageCat = () => {
   const lodCon = useContext(loaderContext);
   const { setProgress } = lodCon;
   const [categories, setCategories] = useState([]);
-    const { blogAdminAccess, libraryAdminAccess, userAdminAccess } = usContext;
+  const { blogAdminAccess, libraryAdminAccess, userAdminAccess } = usContext;
   const getAllCategories = async () => {
-    setProgress(40)
+    setProgress(40);
     const headers = {
       Authorization: `Bearer ${localStorage.getItem("MPSUser")}`,
     };
-    const res = await axios.get(`${vars.host}/api/admin-crud-bk-cat/0/`, {headers: headers});
+    const res = await axios.get(`${vars.host}/api/admin-crud-bk-cat/0/`, {
+      headers: headers,
+    });
     setCategories(res.data);
     setProgress(100);
   };
@@ -30,27 +32,32 @@ const BkManageCat = () => {
       const headers = {
         Authorization: `Bearer ${localStorage.getItem("MPSUser")}`,
       };
-    //   const del = await axios.get(`${vars.host}/api/admin-crud-bk-cat/${name}/`, {
-    //     headers
-    //   });
-      const response = await fetch(`${vars.host}/api/admin-crud-bk-cat/${category.sno}/`, {
-        method: "DELETE",
-        headers: headers
-      })
+      //   const del = await axios.get(`${vars.host}/api/admin-crud-bk-cat/${name}/`, {
+      //     headers
+      //   });
+      const response = await fetch(
+        `${vars.host}/api/admin-crud-bk-cat/${category.sno}/`,
+        {
+          method: "DELETE",
+          headers: headers,
+        }
+      );
       const json = await response.json();
       if (json.success) {
         const newCat = categories.filter((cat) => {
           return cat.sno !== category.sno;
         });
         setCategories(newCat);
-        toast.success("Category Deleted")
+        toast.success("Category Deleted");
       } else if (json.code === "p_exists") {
         toast.warn(
           `Some Books with the category: ${category.name} exists. First delete them to delete the category.`
         );
       }
     } catch (error) {
-      toast.error("Can't connect to the server. Please check your internet connection")
+      toast.error(
+        "Can't connect to the server. Please check your internet connection"
+      );
     }
   };
   useEffect(() => {
@@ -119,9 +126,7 @@ const BkManageCat = () => {
                                     </Link>
                                   </td>
                                   <td className="px-6 py-4">
-                                    <button
-                                      onClick={() => deleteBlog(cat)}
-                                    >
+                                    <button onClick={() => deleteBlog(cat)}>
                                       <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         viewBox="0 0 448 512"

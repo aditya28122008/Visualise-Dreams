@@ -6,7 +6,7 @@ import { FaHome, FaCheckCircle } from "react-icons/fa";
 import { IoLibrary } from "react-icons/io5";
 import userContext from "../context/users/userContext";
 import { toast } from "react-toastify";
-import { FaPencilAlt } from "react-icons/fa";
+import { FaPencilAlt, FaUserShield } from "react-icons/fa";
 import { IoIosCloseCircle } from "react-icons/io";
 import { IoBookSharp } from "react-icons/io5";
 import { TbCategoryFilled } from "react-icons/tb";
@@ -14,7 +14,7 @@ import { TbCategoryFilled } from "react-icons/tb";
 const Sidebar = (props) => {
   const usContext = useContext(userContext);
   const [blogLen, setBlogLen] = useState("");
-    const { blogAdminAccess, libraryAdminAccess, userAdminAccess } = usContext;
+  const { blogAdminAccess, libraryAdminAccess, userAdminAccess } = usContext;
   useEffect(() => {
     getPostsLength();
   }, []);
@@ -113,6 +113,25 @@ const Sidebar = (props) => {
                   <SideNavLink
                     name="Add A Book"
                     to="/admin/eb/add"
+                    icon={
+                      <FaPencilAlt className="text-3xl text-green-600 dark:text-green-400" />
+                    }
+                  />
+                  <hr className="h-[0.18rem] bg-blue-600 rounded-md md:mx-6 md:hidden" />
+                </>
+              )}
+              {userAdminAccess && (
+                <>
+                  <SideNavLink
+                    name="All Users"
+                    to="/admin/all-users"
+                    icon={
+                      <FaUserShield className="text-3xl text-green-600 dark:text-green-400" />
+                    }
+                  />
+                  <SideNavLink
+                    name="Add A User"
+                    to="/admin/add-user"
                     icon={
                       <FaPencilAlt className="text-3xl text-green-600 dark:text-green-400" />
                     }

@@ -20,6 +20,7 @@ const BookItemSearch = (props) => {
           </p>
           <a
             href={`${vars.host}${book.bookPDF}`}
+            target="_blank"
             rel="noreferrer"
             className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white  rounded-lg  focus:ring-4 focus:outline-none bg-blue-600 hover:bg-blue-700 focus:ring-blue-800"
           >

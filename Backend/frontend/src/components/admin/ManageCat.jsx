@@ -14,9 +14,9 @@ const ManageCat = () => {
   const lodCon = useContext(loaderContext);
   const { setProgress } = lodCon;
   const [categories, setCategories] = useState([]);
-    const { blogAdminAccess, libraryAdminAccess, userAdminAccess } = usContext;
+  const { blogAdminAccess, libraryAdminAccess, userAdminAccess } = usContext;
   const getAllCategories = async () => {
-    setProgress(40)
+    setProgress(40);
     const res = await axios.get(`${vars.host}/api/get-all-categories/`);
     setCategories(res.data);
     setProgress(100);
@@ -27,21 +27,23 @@ const ManageCat = () => {
         Authorization: `Bearer ${localStorage.getItem("MPSUser")}`,
       };
       const del = await axios.get(`${vars.host}/api/del-sp-bl-cat/${name}/`, {
-        headers
+        headers: headers,
       });
       if (del.data.success) {
         const newCat = categories.filter((cat) => {
           return cat.name !== name;
         });
         setCategories(newCat);
-        toast.success("Category Deleted Successfully")
+        toast.success("Category Deleted Successfully");
       } else if (del.data.code === "p_exists") {
         toast.warn(
           `Some blogs with the category: ${name} exists. First delete them to delete the category.`
         );
       }
     } catch (error) {
-      toast.error("Can't connect to the server. Please check your internet connection")
+      toast.error(
+        "Can't connect to the server. Please check your internet connection"
+      );
     }
   };
   useEffect(() => {

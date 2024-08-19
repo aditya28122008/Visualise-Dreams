@@ -197,7 +197,7 @@ const AllowedPosts = () => {
                       </tbody>
                     </table>
                     <InfiniteScroll
-                      dataLength={page.count}
+                      dataLength={posts.length}
                       next={fetchPagedBlogs}
                       hasMore={page.next ? true : false}
                       loader={<Spiner />}
