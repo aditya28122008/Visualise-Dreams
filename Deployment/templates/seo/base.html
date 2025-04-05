@@ -1,0 +1,65 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/static/Logo.png" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}{% endblock title %}</title>
+    {% block metatags %}{% endblock metatags %}
+    <link
+      href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2&family=Baloo+Bhaina+2&family=Dancing+Script&family=Kalnia:wght@300&family=Oswald:wght@300&display=swap"
+      rel="stylesheet"
+    />
+    <!-- <script
+      src="https://kit.fontawesome.com/d85da21555.js"
+      crossorigin="anonymous"
+    ></script> -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sevillana&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://demos.creative-tim.com/notus-js/assets/styles/tailwind.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://demos.creative-tim.com/notus-js/assets/vendor/@fortawesome/fontawesome-free/css/all.min.css"
+    />
+    <meta name="description" content="MPS Ajmer Blogs & Elibrary" />
+    <style>
+      body::-webkit-scrollbar {
+        width: 0px;
+      }
+      body {
+        overflow-y: hidden;
+      }
+      #scrollableDiv::-webkit-scrollbar-track {
+        width: 10px;
+        background-color: #1e40af8f;
+      }
+      @media (max-width: 768px) {
+        #scrollableDiv::-webkit-scrollbar {
+          width: 0px;
+        }
+      }
+      #scrollableDiv::-webkit-scrollbar-thumb {
+        background-color: #1e40af;
+        border-radius: 40px;
+      }
+      #scrollableDiv::-webkit-scrollbar {
+        width: 10px;
+      }
+      #scrollableDiv {
+        overflow-x: hidden;
+      }
+    </style>
+    <script type="module" crossorigin src="/static/assets/index-C3nQoUGK.js"></script>
+    <link rel="stylesheet" crossorigin href="/static/assets/index-BKoZqrQ4.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

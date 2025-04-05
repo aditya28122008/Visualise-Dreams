@@ -1,0 +1,1 @@
+max_no_of_posts = 100

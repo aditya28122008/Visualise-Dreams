@@ -1,0 +1,12 @@
+{% extends "seo/base.html" %}
+{% load static %}
+
+{% block title %}{{post.title}} | MPS Ajmer{% endblock title %}
+
+{% block metatags %}
+<meta name="description" content="{{post.tagline}}">
+<meta name="og:title" content="{{post.title}} | MPS Ajmer">
+<meta name="og:description" content="{{post.tagline}}">
+<meta name="og:image" content="{{host}}/media/{{post.image}}">
+<meta name="robots" content="index,follow">
+{% endblock metatags %}

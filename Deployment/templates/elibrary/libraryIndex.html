@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load static %}
+{% block elibraryActive %}link-active{% endblock elibraryActive %}
+{% block body %}
+    <div class="container w-[100%] justify-center mx-auto mb-6 pt-6 flex flex-wrap space-y-2">
+        {% for book in books %}
+            <div class="max-w-sm bg-white border border-gray-200 rounded-lg transition-all shadow-2xl scale-90">
+                
+                    <img class="rounded-t-lg" src="/media/{{book.bookCover}}" alt="" />
+                
+                <div class="p-5">
+                    
+                        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 ">{{book.bookName}}</h5>
+                    
+                    <p class="mb-3 font-normal text-gray-700 ">{{book.desc}}</p>
+                    <a href="/media/{{book.bookPDF}}/" target = "_blank" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 ">
+                        Read This Book
+                        <span class="text-xl font-extrabold ">&rarr;</span>
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock body %}

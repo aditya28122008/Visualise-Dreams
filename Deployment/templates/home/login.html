@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load static %}
+{% block homeActive %}link-active{% endblock homeActive %}
+{% block title %}Login To MPS Ajmer !{% endblock title %}
+{% block body %}
+    <section class="text-gray-400 bg-white body-font relative">
+        <div class="container py-24">
+            <div class="flex flex-col text-center w-full mb-12 mt-20">
+                <h1 class="sm:text-3xl text-2xl font-medium title-font mb-4 text-black">
+                    Login To MPS Ajmer
+                </h1>
+            </div>
+            <div class="lg:w-1/2 md:w-2/3 mx-auto w-[95%] -mt-12 mb-20">
+                <form class="flex flex-wrap flex-col items-center -m-2" method="post" action = "/login/">{% csrf_token %}
+                    <div class="p-2 w-[70%]">
+                        <div class="relative">
+                            <label for="username" class="leading-7 text-sm text-gray-400">User Name</label>
+                            <input type="text" id="username" name="username"
+                                class="w-full bg-white bg-opacity-40 rounded border border-gray-700 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-900 text-base outline-none text-black py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" required/>
+                        </div>
+                    </div>
+                    <div class="p-2 w-[70%]">
+                        <div class="relative">
+                            <label for="password" class="leading-7 text-sm text-gray-400">Password</label>
+                            <input type="password" id="password" name="password"
+                                class="w-full bg-white bg-opacity-40 rounded border border-gray-700 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-900 text-base outline-none text-black py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" required/>
+                        </div>
+                    </div>
+                    <div class="p-2 w-full">
+                        <button
+                            class="flex mx-auto text-white bg-pink-500 border-0 py-2 px-8 mt-8 focus:outline-none hover:bg-pink-600 rounded text-lg" type = 'submit'>
+                            Login
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+{% endblock body %}
