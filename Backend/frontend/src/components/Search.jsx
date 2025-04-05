@@ -105,7 +105,7 @@ const Search = () => {
 
   return (
     <>
-      <TopTitle />
+      <TopTitle title={'Maheshwari Public School'} tagline={"Mastering People's Skills"} />
       <hr className="separator mt-5 hidden dark:block -mb-5 transition-all duration-300" />
       <h1 className="text-black dark:text-white text-5xl -mb-12 mt-32 font-serif w-[85%] mx-auto">
         Search Results:

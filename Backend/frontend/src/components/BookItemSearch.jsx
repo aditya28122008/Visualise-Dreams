@@ -1,4 +1,5 @@
 /* eslint-disable react/prop-types */
+import { Link } from "react-router-dom";
 import vars from "../vars";
 
 const BookItemSearch = (props) => {
@@ -18,10 +19,8 @@ const BookItemSearch = (props) => {
           <p className="my-2 font-normal text-gray-700 dark:text-gray-400">
             {book.author}
           </p>
-          <a
-            href={`${vars.host}${book.bookPDF}`}
-            target="_blank"
-            rel="noreferrer"
+          <Link
+            to={`/book-read/${book.bookSno}`}
             className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white  rounded-lg  focus:ring-4 focus:outline-none bg-blue-600 hover:bg-blue-700 focus:ring-blue-800"
           >
             Read Book
@@ -40,7 +39,7 @@ const BookItemSearch = (props) => {
                 d="M1 5h12m0 0L9 1m4 4L9 9"
               />
             </svg>
-          </a>
+          </Link>
         </div>
       </div>
     </div>

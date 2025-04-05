@@ -183,7 +183,7 @@ const EditBlog = () => {
     return modifiedContent;
   };
   useEffect(() => {
-    document.title = "MPS Ajmer - Administration";
+    document.title = 'Admin | MPS Ajmer'
     getCurrentPost();
     getAllCategories();
   }, []);
@@ -277,6 +277,7 @@ const EditBlog = () => {
                               toolbarInlineForSelection: true,
                               showPlaceholder: false,
                               toolbarStickyOffset: 1,
+                              showTooltip: true
                             }}
                           />
                         </div>

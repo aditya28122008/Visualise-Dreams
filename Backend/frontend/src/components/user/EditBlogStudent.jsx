@@ -43,6 +43,7 @@ const EditBlogStudent = () => {
   useEffect(() => {
     getCurrentBlog();
     getAllCategories();
+    document.title = 'Wanna Edit Something...? | MPS Ajmer'
   }, []);
   const handleFileUpload = (e) => {
     const blogImage = e.target.files[0];

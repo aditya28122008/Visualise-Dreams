@@ -1,6 +1,6 @@
 import random
 import string
-from .serializer import BlogSerializer, BlogUserSerializer, UserSerializer, BookSerializer, UpdateProfileSerializer, GroupSerializer, CategorySerializer, BookCategorySerializer, AdminUserSerializer, AdminAddUserSerializer, LogEntrySerializer, LogEntry
+from .serializer import BlogSerializer, BlogUserSerializer, UserSerializer, BookSerializer, UpdateProfileSerializer, GroupSerializer, CategorySerializer, BookCategorySerializer, AdminUserSerializer, AdminAddUserSerializer, AdminSuperuserUserSerializer, AdminUpdateUserSerializer
 from datetime import datetime
 from django.contrib.auth.hashers import make_password
 from accounts.models import CustomUser
@@ -22,7 +22,7 @@ from visualise_dreams import vars
 from django.utils import timezone
 from django.db.models import Prefetch
 from .pagination import BlogPaginations, AdminPostPaginations, SearchPagination, PageNumberPagination, AdminBookPaginations
-from .permissions import IsSuperUserPermission, BlogPermission, ElibraryPermission, UserAdminPermission
+from .permissions import BlogPermission, ElibraryPermission, UserAdminPermission
 
 
 """
@@ -60,13 +60,12 @@ class AdminCRUDUsers(APIView):
                     try:
                         send_mail(
                             'Your New Account Credentials for MPS Ajmer Blogs are:-',
-                            f'Username: {ser.validated_data['username']}\nPassword: {password}',
+                            f"Username: {ser.validated_data['username']}\nPassword: {password}",
                             settings.EMAIL_HOST_USER,
                             [email],
                             fail_silently=False,
                         )
                         ser.validated_data['is_active'] = True
-                        ser.validated_data['is_staff'] = True
                         ser.save()
                         return Response({"success": True})
                     except Exception as e:
@@ -129,6 +128,25 @@ class AdminCRUDUsers(APIView):
             paginated = paginator.paginate_queryset(users, request)
             ser = AdminUserSerializer(paginated, many = True)
             return paginator.get_paginated_response(ser.data)
+        if data['command'] == "up-sup-user":
+            if (request.user.is_superuser) and (request.user.id != id):
+                user = CustomUser.objects.get(id=id)
+                user.is_superuser = True
+                user.save()
+                ser = AdminSuperuserUserSerializer(user)
+                return Response({"success": True, "user": ser.data}, status=status.HTTP_200_OK)
+            else:
+                return Response({"success": False}, status=status.HTTP_401_UNAUTHORIZED)
+        if data['command'] == "de-sup-user":
+            if (request.user.is_superuser) and (request.user.id != id):
+                user = CustomUser.objects.get(id=id)
+                user.is_superuser = False
+                user.save()
+                ser = AdminSuperuserUserSerializer(user)
+                return Response({"success": True, "user": ser.data}, status=status.HTTP_200_OK)
+            else:
+                return Response({"success": False}, status=status.HTTP_401_UNAUTHORIZED)
+                
 
     def delete(self, request, id):
         if request.user.is_superuser and id != request.user.id:
@@ -155,7 +173,7 @@ class AdminCRUDUsers(APIView):
         try:
             user = CustomUser.objects.get(id=id)
             if user != request.user:
-                ser = AdminUserSerializer(data=data, instance=user)
+                ser = AdminUpdateUserSerializer(data=data, instance=user)
                 if ser.is_valid():
                     try:
                         if ser.validated_data['profile']:
@@ -193,6 +211,14 @@ User's Admin ends Here
 Blogs And Elibrary Starts from Here
 """
 
+
+class BookRetrieveAPIView(RetrieveAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    lookup_field = 'bookSno'
+
+
+
 class AdminCRUDBooks(APIView):
     parser_classes = [MultiPartParser]
     authentication_classes = [JWTAuthentication]
@@ -201,6 +227,7 @@ class AdminCRUDBooks(APIView):
         if bookSno == 0:
             data = request.data
             bookSer = BookSerializer(data=data)
+            # print(request.data)
             if bookSer.is_valid():
                 bookSer.save()
                 return Response({"success": True, "data": bookSer.data}, status=status.HTTP_201_CREATED)
@@ -309,12 +336,13 @@ class AdminCRUDBKCat(APIView):
             data = request.data
             cat = None
             try:
-                cat = BookCategory.objects.get(name=data['name'])
+                cat = BookCategory.objects.get(name=data['name'].upper())
             except Exception as e:
                 pass
             if not cat:
                 ser = BookCategorySerializer(data=data)
                 if ser.is_valid():
+                    ser.validated_data['name'] = ser.validated_data['name'].upper()
                     ser.save()
                     return Response({"success": True}, status=status.HTTP_201_CREATED)
                 return Response({"success": True}, status=status.HTTP_201_CREATED)
@@ -342,11 +370,12 @@ class UpdateBkCat(APIView):
         cat = BookCategory.objects.filter(name=name)
         if cat.exists():
             newcat = cat.first()
-            new_name = data.get('name')
+            new_name = data.get('name').upper()
             if BookCategory.objects.filter(name=new_name).exclude(sno=newcat.sno).exists():
                 return Response({"success": False, "message": "Category name already in use"}, status=status.HTTP_409_CONFLICT)
             ser = BookCategorySerializer(instance=newcat, data=data)
             if ser.is_valid():
+                ser.validated_data['name'] = ser.validated_data['name'].upper()
                 ser.save()
                 return Response({"success": True}, status=status.HTTP_200_OK)
             else:
@@ -364,12 +393,13 @@ class AddBlCategory(APIView):
         data = request.data
         cat = None
         try:
-            cat = Categories.objects.get(name=data['name'])
+            cat = Categories.objects.get(name=data['name'].upper())
         except Exception as e:
             pass
         if not cat:
             ser = CategorySerializer(data=data)
             if ser.is_valid():
+                ser.validated_data['name'] = ser.validated_data['name'].upper()
                 ser.save()
                 return Response({"success": True}, status=status.HTTP_201_CREATED)
             return Response({"success": True}, status=status.HTTP_201_CREATED)
@@ -385,13 +415,13 @@ class UpdateBlCat(APIView):
         cat = Categories.objects.filter(name=name)
         if cat.exists():
             newcat = cat.first()
-            new_name = data.get('name')
+            new_name = data.get('name').upper()
             if Categories.objects.filter(name=new_name).exclude(sno=newcat.sno).exists():
                 return Response({"success": False, "message": "Category name already in use"}, status=status.HTTP_409_CONFLICT)
 
             ser = CategorySerializer(instance=newcat, data=data)
-            
             if ser.is_valid():
+                ser.validated_data['name'] = ser.validated_data['name'].upper()
                 ser.save()
                 return Response({"success": True}, status=status.HTTP_200_OK)
             else:
@@ -452,7 +482,7 @@ class PostList(ListAPIView):
     serializer_class = BlogSerializer
     pagination_class = BlogPaginations
     def get_queryset(self):
-        cat = self.kwargs['cat']
+        cat = self.kwargs['cat'].upper()
         category = Categories.objects.get(name =cat)
         posts = Post.objects.filter(allowed = True, category=category).order_by("-allowd_at")
         return posts
@@ -517,7 +547,7 @@ class BookList(ListAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     def get_queryset(self):
-        categorySno = self.kwargs['cat']
+        categorySno = self.kwargs['cat'].upper()
         mainCat = BookCategory.objects.get(name=categorySno)
         books = Book.objects.filter(category=mainCat)
         return books
@@ -651,6 +681,21 @@ class StudentsBlogApi(APIView):
         paginated = paginator.paginate_queryset(posts, request)
         ser = BlogSerializer(paginated, many=True)
         return paginator.get_paginated_response(ser.data)
+    
+    def patch(self, request, snoPost):
+        paginator = PageNumberPagination()
+        paginator.page_size = 16
+        data = request.data
+        query = data['que']
+        allPosts = []
+        allPostTitle = Post.objects.filter(title__icontains = query, author=request.user, by_admin = False)
+        allPostContent = Post.objects.filter(content__icontains = query, author=request.user, by_admin = False)
+        allPostCat = Post.objects.filter(category__name__icontains = query, author=request.user, by_admin = False)
+        allPosts = allPostTitle.union(allPostContent, allPostCat).order_by("-allowd_at")
+        paginated_blogs = paginator.paginate_queryset(allPosts, request)
+        BloSer = BlogSerializer(paginated_blogs, many=True)
+        return paginator.get_paginated_response(BloSer.data)
+
 
     def put(self, request, snoPost):
         try:
@@ -792,7 +837,8 @@ class SearchBlog(APIView):
         allPostAuthorFName = Post.objects.filter(author__first_name__icontains = query, allowed = True)
         allPostAuthorLName = Post.objects.filter(author__last_name__icontains = query, allowed = True)
         allPostContent = Post.objects.filter(content__icontains = query, allowed = True)
-        allPosts = allPostTitle.union(allPostAuthorFName, allPostAuthorLName, allPostContent).order_by("-allowd_at")
+        allPostCat = Post.objects.filter(category__name__icontains = query, allowed = True)
+        allPosts = allPostTitle.union(allPostAuthorFName, allPostAuthorLName, allPostContent, allPostCat).order_by("-allowd_at")
         paginated_blogs = paginator.paginate_queryset(allPosts, request)
         BloSer = BlogSerializer(paginated_blogs, many=True)
         return paginator.get_paginated_response(BloSer.data)

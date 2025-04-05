@@ -6,6 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import vars from "../../../vars";
 import { FaMinusCircle, FaPlusCircle } from "react-icons/fa";
 import { toast } from "react-toastify";
+
 const EditUser = () => {
   const maxFileNameLength = 100;
   const usCon = useContext(userContext);
@@ -54,11 +55,14 @@ const EditUser = () => {
       setUserCreds(json);
       getAllGroups(json);
     } catch (error) {
-      toast.error("Can't connect to the server. Please check your internet connection")
+      toast.error(
+        "Can't connect to the server. Please check your internet connection"
+      );
     }
   };
   useEffect(() => {
     getCurrUser();
+    document.title = "Admin | MPS Ajmer";
   }, []);
   const handleChange = (e) => {
     setUserCreds({ ...userCreds, [e.target.name]: e.target.value });
@@ -73,6 +77,7 @@ const EditUser = () => {
       userFormData.set("email", userCreds.email);
       userFormData.set("nickname", userCreds.nickname);
       userFormData.set("bio", userCreds.bio);
+      userFormData.set("Status", userCreds.Status);
       const grps = allowedGrps.map((grp) => {
         return parseInt(grp.id);
       });
@@ -126,7 +131,7 @@ const EditUser = () => {
       userFormData.set("profile", profileFile);
     }
   };
-  
+
   const handleBannerImgUpload = (e) => {
     const bannerImg = e.target.files[0];
     const bannerImgUploader = document.getElementById("bannerUploader");
@@ -138,7 +143,6 @@ const EditUser = () => {
     } else {
       userFormData.set("bannerImg", bannerImg);
     }
-    // console.log(formData.get("bannerImg"));
   };
   return (
     <>
@@ -148,7 +152,7 @@ const EditUser = () => {
             <AdminSidebar />
             <div className="main flex md:justify-end justify-center">
               <div className="right-main-content overflow-x-auto md:w-[75%]">
-                {(userAdminAccess && currUser.id !== userCreds.id) && (
+                {userAdminAccess && currUser.id !== userCreds.id && (
                   <>
                     <h1 className="text-4xl mb-4 text-center font-Oswald whitespace-nowrap w-fit mx-auto">
                       Can change everything...!
@@ -317,6 +321,28 @@ const EditUser = () => {
                         </label>
                       </div>
                       <div className="relative z-0 w-full mb-5 group">
+                        <>
+                          <label
+                            htmlFor="countries"
+                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                          >
+                            Select the status
+                          </label>
+                          <select
+                            // id="countries"
+                            value={userCreds.Status}
+                            onChange={handleChange}
+                            name="Status"
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          >
+                            <option value={"Student"}>Student</option>
+                            <option value={"Teacher"}>Teacher</option>
+                            <option value={"Staff"}>Staff</option>
+                            <option value={"Management"}>Management</option>
+                          </select>
+                        </>
+                      </div>
+                      <div className="relative z-0 w-full mb-5 group">
                         <label
                           htmlFor="message"
                           className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -328,6 +354,7 @@ const EditUser = () => {
                           name="bio"
                           onChange={handleChange}
                           rows={4}
+                          maxLength={400}
                           className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                           placeholder="Leave a comment..."
                           value={userCreds.bio}
@@ -337,7 +364,7 @@ const EditUser = () => {
                       <div className="relative z-0 w-full mb-5 group">
                         <p className="text-xl">Manage Permissions:</p>
                         <div className="flex md:flex-row md:justify-between md:space-x-4 md:space-y-0 space-y-2 flex-col my-4">
-                          <div className="w-1/2 border border-black dark:border-white">
+                          <div className="md:w-1/2 w-full border border-black dark:border-white">
                             <div className="w-full bg-blue-600 text-white px-4 py-1 text-left">
                               Available Permissions
                             </div>
@@ -345,7 +372,10 @@ const EditUser = () => {
                               {groups.map((group) => {
                                 return (
                                   <>
-                                    <div key={group.id} className="text-gray-600 dark:text-gray-400 py-1 px-4 flex justify-between items-center">
+                                    <div
+                                      key={group.id}
+                                      className="text-gray-600 dark:text-gray-400 py-1 px-4 flex justify-between items-center"
+                                    >
                                       <p>{group.name}</p>
                                       <FaPlusCircle
                                         className="text-xl cursor-pointer text-green-600 dark:text-green-600"
@@ -357,7 +387,7 @@ const EditUser = () => {
                               })}
                             </div>
                           </div>
-                          <div className="w-1/2 border border-black dark:border-white">
+                          <div className="md:w-1/2 w-full border border-black dark:border-white">
                             <div className="w-full bg-blue-600 text-white px-4 py-1 text-left">
                               Provided Permissions
                             </div>
@@ -365,7 +395,10 @@ const EditUser = () => {
                               {allowedGrps.map((group) => {
                                 return (
                                   <>
-                                    <div key={group.id} className="text-gray-600 dark:text-gray-400 py-1 px-4 flex justify-between items-center">
+                                    <div
+                                      key={group.id}
+                                      className="text-gray-600 dark:text-gray-400 py-1 px-4 flex justify-between items-center"
+                                    >
                                       <p>{group.name}</p>
                                       <FaMinusCircle
                                         className="text-xl cursor-pointer text-red-600 dark:text-red-600"

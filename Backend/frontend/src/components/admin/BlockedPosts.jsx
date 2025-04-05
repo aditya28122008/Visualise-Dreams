@@ -18,8 +18,8 @@ const BlockedPosts = () => {
   const { conDeleteBlogById } = bloCont;
   const usContext = useContext(userContext);
   const [posts, setPost] = useState([]);
-  const [page, setPage] = useState({count: 0});
-    const { blogAdminAccess, libraryAdminAccess, userAdminAccess } = usContext;
+  const [page, setPage] = useState({ count: 0 });
+  const { blogAdminAccess, libraryAdminAccess, userAdminAccess } = usContext;
   const lodCon = useContext(loaderContext);
   const { setProgress } = lodCon;
   const fetchPagedBlogs = async () => {
@@ -78,9 +78,6 @@ const BlockedPosts = () => {
         });
         setPost(newPosts);
         toast.success("Post Allowed Successfully");
-        if (newPosts.length === 9) {
-          fetchPagedBlogs();
-        }
       }
     } catch (error) {
       toast.error(
@@ -101,7 +98,8 @@ const BlockedPosts = () => {
     }
   };
   useEffect(() => {
-    document.title = "MPS Ajmer - Administration";
+    
+    document.title = 'Admin | MPS Ajmer'
     blog();
     // eslint-disable-next-line
   }, []);
@@ -118,6 +116,14 @@ const BlockedPosts = () => {
                     Blocked Blog Posts
                     <IoIosCloseCircle className="inline text-red-600 dark:text-red-500 mx-2 bg-white rounded-full" />
                   </h1>
+                  <div className="relative">
+                    <Link
+                      to={"/admin/addblog"}
+                      className="absolute text-white px-2 py-1 bg-red-500 hover:bg-red-600 -top-10 right-0 rounded-md"
+                    >
+                      Add A Blog &rarr;
+                    </Link>
+                  </div>
                   <div className="relative">
                     <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                       <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -228,6 +234,20 @@ const BlockedPosts = () => {
                       }
                       scrollableTarget="scrollableDiv"
                     ></InfiniteScroll>
+                    {posts.length !== page.count ? (
+                      <>
+                        <div className="flex justify-center items-center">
+                          <button
+                            className="w-fit mx-auto bg-red-600 px-2 py-1 rounded-md hover:bg-red-700"
+                            onClick={() => fetchPagedBlogs()}
+                          >
+                            Show More
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <></>
+                    )}
                   </div>
                 </>
               )}

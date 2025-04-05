@@ -7,6 +7,10 @@ import { toast } from "react-toastify";
 import loaderContext from "../../../context/loadingBar/loderContext";
 import { useNavigate } from "react-router-dom";
 const AddUser = () => {
+  useEffect(() => {
+    document.title = 'Admin | MPS Ajmer'
+  }, [])
+  
   const loadCon = useContext(loaderContext)
   const {setProgress} = loadCon
   const navigate = useNavigate()

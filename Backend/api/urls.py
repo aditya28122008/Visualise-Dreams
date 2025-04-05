@@ -13,6 +13,7 @@ urlpatterns = [
     path('a-post-admin/', views.AllowedPostsList.as_view()),
     path('b-post-admin/', views.BlockedPostsList.as_view()),
     path('post/<str:slug>/', views.SinglePost.as_view()),
+    path('book/<int:bookSno>/', views.BookRetrieveAPIView.as_view()),
     path('all-books/<str:cat>/', views.BookList.as_view()),
     path('admin-all-books/', views.BookListAdmin.as_view()),
     path('cat-books/', views.CatBookList.as_view()),

@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import axios from "axios";
 import { useContext, useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import vars from "../../../vars";
 import { toast } from "react-toastify";
 import userContext from "../../../context/users/userContext";
@@ -94,6 +94,7 @@ const EditBook = () => {
   useEffect(() => {
     getCurrBook();
     getAllCategories();
+    document.title = 'Admin | MPS Ajmer'
   }, []);
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -211,7 +212,7 @@ const EditBook = () => {
                       </div>
                       <div className="w-[10rem] mx-auto mb-4">
                         <img
-                          src={`${vars.host}/${bookCreds.bookCover}`}
+                          src={`${vars.host}${bookCreds.bookCover}`}
                           alt=""
                         />
                       </div>
@@ -235,11 +236,11 @@ const EditBook = () => {
                         </>
                       </div>
                       <div className="text-blue-600 hover:text-blue-400 hover:underline text-center">
-                        <a
-                          href={`${vars.host}/${bookCreds.bookPDF}`}
+                        <Link
+                          to={`/book-read/${bookCreds.bookSno}`}
                         >
                           View Current Book PDF
-                        </a>
+                        </Link>
                       </div>
                       <div className="relative z-0 w-full mb-5 group">
                         <>

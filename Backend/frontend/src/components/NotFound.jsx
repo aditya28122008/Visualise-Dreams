@@ -7,6 +7,7 @@ const NotFound = () => {
   const { setProgress } = lodCon;
   useEffect(() => {
     setProgress(100);
+    document.title = '404 NOT FOUND | MPS Ajmer'
   }, []);
 
   return (

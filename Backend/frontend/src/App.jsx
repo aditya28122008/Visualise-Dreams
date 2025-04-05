@@ -27,7 +27,7 @@ import AddBlog from "./components/admin/AddBlog";
 import EditBlog from "./components/admin/EditBlog";
 import ManageCat from "./components/admin/ManageCat";
 import BlogNew from "./components/BlogNew";
-// import Test from "./components/Test";
+import Test from "./components/Test";
 import LibraryNew from "./components/LibraryNew";
 import EditBlogCategory from "./components/admin/EditBlogCategory";
 import AddBlogCategory from "./components/admin/AddBlogCategory";
@@ -45,8 +45,10 @@ import AllUsers from "./components/admin/Users/AllUsers";
 import AddUser from "./components/admin/Users/AddUser";
 import UserSpBlogs from "./components/admin/Users/UserSpBlogs";
 import EditUser from "./components/admin/Users/EditUser";
-import Test from "./components/Test";
+// import Test from "./components/Test";
 import AdminOptions from "./components/AdminOptions";
+// import BookRead from "./components/BookRead";
+import BookView from "./components/BookView";
 
 function App() {
   const [mode, setMode] = useState("");
@@ -138,13 +140,16 @@ function App() {
                         <Route path="/search/:query" element={<Search />} />
                         <Route path="/edit-profile" element={<EditProfile />} />
                         <Route path="/add-blog" element={<AddBlogStudent />} />
-                        {/* <Route path="/test" element={<Test />} /> */}
-                        <Route path="/u-admin" element={<UserPerAdmin />} />
-                        <Route path="/stu/ed-bl/:slug" element={<EditBlogStudent />} />
                         <Route
-                          path="/admin"
-                          element={<AdminOptions />}
+                          path="/book-read/:bookSno"
+                          element={<BookView />}
                         />
+                        <Route path="/u-admin" element={<UserPerAdmin />} />
+                        <Route
+                          path="/stu/ed-bl/:slug"
+                          element={<EditBlogStudent />}
+                        />
+                        <Route path="/admin" element={<AdminOptions />} />
                         <Route
                           path="/admin/a-posts"
                           element={<AllowedPosts />}
@@ -204,31 +209,21 @@ function App() {
                             <Login logo={logo} title={"Login to MPS Ajmer"} />
                           }
                         />
-                        <Route
-                          path="/admin/all-users"
-                          element={<AllUsers />}
-                        />
-                        <Route
-                          path="/admin/add-user"
-                          element={<AddUser />}
-                        />
+                        <Route path="/admin/all-users" element={<AllUsers />} />
+                        <Route path="/admin/add-user" element={<AddUser />} />
                         <Route
                           path="/admin/user-blogs/:id"
                           element={<UserSpBlogs />}
                         />
-                        <Route
-                          path="/test"
-                          element={<Test />}
-                        />
+                        <Route path="/test" element={<Test />} />
                         <Route
                           path="/admin/ed-user/:id"
                           element={<EditUser />}
                         />
                         <Route path="*" element={<NotFound />} />
-                        <Route path="/api/*" element={<NotFound />} />
                       </Routes>
                     </div>
-                      <Footer logo={logo} />
+                    <Footer logo={logo} />
                   </div>
                 </div>
                 <div className="hidden text-9xl"></div>

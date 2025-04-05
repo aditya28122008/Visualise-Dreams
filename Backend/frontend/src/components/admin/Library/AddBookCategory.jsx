@@ -20,6 +20,7 @@ const AddBookCategory = () => {
   };
   useEffect(() => {
     setProgress(100);
+    document.title = 'Admin | MPS Ajmer'
   }, []);
   const catFormData = new FormData();
   const onSubmit = async (e) => {

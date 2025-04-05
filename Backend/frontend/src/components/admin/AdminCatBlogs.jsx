@@ -63,6 +63,7 @@ const AdminCatBlogs = () => {
   };
   useEffect(() => {
     getCatBlogs();
+    document.title = 'Admin | MPS Ajmer'
   }, []);
   const deleteBlogById = async (id) => {
     if (window.confirm("Are You Sure Want to Delete?")) {
@@ -194,6 +195,20 @@ const AdminCatBlogs = () => {
                       }
                       scrollableTarget="scrollableDiv"
                     ></InfiniteScroll>
+                    {blogs.length !== page.count ? (
+                      <>
+                        <div className="flex justify-center items-center">
+                          <button
+                            className="w-fit mx-auto bg-red-600 px-2 py-1 rounded-md hover:bg-red-700"
+                            onClick={() => fetchPagedBlogs()}
+                          >
+                            Show More
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <></>
+                    )}
                   </div>
                 </>
               )}

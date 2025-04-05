@@ -29,6 +29,7 @@ const EditBookCategory = () => {
   };
   useEffect(() => {
     fetchCat();
+    document.title = 'Admin | MPS Ajmer'
   }, []);
   const catFormData = new FormData();
   const onSubmit = async (e) => {

@@ -1,6 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser, AbstractBaseUser
-from visualise_dreams import settings
+from django.contrib.auth.models import AbstractUser
 # Create your models here.
 
 
@@ -13,10 +12,11 @@ class CustomUser(AbstractUser):
         ("Student", "Student"),
         ("Teacher", "Teacher"),
         ("Staff", "Staff"),
+        ("Management", "Management"),
     )
     
     Status = models.CharField(choices=teacherStatus, default="Student", max_length=20)
-    bio = models.TextField(blank=True, default = "Its About Me...!")
+    bio = models.TextField(blank=True, default = "Its About Me...!", max_length=400)
     
     
     def save(self, *args, **kwargs):

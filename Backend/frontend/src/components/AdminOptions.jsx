@@ -14,6 +14,7 @@ const AdminOptions = () => {
 
   useEffect(() => {
     setProgress(100);
+    document.title = 'Admin | MPS Ajmer'
   }, []);
   const divStyle = {
     borderWidth: "1px",

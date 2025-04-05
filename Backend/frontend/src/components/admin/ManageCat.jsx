@@ -49,6 +49,7 @@ const ManageCat = () => {
   useEffect(() => {
     getAllCategories();
     // setProgress(100)
+    document.title = 'Admin | MPS Ajmer'
   }, []);
 
   return (

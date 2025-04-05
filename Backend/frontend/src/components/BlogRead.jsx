@@ -29,12 +29,15 @@ const BlogRead = () => {
         method: "GET",
       });
       const json = await response.json();
+      // console.log(response.status);
       setPost(json);
-      if (json.detail === "Not found.") {
+      if (response.status === 404) {
         setNotAvail(true);
         setProgress(100);
+        document.title = '404 NOT FOUND | MPS Ajmer'
       } else {
         getPostUser(json.author, json);
+        document.title = `${json.title} | MPS Ajmer`
       }
     } catch (error) {
       toast.error(
@@ -125,7 +128,7 @@ const BlogRead = () => {
         postUser.username === user.username ||
         (blogAdminAccess && !post.allowed)) &&
       !notAvail ? (
-        <section className="dark:bg-gray-900 bg-white body-font">
+        <section className="dark:bg-gray-900 bg-white body-font -mt-32 scale-90">
           <div className="lg:w-[80%] mx-auto">
             <div className="container px-5 py-24 mx-auto flex flex-col">
               <div className="bg-white px-8 rounded-md dark:shadow-blue-300 shadow-lg">

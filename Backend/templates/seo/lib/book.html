@@ -1,0 +1,12 @@
+{% extends "seo/base.html" %}
+{% load static %}
+
+{% block title %}{{book.bookName}} | MPS Ajmer{% endblock title %}
+
+{% block metatags %}
+<meta name="description" content="Written By {{book.author}}">
+<meta name="og:title" content="{{book.bookName}} | MPS Ajmer">
+<meta name="og:description" content="Written By {{book.author}}">
+<meta name="og:image" content="{{host}}/media/{{book.bookCover}}">
+<meta name="robots" content="index,follow">
+{% endblock metatags %}

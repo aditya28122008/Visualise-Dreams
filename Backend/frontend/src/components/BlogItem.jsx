@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 
 const BlogItem = (props) => {
   // const [user, setUser] = useState({ fName: "", lName: "", username: "" });
-  const contentRef = useRef(null);
   // const getPostUser = async () => {
   //   try {
   //     const response = await fetch(
@@ -25,16 +24,11 @@ const BlogItem = (props) => {
   //     );
   //   }
   // };
+  const contentRef = useRef(null);
   const setPostContent = () => {
-    const conDiv = document.createElement("div")
-    conDiv.innerHTML = props.post.content;
-    contentRef.current.innerHTML = `${conDiv.innerText.slice(
-      0,
-      200
-    )}...`;
+    contentRef.current.innerHTML = contentRef.current.innerText.slice(0, 100);
   };
   useEffect(() => {
-    // getPostUser();
     setPostContent();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -98,6 +92,7 @@ const BlogItem = (props) => {
             </div>
             <div
               className="content text-justify dark:text-gray-400 hidden md:block text-gray-600 text-sm"
+              dangerouslySetInnerHTML={{ __html: props.post.content }}
               ref={contentRef}
             />
             <div className="content text-justify dark:text-gray-400 md:hidden text-gray-600 text-sm">

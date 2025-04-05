@@ -41,13 +41,13 @@ const LibraryNew = () => {
     setProgress(100);
   };
   useEffect(() => {
-    document.title = "Our Elibrary - MPS Ajmer !";
+    document.title = "Our Elibrary | MPS Ajmer !";
     book();
     // eslint-disable-next-line
   }, []);
   return (
     <>
-      <TopTitle />
+      <TopTitle title={'Maheshwari Public School'} tagline={"Mastering People's Skills"} />
       <div className="container px-5 mx-auto">
         <h1 className="text-blue-700 italic font-DancingScript dark:bg-gray-900 dark:text-blue-300 md:text-5xl lg:text-8xl text-4xl whitespace-nowrap w-fit mx-auto md:mb-24">
           Our Encyclopedia...!

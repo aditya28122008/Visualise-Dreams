@@ -202,7 +202,7 @@ const AddBlog = () => {
     }));
   };
   useEffect(() => {
-    document.title = "MPS Ajmer - Administration";
+    document.title = 'Admin | MPS Ajmer'
     getAllCategories();
     setProgress(100);
     // eslint-disable-next-line

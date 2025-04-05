@@ -11,7 +11,7 @@ import { useParams } from "react-router-dom";
 const CatBlog = () => {
   const { category } = useParams();
   const [posts, setPost] = useState([]);
-  const [page, setPage] = useState({count: 0});
+  const [page, setPage] = useState({ count: 0 });
   // const [hasMore, setHasMore] = useState(true);
   const loderCon = useContext(loaderContext);
   const { setProgress } = loderCon;
@@ -47,13 +47,16 @@ const CatBlog = () => {
     setProgress(100);
   };
   useEffect(() => {
-    document.title = "Our Blogs - MPS Ajmer !";
+    document.title = `Our ${category} Related Blogs | MPS Ajmer !`;
     blog();
     // eslint-disable-next-line
   }, []);
   return (
     <>
-      <TopTitle />
+      <TopTitle
+        title={"Maheshwari Public School"}
+        tagline={"Mastering People's Skills"}
+      />
       <div className="container px-5 py-24 mx-auto">
         <h1 className="text-blue-700 italic font-DancingScript dark:bg-gray-900 dark:text-blue-300 md:text-5xl lg:text-8xl text-3xl whitespace-nowrap w-fit mx-auto md:mb-24">
           {category}

@@ -23,12 +23,12 @@ const BlogNew = () => {
     setProgress(100);
   };
   useEffect(() => {
-    document.title = "Our Blogs - MPS Ajmer !";
+    document.title = "Our Blogs | MPS Ajmer !";
     blog();
   }, []);
   return (
     <>
-      <TopTitle />
+      <TopTitle title={'Maheshwari Public School'} tagline={"Mastering People's Skills"} />
       <div className="container px-5 mx-auto">
         <h1 className="text-blue-700 italic font-DancingScript dark:bg-gray-900 dark:text-blue-300 md:text-5xl lg:text-8xl text-4xl whitespace-nowrap w-fit mx-auto md:-mb-20">
           Our Popular Blogs...!

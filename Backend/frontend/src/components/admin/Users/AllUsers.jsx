@@ -106,6 +106,7 @@ const AllUsers = () => {
   };
   useEffect(() => {
     getAllUsers("");
+    document.title = "Admin | MPS Ajmer";
   }, []);
 
   const fetchMoreUsers = async () => {
@@ -175,6 +176,67 @@ const AllUsers = () => {
       toast.warning("Can't Edit your own user entity...!");
     }
   };
+
+  const makeSuperUser = async (id) => {
+    if (window.confirm("Are you sure wanna promote this user?")) {
+      if (currUser.id !== id) {
+        try {
+          const res = await fetch(`${vars.host}/api/admin-crud-users/${id}/`, {
+            method: "PATCH",
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("MPSUser")}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ command: "up-sup-user" }),
+          });
+          const json = await res.json();
+          if (json.success) {
+            const updatedUsers = users.map((user) =>
+              user.id === id ? { ...user, is_superuser: true } : user
+            );
+            setUsers(updatedUsers);
+            toast.success("User Promoted Successfully");
+          } else {
+            toast.error("Error Promoting User");
+          }
+        } catch (error) {
+          toast.error("Error Promoting User");
+        }
+      } else {
+        toast.warning("Can't Promote your own user entity...!");
+      }
+    }
+  };
+  const demoteSuperUser = async (id) => {
+    if (window.confirm("Are you sure wanna demote this user?")) {
+      if (currUser.id !== id) {
+        try {
+          const res = await fetch(`${vars.host}/api/admin-crud-users/${id}/`, {
+            method: "PATCH",
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("MPSUser")}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ command: "de-sup-user" }),
+          });
+          const json = await res.json();
+          if (json.success) {
+            const updatedUsers = users.map((user) =>
+              user.id === id ? { ...user, is_superuser: false } : user
+            );
+            setUsers(updatedUsers);
+            toast.success("User Demoted Successfully");
+          } else {
+            toast.error("Error Demoting User");
+          }
+        } catch (error) {
+          toast.error("Error Demoting User");
+        }
+      } else {
+        toast.warning("Can't Demote your own user entity...!");
+      }
+    }
+  };
   return (
     <>
       {libraryAdminAccess || blogAdminAccess || userAdminAccess ? (
@@ -188,6 +250,16 @@ const AllUsers = () => {
                     Manage All The Users From Here
                     <FaUserShield className="inline text-red-500 dark:text-white mx-2" />
                   </h1>
+                  <div className="">
+                    <div className="relative">
+                      <Link
+                        to={"/admin/add-user"}
+                        className="absolute text-white px-2 py-1 bg-red-500 hover:bg-red-600 top-5 left-0 rounded-md"
+                      >
+                        Add Users &rarr;
+                      </Link>
+                    </div>
+                  </div>
                   <div className="w-[60%] mx-auto">
                     <form
                       className="max-w-sm mx-auto mb-4"
@@ -231,10 +303,10 @@ const AllUsers = () => {
                             EMAIL
                           </th>
                           <th scope="col" className="px-6 py-3">
-                            PROFILE
+                            PROFILE PIC
                           </th>
                           <th scope="col" className="px-6 py-3">
-                            BANNER
+                            BANNER PIC
                           </th>
                           <th scope="col" className="px-6 py-3">
                             IS ACTIVE
@@ -242,8 +314,15 @@ const AllUsers = () => {
                           <th scope="col" className="px-6 py-3">
                             ACTIVATE / DEACTIVATE
                           </th>
+                          {loggedUser.is_superuser && (
+                            <>
+                              <th scope="col" className="px-6 py-3">
+                                Promote/Demote Superuser
+                              </th>
+                            </>
+                          )}
                           <th scope="col" className="px-6 py-3">
-                            VIEW
+                            VIEW PROFILE
                           </th>
                           <th scope="col" className="px-6 py-3">
                             EDIT
@@ -318,7 +397,7 @@ const AllUsers = () => {
                                   target="_blank"
                                   className="cursor-pointer text-blue-600 dark:text-blue-400 hover:underline hover:underline-offset-4"
                                 >
-                                  Click To View Profile
+                                  Profile
                                 </a>
                               </th>
                               <th
@@ -330,7 +409,7 @@ const AllUsers = () => {
                                   target="_blank"
                                   className="cursor-pointer text-blue-600 dark:text-blue-400 hover:underline hover:underline-offset-4"
                                 >
-                                  Click To View Banner
+                                  Banner
                                 </a>
                               </th>
                               <th
@@ -384,6 +463,39 @@ const AllUsers = () => {
                                         Activate
                                       </button>
                                     )}
+                                  </>
+                                )}
+                              </th>
+                              <th
+                                scope="row"
+                                className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                              >
+                                {user.id !== currUser.id ? (
+                                  <>
+                                    {user.is_superuser ? (
+                                      <button
+                                        className="bg-red-600 text-white px-2 py-1 rounded-md hover:bg-red-500"
+                                        onClick={() => demoteSuperUser(user.id)}
+                                      >
+                                        Demote From Superuser
+                                      </button>
+                                    ) : (
+                                      <button
+                                        className="bg-green-600 text-white rounded-md px-2 py-1 hover:bg-green-500"
+                                        onClick={() => makeSuperUser(user.id)}
+                                      >
+                                        Promote To Superuser
+                                      </button>
+                                    )}
+                                  </>
+                                ) : (
+                                  <>
+                                    <button
+                                      className="bg-red-600 text-white px-2 py-1 rounded-md"
+                                      disabled
+                                    >
+                                      Can&apos;t Edit Your User Entity
+                                    </button>
                                   </>
                                 )}
                               </th>

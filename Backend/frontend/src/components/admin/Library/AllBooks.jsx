@@ -75,6 +75,7 @@ const AllBooks = () => {
 
   useEffect(() => {
     getAllBooks();
+    document.title = 'Admin | MPS Ajmer'
   }, []);
 
   return (
@@ -132,13 +133,12 @@ const AllBooks = () => {
                                   <td className="px-6 py-4">{book.bookName}</td>
                                   <td className="px-6 py-4">{book.author}</td>
                                   <td className="px-6 py-4">
-                                    <a
-                                      href={`${book.bookPDF}`}
+                                    <Link
+                                      to={`/book-read/${book.bookSno}`}
                                       className="text-xl"
-                                      target="_blank"
                                     >
                                       <FaEye />
-                                    </a>
+                                    </Link>
                                   </td>
                                   <td className="px-6 py-4">
                                     <Link
@@ -175,6 +175,20 @@ const AllBooks = () => {
                         }
                         scrollableTarget="scrollableDiv"
                       ></InfiniteScroll>
+                      {books.length !== page.count ? (
+                      <>
+                        <div className="flex justify-center items-center">
+                          <button
+                            className="w-fit mx-auto bg-red-600 px-2 py-1 rounded-md hover:bg-red-700"
+                            onClick={() => getPagedBooks()}
+                          >
+                            Show More
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <></>
+                    )}
                     </div>
                   </>
                 )}

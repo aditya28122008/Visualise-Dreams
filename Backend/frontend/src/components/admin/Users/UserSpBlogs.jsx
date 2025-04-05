@@ -43,6 +43,7 @@ const UserSpBlogs = () => {
   };
   useEffect(() => {
     getUserSpBlogs();
+    document.title = 'Admin | MPS Ajmer'
   }, []);
   const fetchPagedBlogs = async () => {
     try {

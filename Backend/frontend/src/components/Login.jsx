@@ -86,7 +86,6 @@ const Login = (props) => {
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                 Sign in to your account
               </h1>
-              ~
               <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
                 <div>
                   <label
@@ -153,7 +152,6 @@ const Login = (props) => {
               </a>
             </p>
           </div>
-          {/* <Link to=`{vars.host}`></Link> */}
         </div>
       </section>
     </div>

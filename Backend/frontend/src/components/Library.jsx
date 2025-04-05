@@ -31,7 +31,7 @@ const Library = () => {
     setProgress(100);
   };
   useEffect(() => {
-    document.title = "Our Library - MPS Ajmer !";
+    document.title = `Our ${category} Related Books | MPS Ajmer !`;
     getAllBooks();
   }, []);
   const fetchPagedBlogs = async () => {
@@ -52,7 +52,7 @@ const Library = () => {
   return (
     <>
       <div className="">
-        <TopTitle />
+        <TopTitle title={'Maheshwari Public School'} tagline={"Mastering People's Skills"} />
         <div className="py-8">
           <div className="mt-10">
             <h1 className="text-center mt-4 md:text-6xl lg:text-8xl text-3xl font-Sevillana text-blue-700 dark:text-blue-300 italic my-4">

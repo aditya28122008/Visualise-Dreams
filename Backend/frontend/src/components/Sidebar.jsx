@@ -91,11 +91,12 @@ const Sidebar = (props) => {
                   />
                 </>
               )}
-              <p className="dark:text-gray-300 text-black text-xl mt-4 font-bold text-center font-Oswald">
-                Elibrary:
-              </p>
+
               {libraryAdminAccess && (
                 <>
+                  <p className="dark:text-gray-300 text-black text-xl mt-4 font-bold text-center font-Oswald">
+                    Elibrary:
+                  </p>
                   <SideNavLink
                     name="All Books"
                     to="/admin/eb/all-bk"
@@ -122,6 +123,9 @@ const Sidebar = (props) => {
               )}
               {userAdminAccess && (
                 <>
+                  <p className="dark:text-gray-300 text-black text-xl mt-4 font-bold text-center font-Oswald">
+                    Users Admin:
+                  </p>
                   <SideNavLink
                     name="All Users"
                     to="/admin/all-users"
@@ -131,6 +135,14 @@ const Sidebar = (props) => {
                   />
                   <SideNavLink
                     name="Add A User"
+                    to="/admin/add-user"
+                    icon={
+                      <FaPencilAlt className="text-3xl text-green-600 dark:text-green-400" />
+                    }
+                  />
+                  <SideNavLink
+                    name="Add A User"
+                    className="hidden"
                     to="/admin/add-user"
                     icon={
                       <FaPencilAlt className="text-3xl text-green-600 dark:text-green-400" />

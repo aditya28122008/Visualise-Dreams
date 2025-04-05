@@ -10,31 +10,39 @@ import { FaPencilAlt } from "react-icons/fa";
 import { PiPencilSimpleSlash } from "react-icons/pi";
 import { MdDelete } from "react-icons/md";
 import DeleteSlash from "../../static/delete-slash.svg";
+import { CiSearch } from "react-icons/ci";
 
 const UserPerAdmin = () => {
   const loadCon = useContext(loaderContext);
   const { setProgress } = loadCon;
   const [blogs, setBlogs] = useState([]);
   const [page, setPage] = useState({ count: 0 });
-
-  const getMyPosts = async () => {
+  const [searchCreds, setSearchCreds] = useState("");
+  const getAllPosts = async (que) => {
     setProgress(40);
     try {
       const response = await fetch(`${vars.host}/api/student-crud-blogs/0/`, {
-        method: "GET",
+        method: "PATCH",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("MPSUser")}`,
+          "Content-Type": "application/json",
         },
+        body: JSON.stringify({ que: que }),
       });
       const json = await response.json();
       setPage(json);
       setBlogs(json.results);
+      console.log(json);
     } catch (error) {
       toast.error(
         "Can't connect to the server. Please check your internet connection"
       );
     }
     setProgress(100);
+  };
+  const handleChange = async (e) => {
+    setSearchCreds(e.target.value);
+    getAllPosts(e.target.value);
   };
 
   const deleteBlog = async (id) => {
@@ -63,10 +71,12 @@ const UserPerAdmin = () => {
   const fetchPagedBlogs = async () => {
     try {
       const res = await fetch(`${page.next}`, {
-        method: "GET",
+        method: "PATCH",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("MPSUser")}`,
+          "Content-Type": "application/json",
         },
+        body: JSON.stringify({ que: searchCreds }),
       });
       const json = await res.json();
       const newPosts = blogs.concat(json.results);
@@ -79,8 +89,8 @@ const UserPerAdmin = () => {
     }
   };
   useEffect(() => {
-    getMyPosts();
-    document.title = "My Admin";
+    getAllPosts("");
+    document.title = "My Admin | MPS Ajmer";
   }, []);
 
   return (
@@ -93,6 +103,29 @@ const UserPerAdmin = () => {
           </div>
         </div>
       </h1>
+      <div className="w-[60%] mx-auto">
+        <form
+          className="max-w-sm mx-auto mb-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            getAllPosts(searchCreds);
+          }}
+        >
+          <div className="relative">
+            <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+              <CiSearch className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+            </div>
+            <input
+              type="text"
+              id="email-address-icon"
+              className="bg-gray-50 border shadow-md dark:shadow-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              value={searchCreds}
+              placeholder="Type Something to search among your Blogs"
+              onChange={handleChange}
+            />
+          </div>
+        </form>
+      </div>
 
       <div className="mb-4 flex items-center justify-start space-x-4 flex-row">
         <Link
@@ -206,6 +239,20 @@ const UserPerAdmin = () => {
         }
         scrollableTarget="scrollableDiv"
       ></InfiniteScroll>
+      {blogs.length !== page.count ? (
+        <>
+          <div className="flex justify-center items-center">
+            <button
+              className="w-fit mx-auto bg-red-600 px-2 py-1 rounded-md hover:bg-red-700"
+              onClick={() => fetchPagedBlogs()}
+            >
+              Show More
+            </button>
+          </div>
+        </>
+      ) : (
+        <></>
+      )}
     </div>
   );
 };

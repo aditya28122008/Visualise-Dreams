@@ -15,7 +15,7 @@ const AllowedPosts = () => {
   const { conDeleteBlogById, conGetBlogs } = bloCont;
   const usContext = useContext(userContext);
   const [posts, setPost] = useState([]);
-  const [page, setPage] = useState({count: 0});
+  const [page, setPage] = useState({ count: 0 });
   const { blogAdminAccess, libraryAdminAccess, userAdminAccess } = usContext;
   const lodCon = useContext(loaderContext);
   const { setProgress } = lodCon;
@@ -47,6 +47,7 @@ const AllowedPosts = () => {
       setPost(json.json.results);
     }
     setProgress(100);
+    document.title = 'Admin | MPS Ajmer'
   };
 
   const blockPost = async (id) => {
@@ -66,9 +67,6 @@ const AllowedPosts = () => {
         });
         setPost(newPosts);
         toast.success("Post Blocked Successfully");
-        if (newPosts.length === 9) {
-          fetchPagedBlogs();
-        }
       } else {
         toast.error("An Error occoured");
       }
@@ -91,7 +89,7 @@ const AllowedPosts = () => {
     }
   };
   useEffect(() => {
-    document.title = "MPS Ajmer - Administration";
+    document.title = 'Admin | MPS Ajmer'
     blog();
     // eslint-disable-next-line
   }, []);
@@ -211,6 +209,20 @@ const AllowedPosts = () => {
                       }
                       scrollableTarget="scrollableDiv"
                     ></InfiniteScroll>
+                    {posts.length !== page.count ? (
+                      <>
+                        <div className="flex justify-center items-center">
+                          <button
+                            className="w-fit mx-auto bg-red-600 px-2 py-1 rounded-md hover:bg-red-700"
+                            onClick={() => fetchPagedBlogs()}
+                          >
+                            Show More
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <></>
+                    )}
                   </div>
                 </>
               )}

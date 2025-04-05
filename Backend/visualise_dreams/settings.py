@@ -33,6 +33,7 @@ ALLOWED_HOSTS = [
     '192.168.43.53',
     'localhost',
     '192.168.42.224',
+    '192.168.36.117',
     '192.168.43.122'
 ]
 
@@ -41,7 +42,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 465
 EMAIL_USE_SSL = True 
 EMAIL_HOST_USER = 'bloggerpandey.a@gmail.com'  # Your Gmail username
-EMAIL_HOST_PASSWORD = 'kfvwqjacbciqjgsu'
+EMAIL_HOST_PASSWORD = 'tjtlrpimwvmnqtrv'
 EMAIL_FILE_PATH = BASE_DIR / "sent_emails"
 
 
@@ -57,8 +58,9 @@ FRONTEND_URL = "http://localhost:5173"
 
 INSTALLED_APPS = [
     'blog.apps.BlogConfig',
+    'seo.apps.SeoConfig',
     'main.apps.MainConfig',
-    'fileUploadTest.apps.FileuploadtestConfig',
+    # 'django.contrib.sites',
     'Elibrary.apps.ElibraryConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -89,7 +91,7 @@ ROOT_URLCONF = 'visualise_dreams.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR,"templates")],
+        'DIRS': [os.path.join(BASE_DIR, "templates")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -190,7 +192,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Addded Manually 
 STATICFILES_DIRS = [
     BASE_DIR / "static",
-    "static/",
     os.path.join(BASE_DIR,"frontend/dist/")
 ]
 
@@ -240,10 +241,7 @@ Managing Django CORS:-
 """
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "https://tjcrgnj2-5173.inc1.devtunnels.ms"
 ]
-
 
 CORS_ALLOW_METHODS = [
     'DELETE',
